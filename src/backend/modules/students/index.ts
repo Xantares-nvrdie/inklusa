@@ -12,6 +12,17 @@ const studentsModule = new Elysia({ prefix: "/students", tags: ["Students"] })
         auth: true,
         body: t.Object({ label: t.String({ minLength: 1, maxLength: 40 }) }),
         detail: { summary: "Add a minimal student identifier (e.g. 'Student A')" },
+    })
+    .get("/:id", async ({ user, params, set }) => {
+        const row = await StudentService.getById(user.id, params.id);
+        if (!row) {
+            set.status = 404;
+            return { message: "Student not found" };
+        }
+        return row;
+    }, {
+        auth: true,
+        params: t.Object({ id: t.String() }),
     });
 
 export default studentsModule;

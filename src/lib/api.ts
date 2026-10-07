@@ -1,3 +1,5 @@
+import toast from "react-hot-toast";
+
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
     const res = await fetch(`/api${path}`, {
         ...init,
@@ -5,7 +7,9 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
     });
     if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body?.message ?? `Request failed (${res.status})`);
+        const message = body?.message ?? `Request failed (${res.status})`;
+        toast.error(message);
+        throw new Error(message);
     }
     return res.json() as Promise<T>;
 }

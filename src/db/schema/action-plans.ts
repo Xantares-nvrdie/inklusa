@@ -28,6 +28,7 @@ export const actionPlans = pgTable(
         status: actionPlanStatusEnum("status").notNull().default("PLANNED"),
 
         reflectionResult: reflectionResultEnum("reflection_result"),
+        reflectionReason: text("reflection_reason"),
         reflectionNote: text("reflection_note"),
         reflectedAt: timestamp("reflected_at"),
 

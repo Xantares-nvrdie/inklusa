@@ -1487,16 +1487,31 @@ export const INTERVENTIONS_DATA: LocalizedIntervention[] = [
 
 export const RESULT_LABELS_DATA: Record<Locale, Record<string, string>> = {
     en: {
-        VERY_HELPFUL: "Very helpful",
+        VERY_HELPFUL: "Very Helpful",
         HELPFUL: "Helpful",
-        SOME_CHANGE: "Some change",
-        NOT_HELPFUL: "Not helpful",
+        SOME_CHANGE: "Limited Improvement",
+        NOT_HELPFUL: "Not Helpful",
     },
     id: {
         VERY_HELPFUL: "Sangat membantu",
         HELPFUL: "Membantu",
         SOME_CHANGE: "Ada sedikit perubahan",
         NOT_HELPFUL: "Kurang membantu",
+    },
+};
+
+export const REASON_LABELS_DATA: Record<Locale, Record<string, string>> = {
+    en: {
+        STILL_NEEDED_ASSISTANCE: "Student still needed significant assistance",
+        DIFFICULT_TO_APPLY: "Strategy was difficult to apply",
+        BARRIER_CHANGED: "Barrier appeared in a different way",
+        OTHER: "Other",
+    },
+    id: {
+        STILL_NEEDED_ASSISTANCE: "Siswa masih membutuhkan banyak bantuan",
+        DIFFICULT_TO_APPLY: "Strategi sulit diterapkan di kelas",
+        BARRIER_CHANGED: "Hambatan muncul dalam bentuk yang berbeda",
+        OTHER: "Lainnya",
     },
 };
 
@@ -1516,10 +1531,12 @@ export const STATUS_LABELS_DATA: Record<Locale, Record<string, string>> = {
 };
 
 export const RESULT_LABELS = RESULT_LABELS_DATA.en;
+export const REASON_LABELS = REASON_LABELS_DATA.en;
 export const STATUS_LABELS = STATUS_LABELS_DATA.en;
 
 export type PlanStatus = "PLANNED" | "IN_PROGRESS" | "NEEDS_REFLECTION" | "COMPLETED";
 export type ReflectionResult = "VERY_HELPFUL" | "HELPFUL" | "SOME_CHANGE" | "NOT_HELPFUL";
+export type ReflectionReason = "STILL_NEEDED_ASSISTANCE" | "DIFFICULT_TO_APPLY" | "BARRIER_CHANGED" | "OTHER";
 
 // Helpers that resolve according to the provided locale (default: "id")
 export function getLocalizedCategories(locale: Locale = "id") {
@@ -1611,6 +1628,7 @@ export interface PlanRow {
     timing: string;
     status: PlanStatus;
     reflectionResult: ReflectionResult | null;
+    reflectionReason: ReflectionReason | null;
     reflectionNote: string | null;
     reflectedAt: string | null;
     createdAt: string;

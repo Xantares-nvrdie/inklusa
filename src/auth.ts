@@ -4,12 +4,17 @@ import { admin } from "better-auth/plugins";
 import { db } from "@/db";
 import * as schema from "@/db/schema";
 
+const secret = process.env.BETTER_AUTH_SECRET || process.env.AUTH_SECRET;
+if (!secret && process.env.NODE_ENV === "production") {
+    throw new Error("BETTER_AUTH_SECRET is required in production");
+}
+
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
         provider: "pg",
         schema,
     }),
-    secret: process.env.BETTER_AUTH_SECRET || process.env.AUTH_SECRET || "secret-placeholder-change-in-env",
+    secret: secret || "secret-placeholder-change-in-env",
     plugins: [admin({ defaultRole: "TEACHER", adminRoles: ["ADMIN"] })],
     emailAndPassword: {
         enabled: true,

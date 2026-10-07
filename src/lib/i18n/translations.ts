@@ -12,6 +12,7 @@ export interface TranslationDict {
         dashboard: string;
         myInterventions: string;
         library: string;
+        students: string;
         signOut: string;
     };
     footer: {
@@ -119,6 +120,9 @@ export interface TranslationDict {
         startDifferent: string;
         missingContext: string;
         btnStartQuickCheck: string;
+        historyHelpful: string;
+        historyLimited: string;
+        workedBefore: string;
     };
     interventionDetail: {
         back: string;
@@ -158,11 +162,16 @@ export interface TranslationDict {
         whatToObserve: string;
         reflectTitle: string;
         didStrategyHelp: string;
+        whatHappened: string;
         whatDidYouObserve: string;
         observePlaceholder: string;
         btnSaveReflection: string;
         reflectionSaved: string;
         savedHint: string;
+        insightHelpful: string;
+        insightNotHelpful: string;
+        continueStrategy: string;
+        tryAnotherStrategy: string;
     };
     myInterventions: {
         title: string;
@@ -194,6 +203,7 @@ export const translations: Record<Locale, TranslationDict> = {
             dashboard: "Dashboard",
             myInterventions: "My Interventions",
             library: "Library",
+            students: "Students",
             signOut: "Sign out",
         },
         footer: {
@@ -309,6 +319,9 @@ export const translations: Record<Locale, TranslationDict> = {
             startDifferent: "← Start a different Quick Check",
             missingContext: "Start with a Quick Check",
             btnStartQuickCheck: "Start Quick Check",
+            historyHelpful: "Helpful in {count} past attempts",
+            historyLimited: "Limited improvement in {count} past attempts",
+            workedBefore: "What Worked Before",
         },
         interventionDetail: {
             back: "← Back",
@@ -347,12 +360,17 @@ export const translations: Record<Locale, TranslationDict> = {
             howToApply: "How to apply",
             whatToObserve: "What to observe:",
             reflectTitle: "Reflect on this intervention",
-            didStrategyHelp: "Did the strategy help?",
-            whatDidYouObserve: "What did you observe?",
+            didStrategyHelp: "How effective was this strategy?",
+            whatHappened: "What happened?",
+            whatDidYouObserve: "Additional notes (Optional)",
             observePlaceholder: "Student was able to organise ideas better…",
             btnSaveReflection: "Save Reflection",
             reflectionSaved: "Reflection saved",
             savedHint: "Your observation has been added to the intervention record.",
+            insightHelpful: "Teacher insight: This strategy seems appropriate for the situation.",
+            insightNotHelpful: "Teacher insight: This strategy showed limited improvement. A different approach might be needed.",
+            continueStrategy: "Continue Strategy",
+            tryAnotherStrategy: "Try Another Strategy",
         },
         myInterventions: {
             title: "My Interventions",
@@ -382,6 +400,7 @@ export const translations: Record<Locale, TranslationDict> = {
             dashboard: "Dashboard",
             myInterventions: "Intervensi Saya",
             library: "Pustaka Strategi",
+            students: "Siswa",
             signOut: "Keluar",
         },
         footer: {
@@ -497,6 +516,9 @@ export const translations: Record<Locale, TranslationDict> = {
             startDifferent: "← Mulai Quick Check yang lain",
             missingContext: "Mulai dari Quick Check",
             btnStartQuickCheck: "Mulai Quick Check",
+            historyHelpful: "Membantu pada {count} percobaan sebelumnya",
+            historyLimited: "Peningkatan terbatas pada {count} percobaan sebelumnya",
+            workedBefore: "Riwayat Keberhasilan",
         },
         interventionDetail: {
             back: "← Kembali",
@@ -535,12 +557,17 @@ export const translations: Record<Locale, TranslationDict> = {
             howToApply: "Cara menerapkan",
             whatToObserve: "Yang perlu diamati:",
             reflectTitle: "Refleksi Terhadap Intervensi",
-            didStrategyHelp: "Apakah strategi ini membantu siswa?",
-            whatDidYouObserve: "Apa yang Anda amati selama penerapannya?",
+            didStrategyHelp: "Seberapa efektif strategi ini?",
+            whatHappened: "Apa yang terjadi?",
+            whatDidYouObserve: "Catatan tambahan (Opsional)",
             observePlaceholder: "Siswa lebih mampu menyusun ide sebelum menulis…",
             btnSaveReflection: "Simpan Refleksi",
             reflectionSaved: "Refleksi Tersimpan",
             savedHint: "Pengamatan Anda telah dicatat ke riwayat intervensi.",
+            insightHelpful: "Insight Guru: Strategi ini tampaknya sesuai untuk situasi tersebut.",
+            insightNotHelpful: "Insight Guru: Strategi ini menunjukkan sedikit perbaikan. Pendekatan lain mungkin diperlukan.",
+            continueStrategy: "Lanjutkan Strategi",
+            tryAnotherStrategy: "Coba Strategi Lain",
         },
         myInterventions: {
             title: "Intervensi Saya",

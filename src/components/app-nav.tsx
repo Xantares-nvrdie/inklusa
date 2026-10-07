@@ -1,6 +1,6 @@
 "use client";
 
-import { Library, ListChecks, LogOut, Home } from "lucide-react";
+import { Library, ListChecks, LogOut, Home, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "@/components/logo";
@@ -17,6 +17,7 @@ export function AppNav({ name }: { name: string }) {
     const links = [
         { href: "/dashboard", label: t.nav.dashboard, Icon: Home },
         { href: "/action-plans", label: t.nav.myInterventions, Icon: ListChecks },
+        { href: "/students", label: t.nav.students, Icon: Users },
         { href: "/interventions", label: t.nav.library, Icon: Library },
     ];
 

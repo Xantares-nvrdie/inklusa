@@ -4,10 +4,10 @@ import { Check, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { StatusBadge } from "@/components/status-badge";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { api } from "@/lib/api";
-import { type PlanRow, type PlanStatus, RESULT_LABELS_DATA, type ReflectionResult } from "@/lib/knowledge";
+import { type PlanRow, type PlanStatus, RESULT_LABELS_DATA, type ReflectionResult, REASON_LABELS_DATA, type ReflectionReason } from "@/lib/knowledge";
 import { useLanguage } from "@/lib/i18n/context";
 import { useKnowledge } from "@/lib/knowledge-context";
 
@@ -17,6 +17,7 @@ export function PlanDetail({ id }: { id: string }) {
     const [plan, setPlan] = useState<PlanRow | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [result, setResult] = useState<ReflectionResult | null>(null);
+    const [reason, setReason] = useState<ReflectionReason | null>(null);
     const [note, setNote] = useState("");
     const [busy, setBusy] = useState(false);
 
@@ -43,6 +44,10 @@ export function PlanDetail({ id }: { id: string }) {
     const idx = track.findIndex((tr) => tr.id === plan.status);
     const nextAction = next[plan.status];
     const resultLabels = RESULT_LABELS_DATA[locale];
+    const reasonLabels = REASON_LABELS_DATA[locale];
+
+    const needsReason = result === "SOME_CHANGE" || result === "NOT_HELPFUL";
+    const canReflect = result && (!needsReason || reason) && !busy;
 
     async function advance() {
         if (!nextAction) return;
@@ -55,7 +60,7 @@ export function PlanDetail({ id }: { id: string }) {
     async function reflect() {
         if (!result) return;
         setBusy(true);
-        await api(`/action-plans/${id}/reflection`, { method: "POST", body: JSON.stringify({ result, note }) });
+        await api(`/action-plans/${id}/reflection`, { method: "POST", body: JSON.stringify({ result, reason: needsReason ? reason : undefined, note }) });
         await load();
         setBusy(false);
     }
@@ -121,30 +126,62 @@ export function PlanDetail({ id }: { id: string }) {
                         <legend className="font-semibold">{t.planDetail.didStrategyHelp}</legend>
                         <div className="grid gap-3 sm:grid-cols-2">
                             {(Object.keys(resultLabels) as ReflectionResult[]).map((r) => (
-                                <button key={r} id={`result-${r.toLowerCase()}`} type="button" aria-pressed={result === r} onClick={() => setResult(r)} className={`cursor-pointer rounded-2xl border-2 px-5 py-4 text-left font-semibold transition-all ${result === r ? "border-primary bg-primary-soft" : "border-line hover:border-primary/50"}`}>
+                                <button key={r} id={`result-${r.toLowerCase()}`} type="button" aria-pressed={result === r} onClick={() => { setResult(r); setReason(null); }} className={`cursor-pointer rounded-2xl border-2 px-5 py-4 text-left font-semibold transition-all ${result === r ? "border-primary bg-primary-soft" : "border-line hover:border-primary/50"}`}>
                                     {resultLabels[r]}
                                 </button>
                             ))}
                         </div>
                     </fieldset>
+
+                    {needsReason && (
+                        <fieldset className="animate-in fade-in slide-in-from-top-2 space-y-3">
+                            <legend className="font-semibold">{t.planDetail.whatHappened}</legend>
+                            <div className="grid gap-2">
+                                {(Object.keys(reasonLabels) as ReflectionReason[]).map((r) => (
+                                    <label key={r} className="flex cursor-pointer items-center gap-3 rounded-xl border border-line p-3 hover:bg-surface-2">
+                                        <input type="radio" name="reason" value={r} checked={reason === r} onChange={() => setReason(r)} className="h-4 w-4 accent-primary" />
+                                        <span className="text-sm font-medium">{reasonLabels[r]}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        </fieldset>
+                    )}
+
                     <div className="space-y-2">
                         <label htmlFor="note" className="font-semibold">{t.planDetail.whatDidYouObserve}</label>
                         <textarea id="note" value={note} onChange={(e) => setNote(e.target.value)} rows={4} maxLength={1000} placeholder={t.planDetail.observePlaceholder} className="w-full rounded-2xl border border-line p-4 outline-none focus:border-primary focus:ring-4 focus:ring-primary/15" />
                     </div>
-                    <Button id="btn-save-reflection" size="lg" onClick={reflect} disabled={!result || busy} className="w-full">{t.planDetail.btnSaveReflection}</Button>
+                    <Button id="btn-save-reflection" size="lg" onClick={reflect} disabled={!canReflect} className="w-full">{t.planDetail.btnSaveReflection}</Button>
                 </Card>
             )}
 
             {completed && (
-                <Card className="space-y-4 bg-primary-soft/60">
-                    <div className="flex items-center gap-3">
-                        <CheckCircle2 className="text-primary" aria-hidden="true" />
-                        <h2 className="text-2xl font-bold">{t.planDetail.reflectionSaved}</h2>
+                <div className="space-y-4">
+                    <Card className="space-y-4 border-l-4 border-l-primary bg-primary-soft/30 shadow-none">
+                        <div className="flex items-center gap-3">
+                            <CheckCircle2 className="text-primary" aria-hidden="true" />
+                            <h2 className="text-2xl font-bold">{t.planDetail.reflectionSaved}</h2>
+                        </div>
+                        <div className="space-y-1">
+                            <p className="text-lg"><strong>{plan.reflectionResult && (resultLabels[plan.reflectionResult] ?? plan.reflectionResult)}</strong></p>
+                            {plan.reflectionReason && <p className="text-muted">{reasonLabels[plan.reflectionReason] ?? plan.reflectionReason}</p>}
+                        </div>
+                        {plan.reflectionNote && <p className="text-lg text-muted">&ldquo;{plan.reflectionNote}&rdquo;</p>}
+                        
+                        <div className="mt-4 rounded-xl bg-white p-4 text-sm font-medium text-muted-foreground shadow-sm">
+                            {plan.reflectionResult === "VERY_HELPFUL" || plan.reflectionResult === "HELPFUL" 
+                                ? t.planDetail.insightHelpful 
+                                : t.planDetail.insightNotHelpful}
+                        </div>
+                    </Card>
+                    <div className="flex justify-end gap-3">
+                        {plan.reflectionResult === "VERY_HELPFUL" || plan.reflectionResult === "HELPFUL" ? (
+                            <ButtonLink href="/action-plans">{t.planDetail.continueStrategy}</ButtonLink>
+                        ) : (
+                            <ButtonLink href="/quick-check">{t.planDetail.tryAnotherStrategy}</ButtonLink>
+                        )}
                     </div>
-                    <p className="text-lg"><strong>{plan.reflectionResult && (resultLabels[plan.reflectionResult] ?? plan.reflectionResult)}</strong></p>
-                    {plan.reflectionNote && <p className="text-lg text-muted">&ldquo;{plan.reflectionNote}&rdquo;</p>}
-                    <p className="text-sm text-muted">{t.planDetail.savedHint}</p>
-                </Card>
+                </div>
             )}
         </div>
     );

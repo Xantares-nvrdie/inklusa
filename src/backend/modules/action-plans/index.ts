@@ -13,15 +13,28 @@ const CATEGORIES = t.Union([
 const actionPlansModule = new Elysia({ prefix: "/action-plans", tags: ["Action Plans"] })
     .use(betterAuthMiddleware)
 
-    .get("/", ({ user, query }) => ActionPlanService.list(user.id, (query.filter ?? "all") as PlanFilter), {
+    .get("/", ({ user, query }) => ActionPlanService.list(user.id, (query.filter ?? "all") as PlanFilter, query.student), {
         auth: true,
-        query: t.Object({ filter: t.Optional(t.String()) }),
+        query: t.Object({ 
+            filter: t.Optional(t.String()),
+            student: t.Optional(t.String())
+        }),
         detail: { summary: "List interventions (filter: all | active | completed)" },
     })
 
     .get("/summary", ({ user }) => ActionPlanService.summary(user.id), {
         auth: true,
         detail: { summary: "Dashboard counters" },
+    })
+
+    .get("/history", ({ user, query }) => ActionPlanService.history(user.id, query.cat as any, query.clar, query.student), {
+        auth: true,
+        query: t.Object({
+            cat: t.String(),
+            clar: t.String(),
+            student: t.Optional(t.String()),
+        }),
+        detail: { summary: "Historical reflection stats for a barrier" },
     })
 
     .get(
@@ -103,6 +116,7 @@ const actionPlansModule = new Elysia({ prefix: "/action-plans", tags: ["Action P
                     t.Literal("SOME_CHANGE"),
                     t.Literal("NOT_HELPFUL"),
                 ]),
+                reason: t.Optional(t.String()),
                 note: t.Optional(t.String({ maxLength: 1000 })),
             }),
             detail: { summary: "Save reflection and complete the intervention" },

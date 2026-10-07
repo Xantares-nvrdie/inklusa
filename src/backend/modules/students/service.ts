@@ -17,4 +17,10 @@ export const StudentService = {
         const [row] = await db.insert(students).values({ teacherId, label: clean }).returning();
         return row;
     },
+
+    getById(teacherId: string, id: string) {
+        return db.query.students.findFirst({
+            where: and(eq(students.id, id), eq(students.teacherId, teacherId)),
+        });
+    }
 };

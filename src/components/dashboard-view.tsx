@@ -9,11 +9,13 @@ import { Card } from "@/components/ui/card";
 import { api } from "@/lib/api";
 import type { PlanRow } from "@/lib/knowledge";
 import { useLanguage } from "@/lib/i18n/context";
+import { useKnowledge } from "@/lib/knowledge-context";
 
 interface Summary { active: number; needsReflection: number; completed: number }
 
 export function DashboardView() {
     const { t } = useLanguage();
+    const { getIntervention } = useKnowledge();
     const [summary, setSummary] = useState<Summary | null>(null);
     const [plans, setPlans] = useState<PlanRow[] | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -34,6 +36,18 @@ export function DashboardView() {
         { label: t.dashboard.needsReflection, value: summary?.needsReflection, Icon: ClipboardCheck, tone: "bg-accent-soft text-[#9a5612]" },
         { label: t.dashboard.completed, value: summary?.completed, Icon: CheckCircle2, tone: "bg-primary-soft text-primary-strong" },
     ];
+
+    const topEffective = (() => {
+        if (!plans) return null;
+        const counts: Record<string, number> = {};
+        for (const p of plans) {
+            if (p.status === "COMPLETED" && (p.reflectionResult === "VERY_HELPFUL" || p.reflectionResult === "HELPFUL")) {
+                counts[p.interventionSlug] = (counts[p.interventionSlug] || 0) + 1;
+            }
+        }
+        const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+        return top ? top[0] : null;
+    })();
 
     return (
         <div className="space-y-10">
@@ -76,6 +90,19 @@ export function DashboardView() {
                     </Card>
                 ))}
             </section>
+
+            {topEffective && (
+                <Card className="flex flex-col gap-4 bg-success/10 border-success/20 sm:flex-row sm:items-center">
+                    <span className="grid h-12 w-12 place-items-center rounded-full bg-success text-white">
+                        <Sparkles size={20} />
+                    </span>
+                    <div>
+                        <p className="text-sm font-semibold uppercase tracking-wider text-success">Your Most Effective Strategy</p>
+                        <p className="text-xl font-bold">{getIntervention(topEffective)?.title ?? topEffective}</p>
+                        <p className="text-muted text-sm">Based on your past reflections, this strategy has been helpful multiple times.</p>
+                    </div>
+                </Card>
+            )}
 
             <section className="space-y-4">
                 <div className="flex items-center justify-between">
