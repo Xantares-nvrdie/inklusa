@@ -10,7 +10,7 @@ import { api } from "@/lib/api";
 import type { PlanRow } from "@/lib/knowledge";
 import { useLanguage } from "@/lib/i18n/context";
 
-interface Student { id: string; label: string }
+interface Student { id: string; name: string; classId?: string; class?: { id: string, name: string } }
 
 export function StudentDetail({ id }: { id: string }) {
     const { t, locale } = useLanguage();
@@ -32,7 +32,8 @@ export function StudentDetail({ id }: { id: string }) {
 
     if (!student) return <div className="h-64 animate-pulse rounded-card bg-surface-2" />;
 
-    const studentName = isGeneral ? t.quickCheck.generalClassroom : (student as Student).label;
+    const studentName = isGeneral ? t.quickCheck.generalClassroom : (student as Student).name;
+    const className = !isGeneral && (student as Student).class?.name;
 
     // Derived insights
     const completedPlans = plans?.filter(p => p.status === "COMPLETED") || [];
@@ -66,7 +67,14 @@ export function StudentDetail({ id }: { id: string }) {
                         </span>
                         <div>
                             <h1 className="text-4xl font-bold">{studentName}</h1>
-                            <p className="text-muted">{isGeneral ? t.quickCheck.generalClassroomDesc : (locale === "id" ? "Profil Siswa" : "Student Profile")}</p>
+                            <p className="text-muted">
+                                {isGeneral 
+                                    ? t.quickCheck.generalClassroomDesc 
+                                    : className 
+                                        ? `${className} • ${locale === "id" ? "Profil Siswa" : "Student Profile"}`
+                                        : (locale === "id" ? "Profil Siswa" : "Student Profile")
+                                }
+                            </p>
                         </div>
                     </div>
                     <ButtonLink href={`/quick-check${!isGeneral ? "?student=" + id : ""}`}>

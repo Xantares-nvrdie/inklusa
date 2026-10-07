@@ -30,7 +30,7 @@ export function MyInterventions() {
         const headers = ["ID", "Student", "Barrier", "Intervention", "Status", "Goal", "Reflection Result", "Created At"];
         const rows = plans.map(p => [
             p.id,
-            p.student?.label || "General Classroom",
+            p.student?.name || "General Classroom",
             `"${p.barrierTitle.replace(/"/g, '""')}"`,
             p.interventionSlug,
             p.status,

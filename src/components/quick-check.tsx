@@ -12,7 +12,8 @@ import { flowQs } from "@/lib/flow";
 import { useKnowledge } from "@/lib/knowledge-context";
 import { useLanguage } from "@/lib/i18n/context";
 
-interface Student { id: string; label: string }
+interface Student { id: string; name: string }
+interface ClassData { id: string; name: string; students: Student[] }
 
 function choiceCls(selected: boolean) {
     return `flex w-full cursor-pointer items-center gap-4 rounded-2xl border-2 p-5 text-left transition-all duration-200 ${
@@ -23,10 +24,12 @@ function choiceCls(selected: boolean) {
 export function QuickCheck() {
     const { t, locale } = useLanguage();
     const [step, setStep] = useState(0); // 0..2 questions, 3 = result
-    const [students, setStudents] = useState<Student[]>([]);
+    const [classesData, setClassesData] = useState<ClassData[]>([]);
     const [student, setStudent] = useState<string | null>(null);
-    const [adding, setAdding] = useState(false);
-    const [newLabel, setNewLabel] = useState("");
+    const [addingClass, setAddingClass] = useState(false);
+    const [addingStudentTo, setAddingStudentTo] = useState<string | null>(null);
+    const [newClassName, setNewClassName] = useState("");
+    const [newStudentName, setNewStudentName] = useState("");
     const [selectedCatId, setSelectedCatId] = useState<string | null>(null);
     const [clarId, setClarId] = useState<string | null>(null);
 
@@ -41,16 +44,26 @@ export function QuickCheck() {
     ];
 
     useEffect(() => {
-        api<Student[]>("/students").then(setStudents).catch(() => setStudents([]));
+        api<ClassData[]>("/students/classes").then(setClassesData).catch(() => setClassesData([]));
     }, []);
 
-    async function addStudent() {
-        const label = newLabel.trim() || `Student ${String.fromCharCode(65 + students.length)}`;
-        const s = await api<Student>("/students", { method: "POST", body: JSON.stringify({ label }) });
-        setStudents((p) => (p.some((x) => x.id === s.id) ? p : [...p, s]));
+    async function addClass() {
+        const name = newClassName.trim();
+        if (!name) return;
+        const c = await api<ClassData>("/students/classes", { method: "POST", body: JSON.stringify({ name }) });
+        setClassesData((p) => [...p, { ...c, students: [] }]);
+        setAddingClass(false);
+        setNewClassName("");
+    }
+
+    async function addStudent(classId: string) {
+        const name = newStudentName.trim();
+        if (!name) return;
+        const s = await api<Student>("/students", { method: "POST", body: JSON.stringify({ classId, name }) });
+        setClassesData((p) => p.map(c => c.id === classId ? { ...c, students: [...c.students, s] } : c));
         setStudent(s.id);
-        setAdding(false);
-        setNewLabel("");
+        setAddingStudentTo(null);
+        setNewStudentName("");
     }
 
     const canNext = step === 0 ? !!student : step === 1 ? !!selectedCatId : step === 2 ? !!clarId : false;
@@ -86,13 +99,7 @@ export function QuickCheck() {
                     {step === 0 && (
                         <>
                             <h1 className="text-4xl font-bold">{t.quickCheck.step1Title}</h1>
-                            <div className="grid gap-3 sm:grid-cols-2">
-                                {students.map((s) => (
-                                    <button key={s.id} id={`student-${s.id}`} type="button" onClick={() => setStudent(s.id)} className={choiceCls(student === s.id)}>
-                                        <span className="grid h-11 w-11 place-items-center rounded-xl bg-surface-2 text-primary-strong"><UserRound size={20} aria-hidden="true" /></span>
-                                        <span className="text-lg font-semibold">{s.label}</span>
-                                    </button>
-                                ))}
+                            <div className="space-y-6">
                                 <button id="student-general" type="button" onClick={() => setStudent("general")} className={choiceCls(student === "general")}>
                                     <span className="grid h-11 w-11 place-items-center rounded-xl bg-accent-soft text-[#9a5612]"><Users size={20} aria-hidden="true" /></span>
                                     <span>
@@ -100,27 +107,65 @@ export function QuickCheck() {
                                         <span className="block text-sm text-muted">{t.quickCheck.generalClassroomDesc}</span>
                                     </span>
                                 </button>
+                                
+                                <div className="space-y-4">
+                                    {classesData.map(c => (
+                                        <Card key={c.id} className="p-4 space-y-4 bg-surface/50">
+                                            <h3 className="font-semibold text-lg flex items-center gap-2"><Users size={18} /> {c.name}</h3>
+                                            <div className="grid gap-3 sm:grid-cols-2">
+                                                {c.students.map((s) => (
+                                                    <button key={s.id} type="button" onClick={() => setStudent(s.id)} className={choiceCls(student === s.id)}>
+                                                        <span className="grid h-11 w-11 place-items-center rounded-xl bg-surface-2 text-primary-strong"><UserRound size={20} aria-hidden="true" /></span>
+                                                        <span className="text-lg font-semibold">{s.name}</span>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                            
+                                            {addingStudentTo === c.id ? (
+                                                <div className="flex flex-col gap-3 sm:flex-row mt-2">
+                                                    <input
+                                                        autoFocus
+                                                        value={newStudentName}
+                                                        onChange={(e) => setNewStudentName(e.target.value)}
+                                                        placeholder="Nama siswa"
+                                                        maxLength={50}
+                                                        className="h-12 flex-1 rounded-2xl border border-line px-4 outline-none focus:border-primary focus:ring-4 focus:ring-primary/15"
+                                                    />
+                                                    <div className="flex gap-2">
+                                                        <Button variant="ghost" onClick={() => setAddingStudentTo(null)}>Batal</Button>
+                                                        <Button onClick={() => addStudent(c.id)}>Simpan</Button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <button type="button" onClick={() => setAddingStudentTo(c.id)} className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline">
+                                                    <Plus size={16} /> Tambah Siswa ke {c.name}
+                                                </button>
+                                            )}
+                                        </Card>
+                                    ))}
+                                </div>
+
+                                {addingClass ? (
+                                    <Card className="flex flex-col gap-3 sm:flex-row">
+                                        <input
+                                            autoFocus
+                                            value={newClassName}
+                                            onChange={(e) => setNewClassName(e.target.value)}
+                                            placeholder="Nama Kelas (misal: Kelas 7A)"
+                                            maxLength={50}
+                                            className="h-12 flex-1 rounded-2xl border border-line px-4 outline-none focus:border-primary focus:ring-4 focus:ring-primary/15"
+                                        />
+                                        <div className="flex gap-2">
+                                            <Button variant="ghost" onClick={() => setAddingClass(false)}>Batal</Button>
+                                            <Button onClick={addClass}>Simpan Kelas</Button>
+                                        </div>
+                                    </Card>
+                                ) : (
+                                    <button type="button" onClick={() => setAddingClass(true)} className="inline-flex cursor-pointer items-center gap-2 font-semibold text-primary hover:underline">
+                                        <Plus size={16} aria-hidden="true" /> Tambah Kelas Baru
+                                    </button>
+                                )}
                             </div>
-                            {adding ? (
-                                <Card className="flex flex-col gap-3 sm:flex-row">
-                                    <input
-                                        id="input-new-student"
-                                        autoFocus
-                                        value={newLabel}
-                                        onChange={(e) => setNewLabel(e.target.value)}
-                                        placeholder={`e.g. Student ${String.fromCharCode(65 + students.length)}`}
-                                        maxLength={40}
-                                        aria-label="Student identifier"
-                                        className="h-12 flex-1 rounded-2xl border border-line px-4 outline-none focus:border-primary focus:ring-4 focus:ring-primary/15"
-                                    />
-                                    <Button id="btn-save-student" onClick={addStudent}>{t.quickCheck.btnAdd}</Button>
-                                </Card>
-                            ) : (
-                                <button id="btn-add-student" type="button" onClick={() => setAdding(true)} className="inline-flex cursor-pointer items-center gap-2 font-semibold text-primary hover:underline">
-                                    <Plus size={16} aria-hidden="true" /> {t.quickCheck.addStudent}
-                                </button>
-                            )}
-                            <p className="text-sm text-muted">{t.quickCheck.privacyHint}</p>
                         </>
                     )}
 

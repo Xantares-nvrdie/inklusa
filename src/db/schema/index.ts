@@ -5,6 +5,7 @@ export * from "./auth";
 export * from "./enums";
 
 // Core product loop
+export * from "./classes";
 export * from "./students";
 export * from "./action-plans";
 

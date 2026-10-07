@@ -35,9 +35,9 @@ export function NewActionPlan() {
             setStudentLabel(t.dashboard.generalClassroom);
             return;
         }
-        api<{ id: string; label: string }[]>("/students").then((l) => {
+        api<{ id: string; name: string }[]>("/students").then((l) => {
             const s = l.find((x) => x.id === studentParam);
-            if (s) setStudentLabel(s.label);
+            if (s) setStudentLabel(s.name);
         });
     }, [studentParam, t]);
 

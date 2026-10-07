@@ -19,7 +19,7 @@ export function PlanCard({ plan }: { plan: PlanRow }) {
             <Card interactive className="h-full space-y-3">
                 <div className="flex items-start justify-between gap-3">
                     <div>
-                        <p className="text-sm font-semibold text-primary">{plan.student?.label ?? t.dashboard.generalClassroom}</p>
+                        <p className="text-sm font-semibold text-primary">{plan.student?.name ?? t.dashboard.generalClassroom}</p>
                         <h3 className="text-xl font-bold">{plan.barrierTitle}</h3>
                     </div>
                     <StatusBadge status={plan.status} />

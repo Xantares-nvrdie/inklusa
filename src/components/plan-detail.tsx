@@ -73,7 +73,7 @@ export function PlanDetail({ id }: { id: string }) {
 
             <div className="space-y-3">
                 <div className="flex flex-wrap items-center gap-3">
-                    <p className="font-semibold text-primary">{plan.student?.label ?? t.dashboard.generalClassroom}</p>
+                    <p className="font-semibold text-primary">{plan.student?.name ?? t.dashboard.generalClassroom}</p>
                     <StatusBadge status={plan.status} />
                 </div>
                 <h1 className="text-4xl font-bold">{plan.barrierTitle}</h1>

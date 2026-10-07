@@ -4,14 +4,31 @@ import { StudentService } from "./service";
 
 const studentsModule = new Elysia({ prefix: "/students", tags: ["Students"] })
     .use(betterAuthMiddleware)
+    
+    .get("/classes", ({ user }) => StudentService.listClasses(user.id), {
+        auth: true,
+        detail: { summary: "List all classes with their students" },
+    })
+    
+    .post(
+        "/classes",
+        ({ user, body }) => StudentService.createClass(user.id, body.name),
+        {
+            auth: true,
+            body: t.Object({ name: t.String({ minLength: 1, maxLength: 50 }) }),
+            detail: { summary: "Create a new class" },
+        }
+    )
+
     .get("/", ({ user }) => StudentService.list(user.id), {
         auth: true,
-        detail: { summary: "List the teacher's student identifiers" },
+        detail: { summary: "List all students" },
     })
-    .post("/", ({ user, body }) => StudentService.create(user.id, body.label), {
+    
+    .post("/", ({ user, body }) => StudentService.createStudent(user.id, body.classId, body.name), {
         auth: true,
-        body: t.Object({ label: t.String({ minLength: 1, maxLength: 40 }) }),
-        detail: { summary: "Add a minimal student identifier (e.g. 'Student A')" },
+        body: t.Object({ classId: t.String(), name: t.String({ minLength: 1, maxLength: 50 }) }),
+        detail: { summary: "Add a new student to a class" },
     })
     .get("/:id", async ({ user, params, set }) => {
         const row = await StudentService.getById(user.id, params.id);

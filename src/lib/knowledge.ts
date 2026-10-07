@@ -1619,7 +1619,7 @@ export interface Intervention {
 export interface PlanRow {
     id: string;
     studentId: string | null;
-    student: { id: string; label: string } | null;
+    student: { id: string; name: string } | null;
     barrierCategory: BarrierCategory;
     clarificationId: string;
     barrierTitle: string;

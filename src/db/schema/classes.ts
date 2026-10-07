@@ -1,22 +1,17 @@
 import { index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { user } from "./auth";
-import { classes } from "./classes";
 
-export const students = pgTable(
-    "students",
+export const classes = pgTable(
+    "classes",
     {
         id: uuid("id").primaryKey().defaultRandom(),
         teacherId: text("teacher_id")
             .notNull()
             .references(() => user.id, { onDelete: "cascade" }),
-        classId: uuid("class_id")
-            .notNull()
-            .references(() => classes.id, { onDelete: "cascade" }),
         name: text("name").notNull(),
         createdAt: timestamp("created_at").defaultNow().notNull(),
     },
     (t) => ({
-        teacherIdx: index("students_teacher_idx").on(t.teacherId),
-        classIdx: index("students_class_idx").on(t.classId),
+        teacherIdx: index("classes_teacher_idx").on(t.teacherId),
     }),
 );
