@@ -148,7 +148,7 @@ export function ClassesManager() {
                         type="search"
                         placeholder={a.search}
                         value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
                         className="pl-9"
                     />
                 </div>
@@ -159,7 +159,7 @@ export function ClassesManager() {
                     <Input 
                         placeholder={a.name} 
                         value={newClassName} 
-                        onChange={(e) => setNewClassName(e.target.value)} 
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewClassName(e.target.value)} 
                         maxLength={50}
                         required 
                     />
@@ -182,7 +182,7 @@ export function ClassesManager() {
                                     <form onSubmit={(e) => handleEditClass(e, c.id)} className="flex gap-2 flex-1 mr-2">
                                         <Input
                                             value={editClassName}
-                                            onChange={(e) => setEditClassName(e.target.value)}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditClassName(e.target.value)}
                                             maxLength={50}
                                             required
                                             autoFocus
@@ -217,7 +217,7 @@ export function ClassesManager() {
                                                     <form onSubmit={(e) => handleEditStudent(e, st.id)} className="flex gap-2 flex-1">
                                                         <Input
                                                             value={editStudentName}
-                                                            onChange={(e) => setEditStudentName(e.target.value)}
+                                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditStudentName(e.target.value)}
                                                             maxLength={50}
                                                             required
                                                             autoFocus
@@ -251,7 +251,7 @@ export function ClassesManager() {
                                         <Input 
                                             placeholder={a.studentName} 
                                             value={newStudentName} 
-                                            onChange={(e) => setNewStudentName(e.target.value)} 
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewStudentName(e.target.value)} 
                                             maxLength={50}
                                             required 
                                             autoFocus
