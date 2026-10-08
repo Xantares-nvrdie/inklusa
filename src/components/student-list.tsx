@@ -32,7 +32,10 @@ export function StudentList() {
         <div className="space-y-8">
             <div className="flex flex-wrap items-end justify-between gap-4">
                 <h1 className="text-4xl font-bold">{locale === "id" ? "Siswa / Kelas" : "Students / Classes"}</h1>
-                <ButtonLink href="/quick-check">{t.myInterventions.btnNew}</ButtonLink>
+                <div className="flex gap-3">
+                    <ButtonLink href="/students/manage" variant="soft">{locale === "id" ? "Kelola Kelas" : "Manage Classes"}</ButtonLink>
+                    <ButtonLink href="/quick-check">{t.myInterventions.btnNew}</ButtonLink>
+                </div>
             </div>
 
             {classesData === null && <div className="h-28 animate-pulse rounded-card bg-surface-2" />}
