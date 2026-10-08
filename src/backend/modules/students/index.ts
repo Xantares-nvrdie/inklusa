@@ -16,6 +16,22 @@ const studentsModule = new Elysia({ prefix: "/students", tags: ["Students"] })
         detail: { summary: "Create a new class" },
     })
 
+    .patch("/classes/:id", async ({ params, body }) => {
+        return await StudentService.updateClass(params.id, body.name);
+    }, {
+        auth: true,
+        params: t.Object({ id: t.String() }),
+        body: t.Object({ name: t.String({ minLength: 1, maxLength: 50 }) }),
+    })
+
+    .delete("/classes/:id", async ({ params }) => {
+        await StudentService.deleteClass(params.id);
+        return { success: true };
+    }, {
+        auth: true,
+        params: t.Object({ id: t.String() }),
+    })
+
     .get("/", () => StudentService.list(), {
         auth: true,
         detail: { summary: "List all students" },
@@ -40,6 +56,22 @@ const studentsModule = new Elysia({ prefix: "/students", tags: ["Students"] })
             auth: true,
             params: t.Object({ id: t.String() }),
         },
-    );
+    )
+    
+    .patch("/:id", async ({ params, body }) => {
+        return await StudentService.updateStudent(params.id, body.name);
+    }, {
+        auth: true,
+        params: t.Object({ id: t.String() }),
+        body: t.Object({ name: t.String({ minLength: 1, maxLength: 50 }) }),
+    })
+
+    .delete("/:id", async ({ params }) => {
+        await StudentService.deleteStudent(params.id);
+        return { success: true };
+    }, {
+        auth: true,
+        params: t.Object({ id: t.String() }),
+    });
 
 export default studentsModule;

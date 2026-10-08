@@ -45,4 +45,24 @@ export const StudentService = {
             with: { class: true },
         });
     },
+
+    async updateClass(id: string, name: string) {
+        const clean = name.trim();
+        const [row] = await db.update(classes).set({ name: clean }).where(eq(classes.id, id)).returning();
+        return row;
+    },
+
+    async deleteClass(id: string) {
+        await db.delete(classes).where(eq(classes.id, id));
+    },
+
+    async updateStudent(id: string, name: string) {
+        const clean = name.trim();
+        const [row] = await db.update(students).set({ name: clean }).where(eq(students.id, id)).returning();
+        return row;
+    },
+
+    async deleteStudent(id: string) {
+        await db.delete(students).where(eq(students.id, id));
+    },
 };

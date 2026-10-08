@@ -54,6 +54,10 @@ const en = {
         empty: "No classes found.",
         addStudent: "Add Student",
         studentName: "Student Name",
+        edit: "Edit",
+        del: "Delete",
+        confirmDeleteClass: "Are you sure you want to delete this class and all its students? This cannot be undone.",
+        confirmDeleteStudent: "Are you sure you want to delete this student and their action plans?",
     },
     kb: {
         title: "Knowledge Base",
@@ -147,6 +151,10 @@ const id: typeof en = {
         empty: "Belum ada kelas.",
         addStudent: "Tambah Siswa",
         studentName: "Nama Siswa",
+        edit: "Ubah",
+        del: "Hapus",
+        confirmDeleteClass: "Hapus kelas ini beserta SEMUA siswanya? Tindakan ini tidak dapat dibatalkan.",
+        confirmDeleteStudent: "Hapus siswa ini beserta riwayat intervensinya?",
     },
     kb: {
         title: "Basis Pengetahuan",
