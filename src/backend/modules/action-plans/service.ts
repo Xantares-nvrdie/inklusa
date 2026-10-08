@@ -9,8 +9,11 @@ const ACTIVE = ["PLANNED", "IN_PROGRESS", "NEEDS_REFLECTION"] as const;
 export type PlanFilter = "all" | "active" | "completed";
 
 export const ActionPlanService = {
-    async list(teacherId: string, filter: PlanFilter = "all", studentId?: string) {
-        const filters = [eq(actionPlans.teacherId, teacherId)];
+    async list(teacherId: string | null, filter: PlanFilter = "all", studentId?: string) {
+        const filters = [];
+        if (teacherId) {
+            filters.push(eq(actionPlans.teacherId, teacherId));
+        }
 
         if (filter === "active") {
             filters.push(inArray(actionPlans.status, [...ACTIVE]));
@@ -23,10 +26,10 @@ export const ActionPlanService = {
         }
 
         return db.query.actionPlans.findMany({
-            where: and(...filters),
+            where: filters.length > 0 ? and(...filters) : undefined,
             orderBy: desc(actionPlans.updatedAt),
-            with: { student: true },
-        });
+            with: { student: true, teacher: true },
+        }).then(plans => plans.map(p => ({ ...p, teacherName: p.teacher?.name ?? "Unknown" })));
     },
 
     async summary(teacherId: string) {

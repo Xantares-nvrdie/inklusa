@@ -30,7 +30,11 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
             : await signUp.email({ email, password, name: String(f.get("name")) });
         setLoading(false);
         if (res.error) {
-            setError(res.error.message ?? "Something went wrong. Please try again.");
+            if ((res.error as any).code === "BANNED_USER" || res.error.status === 403) {
+                setError(t.auth.pendingApproval);
+            } else {
+                setError(res.error.message ?? "Something went wrong. Please try again.");
+            }
             return;
         }
         router.push("/dashboard");

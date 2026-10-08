@@ -161,10 +161,17 @@ export function TeachersManager() {
                             <div className="flex flex-wrap items-center gap-2">
                                 <h2 className="text-lg font-bold">{t.name}</h2>
                                 {t.banned ? (
-                                    <span className="inline-flex items-center gap-1 rounded-full bg-[#fbe9e7] px-2.5 py-0.5 text-xs font-semibold text-danger">
-                                        <Ban size={12} aria-hidden="true" />
-                                        {a.statusBanned}
-                                    </span>
+                                    t.banReason === "PENDING_APPROVAL" ? (
+                                        <span className="inline-flex items-center gap-1 rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-semibold text-[#9a5612]">
+                                            <UserCheck size={12} aria-hidden="true" />
+                                            {a.statusPending}
+                                        </span>
+                                    ) : (
+                                        <span className="inline-flex items-center gap-1 rounded-full bg-[#fbe9e7] px-2.5 py-0.5 text-xs font-semibold text-danger">
+                                            <Ban size={12} aria-hidden="true" />
+                                            {a.statusBanned}
+                                        </span>
+                                    )
                                 ) : (
                                     <span className="inline-flex items-center gap-1 rounded-full bg-primary-soft px-2.5 py-0.5 text-xs font-semibold text-primary-strong">
                                         <CheckCircle2 size={12} aria-hidden="true" />
@@ -176,7 +183,7 @@ export function TeachersManager() {
                                 {t.email} · {a.joined}{" "}
                                 {new Date(t.createdAt).toLocaleDateString(locale === "id" ? "id-ID" : "en-US")}
                             </p>
-                            {t.banned && t.banReason && <p className="text-sm text-danger">{t.banReason}</p>}
+                            {t.banned && t.banReason && t.banReason !== "PENDING_APPROVAL" && <p className="text-sm text-danger">{t.banReason}</p>}
                         </div>
                         <div className="flex gap-6 text-center text-sm">
                             <div>
@@ -204,7 +211,7 @@ export function TeachersManager() {
                                 ) : (
                                     <Ban size={14} aria-hidden="true" />
                                 )}
-                                {t.banned ? a.unban : a.ban}
+                                {t.banned ? (t.banReason === "PENDING_APPROVAL" ? a.approve : a.unban) : a.ban}
                             </Button>
                             <Button
                                 id={`btn-delete-${t.id}`}

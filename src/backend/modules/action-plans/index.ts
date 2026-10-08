@@ -15,12 +15,13 @@ const actionPlansModule = new Elysia({ prefix: "/action-plans", tags: ["Action P
 
     .get(
         "/",
-        ({ user, query }) => ActionPlanService.list(user.id, (query.filter ?? "all") as PlanFilter, query.student),
+        ({ user, query }) => ActionPlanService.list(query.global === "true" ? null : user.id, (query.filter ?? "all") as PlanFilter, query.student),
         {
             auth: true,
             query: t.Object({
                 filter: t.Optional(t.String()),
                 student: t.Optional(t.String()),
+                global: t.Optional(t.String()),
             }),
             detail: { summary: "List interventions (filter: all | active | completed)" },
         },

@@ -1,7 +1,7 @@
 import type { Locale } from "./translations";
 
 const en = {
-    nav: { overview: "Overview", teachers: "Teachers", knowledge: "Knowledge Base", badge: "Admin" },
+    nav: { overview: "Overview", teachers: "Teachers", classes: "Classes", knowledge: "Knowledge Base", badge: "Admin" },
     overview: {
         title: "Platform insights",
         sub: "What teachers are facing in classrooms, and how the knowledge base is performing.",
@@ -30,8 +30,10 @@ const en = {
         active: "active",
         statusActive: "Active",
         statusBanned: "Suspended",
+        statusPending: "Pending Approval",
         ban: "Suspend",
         unban: "Reactivate",
+        approve: "Approve",
         del: "Delete",
         banReason: "Reason for suspension (optional)",
         confirmDelete: "Delete this teacher and ALL their students and interventions? This cannot be undone.",
@@ -39,6 +41,19 @@ const en = {
         search: "Search name or email…",
         joined: "Joined",
         cancel: "Cancel",
+    },
+    classes: {
+        title: "Classes & Students",
+        sub: "Manage school classes globally. All teachers share this list.",
+        addClass: "Add Class",
+        name: "Class Name",
+        students: "students",
+        create: "Create Class",
+        cancel: "Cancel",
+        search: "Search class name...",
+        empty: "No classes found.",
+        addStudent: "Add Student",
+        studentName: "Student Name",
     },
     kb: {
         title: "Knowledge Base",
@@ -79,7 +94,7 @@ const en = {
 };
 
 const id: typeof en = {
-    nav: { overview: "Ringkasan", teachers: "Guru", knowledge: "Basis Pengetahuan", badge: "Admin" },
+    nav: { overview: "Ringkasan", teachers: "Guru", classes: "Kelas", knowledge: "Basis Pengetahuan", badge: "Admin" },
     overview: {
         title: "Insight platform",
         sub: "Hambatan apa yang dihadapi guru di kelas, dan bagaimana kinerja basis pengetahuan.",
@@ -108,8 +123,10 @@ const id: typeof en = {
         active: "aktif",
         statusActive: "Aktif",
         statusBanned: "Ditangguhkan",
+        statusPending: "Menunggu Persetujuan",
         ban: "Tangguhkan",
         unban: "Aktifkan kembali",
+        approve: "Setujui",
         del: "Hapus",
         banReason: "Alasan penangguhan (opsional)",
         confirmDelete: "Hapus guru ini beserta SEMUA siswa dan intervensinya? Tindakan ini tidak dapat dibatalkan.",
@@ -117,6 +134,19 @@ const id: typeof en = {
         search: "Cari nama atau email…",
         joined: "Bergabung",
         cancel: "Batal",
+    },
+    classes: {
+        title: "Kelas & Siswa",
+        sub: "Kelola kelas secara terpusat. Semua guru dapat melihat daftar ini.",
+        addClass: "Tambah Kelas",
+        name: "Nama Kelas",
+        students: "siswa",
+        create: "Buat Kelas",
+        cancel: "Batal",
+        search: "Cari nama kelas...",
+        empty: "Belum ada kelas.",
+        addStudent: "Tambah Siswa",
+        studentName: "Nama Siswa",
     },
     kb: {
         title: "Basis Pengetahuan",

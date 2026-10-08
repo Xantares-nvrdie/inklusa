@@ -1620,6 +1620,7 @@ export interface PlanRow {
     id: string;
     studentId: string | null;
     student: { id: string; name: string } | null;
+    teacherName?: string | null;
     barrierCategory: BarrierCategory;
     clarificationId: string;
     barrierTitle: string;

@@ -1,4 +1,4 @@
-import { and, count, desc, eq, ne } from "drizzle-orm";
+import { and, count, desc, eq, ne, sql } from "drizzle-orm";
 import { auth } from "@/auth";
 import { db } from "@/db";
 import { actionPlans, knowledgeClarifications, knowledgeInterventions, session, students, user } from "@/db/schema";
@@ -66,9 +66,9 @@ export const AdminService = {
             .from(actionPlans)
             .groupBy(actionPlans.teacherId, actionPlans.status);
         const studs = await db
-            .select({ teacherId: students.teacherId, n: count() })
-            .from(students)
-            .groupBy(students.teacherId);
+            .select({ teacherId: actionPlans.teacherId, n: sql<number>`count(distinct ${actionPlans.studentId})` })
+            .from(actionPlans)
+            .groupBy(actionPlans.teacherId);
 
         return users.map((u) => {
             const mine = plans.filter((p) => p.teacherId === u.id);
@@ -88,6 +88,7 @@ export const AdminService = {
 
     async createTeacher(input: { name: string; email: string; password: string }) {
         const res = await auth.api.signUpEmail({ body: input });
+        await db.update(user).set({ banned: false, banReason: null }).where(eq(user.id, res.user.id));
         return { id: res.user.id, name: res.user.name, email: res.user.email };
     },
 

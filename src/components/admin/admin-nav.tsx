@@ -19,6 +19,7 @@ export function AdminNav({ name }: { name: string }) {
     const links = [
         { href: "/admin", label: a.nav.overview, Icon: LayoutDashboard },
         { href: "/admin/teachers", label: a.nav.teachers, Icon: Users },
+        { href: "/admin/classes", label: a.nav.classes, Icon: Users },
         { href: "/admin/knowledge", label: a.nav.knowledge, Icon: BookMarked },
     ];
 

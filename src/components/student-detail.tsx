@@ -33,7 +33,7 @@ export function StudentDetail({ id }: { id: string }) {
                 .catch(() => setStudent(null));
         }
 
-        const q = new URLSearchParams(isGeneral ? {} : { student: id });
+        const q = new URLSearchParams(isGeneral ? {} : { student: id, global: "true" });
         api<PlanRow[]>(`/action-plans?${q.toString()}`)
             .then(setPlans)
             .catch(() => setPlans([]));

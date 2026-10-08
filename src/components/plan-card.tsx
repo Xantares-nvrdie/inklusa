@@ -21,6 +21,7 @@ export function PlanCard({ plan }: { plan: PlanRow }) {
                     <div>
                         <p className="text-sm font-semibold text-primary">
                             {plan.student?.name ?? t.dashboard.generalClassroom}
+                            {plan.teacherName && <span className="text-muted ml-2 font-normal">• {plan.teacherName}</span>}
                         </p>
                         <h3 className="text-xl font-bold">{plan.barrierTitle}</h3>
                     </div>

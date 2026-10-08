@@ -83,6 +83,7 @@ export interface TranslationDict {
         dontHaveAccount: string;
         alreadyHaveAccount: string;
         disclaimerPrivacy: string;
+        pendingApproval: string;
     };
     dashboard: {
         greeting: { morning: string; afternoon: string; evening: string };
@@ -290,6 +291,7 @@ export const translations: Record<Locale, TranslationDict> = {
             dontHaveAccount: "Don't have an account? ",
             alreadyHaveAccount: "Already have an account? ",
             disclaimerPrivacy: "INKLUSA stores only minimal student identifiers. It never diagnoses.",
+            pendingApproval: "Your account is currently pending admin approval.",
         },
         dashboard: {
             greeting: { morning: "Good morning", afternoon: "Good afternoon", evening: "Good evening" },
@@ -496,6 +498,7 @@ export const translations: Record<Locale, TranslationDict> = {
             dontHaveAccount: "Belum punya akun? ",
             alreadyHaveAccount: "Sudah punya akun? ",
             disclaimerPrivacy: "INKLUSA hanya menyimpan identifier minimal siswa. Tanpa diagnosis.",
+            pendingApproval: "Akun Anda sedang menunggu persetujuan admin.",
         },
         dashboard: {
             greeting: { morning: "Selamat pagi", afternoon: "Selamat siang", evening: "Selamat sore" },
