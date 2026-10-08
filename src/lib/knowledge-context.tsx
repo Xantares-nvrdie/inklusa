@@ -8,7 +8,10 @@ type Localized = ReturnType<typeof localizeKnowledge>;
 
 interface KnowledgeContextType extends Localized {
     getCategory: (id: string) => Localized["categories"][number] | undefined;
-    getClarification: (categoryId: string, clarificationId: string) => Localized["categories"][number]["clarifications"][number] | undefined;
+    getClarification: (
+        categoryId: string,
+        clarificationId: string,
+    ) => Localized["categories"][number]["clarifications"][number] | undefined;
     getIntervention: (slug: string) => Localized["interventions"][number] | undefined;
     refresh: () => Promise<void>;
 }
@@ -41,7 +44,8 @@ export function KnowledgeProvider({ children }: { children: React.ReactNode }) {
         return {
             ...l,
             getCategory: (id) => l.categories.find((c) => c.id === id),
-            getClarification: (cat, id) => l.categories.find((c) => c.id === cat)?.clarifications.find((c) => c.id === id),
+            getClarification: (cat, id) =>
+                l.categories.find((c) => c.id === cat)?.clarifications.find((c) => c.id === id),
             getIntervention: (slug) => l.interventions.find((i) => i.slug === slug),
             refresh,
         };

@@ -1,14 +1,7 @@
 import { and, count, desc, eq, ne } from "drizzle-orm";
 import { auth } from "@/auth";
 import { db } from "@/db";
-import {
-    actionPlans,
-    knowledgeClarifications,
-    knowledgeInterventions,
-    session,
-    students,
-    user,
-} from "@/db/schema";
+import { actionPlans, knowledgeClarifications, knowledgeInterventions, session, students, user } from "@/db/schema";
 import type { BarrierCategory, ClarificationData, InterventionData } from "@/lib/knowledge";
 
 const TEACHER = eq(user.role, "TEACHER");
@@ -17,9 +10,15 @@ export const AdminService = {
     // ── Insights ─────────────────────────────────────────────────────────────
     async stats() {
         const [teachers] = await db.select({ n: count() }).from(user).where(TEACHER);
-        const [bannedTeachers] = await db.select({ n: count() }).from(user).where(and(TEACHER, eq(user.banned, true)));
+        const [bannedTeachers] = await db
+            .select({ n: count() })
+            .from(user)
+            .where(and(TEACHER, eq(user.banned, true)));
         const [plans] = await db.select({ n: count() }).from(actionPlans);
-        const [completed] = await db.select({ n: count() }).from(actionPlans).where(eq(actionPlans.status, "COMPLETED"));
+        const [completed] = await db
+            .select({ n: count() })
+            .from(actionPlans)
+            .where(eq(actionPlans.status, "COMPLETED"));
         const [ivs] = await db.select({ n: count() }).from(knowledgeInterventions);
         const [cls] = await db.select({ n: count() }).from(knowledgeClarifications);
 
@@ -95,7 +94,7 @@ export const AdminService = {
     async setBan(id: string, banned: boolean, reason?: string) {
         const [row] = await db
             .update(user)
-            .set({ banned, banReason: banned ? (reason?.trim() || null) : null })
+            .set({ banned, banReason: banned ? reason?.trim() || null : null })
             .where(and(eq(user.id, id), ne(user.role, "ADMIN")))
             .returning({ id: user.id });
         if (row && banned) await db.delete(session).where(eq(session.userId, id));
@@ -184,4 +183,3 @@ export const AdminService = {
         return row ?? null;
     },
 };
-

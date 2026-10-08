@@ -1,13 +1,13 @@
 "use client";
 
-import { Library, ListChecks, LogOut, Home, Users } from "lucide-react";
+import { Home, Library, ListChecks, LogOut, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Logo } from "@/components/logo";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { Logo } from "@/components/logo";
 import { signOut } from "@/lib/auth-client";
-import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/context";
+import { cn } from "@/lib/utils";
 
 export function AppNav({ name }: { name: string }) {
     const pathname = usePathname();
@@ -36,7 +36,9 @@ export function AppNav({ name }: { name: string }) {
                                 aria-current={active ? "page" : undefined}
                                 className={cn(
                                     "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors",
-                                    active ? "bg-primary-soft text-primary-strong" : "text-muted hover:text-foreground hover:bg-surface-2",
+                                    active
+                                        ? "bg-primary-soft text-primary-strong"
+                                        : "text-muted hover:text-foreground hover:bg-surface-2",
                                 )}
                             >
                                 <Icon size={16} aria-hidden="true" />

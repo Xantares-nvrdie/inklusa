@@ -90,7 +90,11 @@ const adminModule = new Elysia({ prefix: "/admin", tags: ["Admin"] })
             }
             return { ok: true };
         },
-        { adminOnly: true, params: t.Object({ id: t.String() }), detail: { summary: "Delete a teacher and their data" } },
+        {
+            adminOnly: true,
+            params: t.Object({ id: t.String() }),
+            detail: { summary: "Delete a teacher and their data" },
+        },
     )
 
     // ── Knowledge ──

@@ -11,7 +11,10 @@ function Word({ word, progress, range }: { word: string; progress: MotionValue<n
     const y = useTransform(progress, range, [10, 0]);
     const clean = word.toLowerCase().replace(/[^\p{L}]/gu, "");
     return (
-        <motion.span style={{ opacity, y }} className={`mr-[0.28em] inline-block ${HIGHLIGHT.has(clean) ? "text-gradient-warm" : ""}`}>
+        <motion.span
+            style={{ opacity, y }}
+            className={`mr-[0.28em] inline-block ${HIGHLIGHT.has(clean) ? "text-gradient-warm" : ""}`}
+        >
             {word}
         </motion.span>
     );
@@ -49,7 +52,10 @@ export function LandingManifesto() {
 
                 <div className="relative mx-auto max-w-5xl px-5">
                     <p className="sr-only">{t.landing.manifesto}</p>
-                    <p aria-hidden="true" className="font-display text-3xl font-semibold leading-[1.25] tracking-[-0.02em] sm:text-5xl lg:text-[3.6rem]">
+                    <p
+                        aria-hidden="true"
+                        className="font-display text-3xl font-semibold leading-[1.25] tracking-[-0.02em] sm:text-5xl lg:text-[3.6rem]"
+                    >
                         {words.map((w, i) => {
                             const start = (i / words.length) * 0.8 + 0.05;
                             const end = start + 0.8 / words.length + 0.04;

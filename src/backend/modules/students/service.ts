@@ -1,6 +1,6 @@
 import { and, asc, eq } from "drizzle-orm";
 import { db } from "@/db";
-import { students, classes } from "@/db/schema";
+import { classes, students } from "@/db/schema";
 
 export const StudentService = {
     listClasses(teacherId: string) {
@@ -47,5 +47,5 @@ export const StudentService = {
             where: and(eq(students.id, id), eq(students.teacherId, teacherId)),
             with: { class: true },
         });
-    }
+    },
 };

@@ -67,7 +67,11 @@ export function LandingHero() {
                 <div className="absolute bottom-0 left-1/3 h-[24rem] w-[24rem] rounded-full bg-sky/15 blur-[120px]" />
             </motion.div>
             {/* Layer 1 — grid */}
-            <motion.div style={{ y: yGrid }} className="bg-grid pointer-events-none absolute inset-0 -z-10" aria-hidden="true" />
+            <motion.div
+                style={{ y: yGrid }}
+                className="bg-grid pointer-events-none absolute inset-0 -z-10"
+                aria-hidden="true"
+            />
 
             <div className="mx-auto grid min-h-[calc(100svh-4rem)] max-w-6xl items-center gap-10 px-5 pb-28 pt-14 lg:grid-cols-[1.05fr_0.95fr]">
                 {/* Layer 2 — copy */}
@@ -85,7 +89,10 @@ export function LandingHero() {
                         {t.landing.taglineBadge}
                     </motion.span>
 
-                    <h1 id="hero-title" className="text-[2.9rem] font-bold leading-[1.02] tracking-[-0.035em] sm:text-7xl lg:text-[5.4rem]">
+                    <h1
+                        id="hero-title"
+                        className="text-[2.9rem] font-bold leading-[1.02] tracking-[-0.035em] sm:text-7xl lg:text-[5.4rem]"
+                    >
                         {titleLines.map((line, i) => (
                             <span key={line} className="block overflow-hidden pb-2">
                                 <motion.span
@@ -117,7 +124,11 @@ export function LandingHero() {
                     >
                         <ButtonLink id="cta-hero-start" href="/register" size="lg" className="group">
                             {t.landing.ctaQuickCheck}
-                            <ArrowRight size={18} aria-hidden="true" className="transition-transform group-hover:translate-x-1" />
+                            <ArrowRight
+                                size={18}
+                                aria-hidden="true"
+                                className="transition-transform group-hover:translate-x-1"
+                            />
                         </ButtonLink>
                         <ButtonLink id="cta-hero-how" href="#how" variant="outline" size="lg">
                             {t.landing.ctaHow}
@@ -145,11 +156,21 @@ export function LandingHero() {
                             transition={{ duration: 1.1, delay: 0.2, ease: EASE }}
                             className="relative h-full w-full"
                         >
-                            <div className="absolute inset-[12%] rounded-full bg-gradient-to-br from-primary-soft via-white to-accent-soft" aria-hidden="true" />
-                            <div className="animate-spin-slow absolute inset-[6%] rounded-full border border-dashed border-primary/25" aria-hidden="true" />
+                            <div
+                                className="absolute inset-[12%] rounded-full bg-gradient-to-br from-primary-soft via-white to-accent-soft"
+                                aria-hidden="true"
+                            />
+                            <div
+                                className="animate-spin-slow absolute inset-[6%] rounded-full border border-dashed border-primary/25"
+                                aria-hidden="true"
+                            />
                             <Image
                                 src="/landing/hero-clay.jpg"
-                                alt={locale === "id" ? "Ilustrasi buku, puzzle, dan bola lampu yang melambangkan dukungan belajar" : "Illustration of a notebook, puzzle pieces and a lightbulb representing learning support"}
+                                alt={
+                                    locale === "id"
+                                        ? "Ilustrasi buku, puzzle, dan bola lampu yang melambangkan dukungan belajar"
+                                        : "Illustration of a notebook, puzzle pieces and a lightbulb representing learning support"
+                                }
                                 fill
                                 priority
                                 sizes="(min-width: 1024px) 540px, 90vw"
@@ -167,7 +188,9 @@ export function LandingHero() {
                             transition={{ duration: 0.8, delay: 0.7, ease: EASE }}
                             className="glass w-56 rounded-2xl border border-white/70 p-4 shadow-lift"
                         >
-                            <p className="text-[0.65rem] font-semibold uppercase tracking-widest text-muted">{t.landing.observedBarrier}</p>
+                            <p className="text-[0.65rem] font-semibold uppercase tracking-widest text-muted">
+                                {t.landing.observedBarrier}
+                            </p>
                             <p className="mt-1 font-display text-lg font-bold">{t.landing.sampleBarrierTitle}</p>
                             <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-surface-2">
                                 <motion.div

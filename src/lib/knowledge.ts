@@ -971,13 +971,13 @@ export const INTERVENTIONS_DATA: LocalizedIntervention[] = [
         steps: {
             en: [
                 "Give the instruction",
-                "Ask: \"What will you do first?\"",
+                'Ask: "What will you do first?"',
                 "Clarify anything missed gently",
                 "Let the student begin with confidence",
             ],
             id: [
                 "Sampaikan instruksi tugas",
-                "Tanyakan: \"Apa yang akan kamu lakukan pertama kali?\"",
+                'Tanyakan: "Apa yang akan kamu lakukan pertama kali?"',
                 "Luruskan bagian yang terlewat dengan tenang",
                 "Biarkan siswa mulai bekerja dengan percaya diri",
             ],
@@ -1472,7 +1472,7 @@ export const INTERVENTIONS_DATA: LocalizedIntervention[] = [
                 "Give positive praise when a starter is spoken",
             ],
             id: [
-                "Siapkan 3–4 contoh kalimat pembuka di kartu meja (misal: \"Menurut saya...\")",
+                'Siapkan 3–4 contoh kalimat pembuka di kartu meja (misal: "Menurut saya...")',
                 "Contohkan cara menggunakannya di depan kelas",
                 "Ajak siswa membaca salah satu kalimat pembuka saat gilirannya",
                 "Beri senyuman dan apresiasi ketika siswa mencoba berbicara",

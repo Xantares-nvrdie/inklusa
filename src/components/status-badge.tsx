@@ -1,8 +1,8 @@
 "use client";
 
 import { CheckCircle2, CircleDashed, Clock3, MessageSquareText } from "lucide-react";
-import { type PlanStatus, STATUS_LABELS_DATA } from "@/lib/knowledge";
 import { useLanguage } from "@/lib/i18n/context";
+import { type PlanStatus, STATUS_LABELS_DATA } from "@/lib/knowledge";
 
 const STYLE: Record<PlanStatus, { cls: string; Icon: typeof Clock3 }> = {
     PLANNED: { cls: "bg-sky-soft text-sky", Icon: CircleDashed },

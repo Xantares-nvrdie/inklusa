@@ -43,7 +43,11 @@ export function LandingProblem() {
 
                 <div className="grid gap-5 sm:grid-cols-2">
                     {cols.map((col, ci) => (
-                        <motion.div key={col.join()} style={{ y: ci === 0 ? yColA : yColB }} className={`space-y-5 ${ci === 1 ? "sm:mt-24" : ""}`}>
+                        <motion.div
+                            key={col.join()}
+                            style={{ y: ci === 0 ? yColA : yColB }}
+                            className={`space-y-5 ${ci === 1 ? "sm:mt-24" : ""}`}
+                        >
                             {col.map((idx) => {
                                 const Icon = ICONS[idx];
                                 return (
@@ -54,10 +58,14 @@ export function LandingProblem() {
                                         <span className="pointer-events-none absolute -right-4 -top-6 font-display text-[7rem] font-bold leading-none text-surface-2 transition-colors group-hover:text-primary-soft">
                                             0{idx + 1}
                                         </span>
-                                        <span className={`relative grid h-12 w-12 place-items-center rounded-2xl ${TONES[idx]}`}>
+                                        <span
+                                            className={`relative grid h-12 w-12 place-items-center rounded-2xl ${TONES[idx]}`}
+                                        >
                                             <Icon size={22} aria-hidden="true" />
                                         </span>
-                                        <p className="relative mt-10 text-lg font-medium leading-snug">{t.landing.problems[idx]}</p>
+                                        <p className="relative mt-10 text-lg font-medium leading-snug">
+                                            {t.landing.problems[idx]}
+                                        </p>
                                     </article>
                                 );
                             })}

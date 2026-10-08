@@ -42,7 +42,9 @@ export function AdminNav({ name }: { name: string }) {
                                 aria-current={active ? "page" : undefined}
                                 className={cn(
                                     "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors",
-                                    active ? "bg-primary-soft text-primary-strong" : "text-muted hover:bg-surface-2 hover:text-foreground",
+                                    active
+                                        ? "bg-primary-soft text-primary-strong"
+                                        : "text-muted hover:bg-surface-2 hover:text-foreground",
                                 )}
                             >
                                 <Icon size={16} aria-hidden="true" />

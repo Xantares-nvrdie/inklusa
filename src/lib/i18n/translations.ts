@@ -266,7 +266,8 @@ export const translations: Record<Locale, TranslationDict> = {
             ctaBottomTitle: "What are you dealing with today?",
             ctaBottomSub: "Find the right support for a classroom barrier in under two minutes.",
             scrollHint: "Scroll to explore",
-            manifesto: "Every student learns differently. A barrier is not a label — it is a signal. INKLUSA helps you read that signal and respond with care.",
+            manifesto:
+                "Every student learns differently. A barrier is not a label — it is a signal. INKLUSA helps you read that signal and respond with care.",
             eyebrowProblem: "The gap",
             eyebrowLoop: "How it works",
             eyebrowSupports: "Support library",
@@ -382,7 +383,8 @@ export const translations: Record<Locale, TranslationDict> = {
             reflectionSaved: "Reflection saved",
             savedHint: "Your observation has been added to the intervention record.",
             insightHelpful: "Teacher insight: This strategy seems appropriate for the situation.",
-            insightNotHelpful: "Teacher insight: This strategy showed limited improvement. A different approach might be needed.",
+            insightNotHelpful:
+                "Teacher insight: This strategy showed limited improvement. A different approach might be needed.",
             continueStrategy: "Continue Strategy",
             tryAnotherStrategy: "Try Another Strategy",
         },
@@ -470,7 +472,8 @@ export const translations: Record<Locale, TranslationDict> = {
             ctaBottomTitle: "Situasi apa yang sedang Anda hadapi di kelas?",
             ctaBottomSub: "Temukan dukungan pembelajaran yang sesuai dalam waktu kurang dari dua menit.",
             scrollHint: "Gulir untuk menjelajah",
-            manifesto: "Setiap siswa belajar dengan caranya sendiri. Hambatan bukanlah label — melainkan sinyal. INKLUSA membantu Anda membaca sinyal itu dan meresponsnya dengan peduli.",
+            manifesto:
+                "Setiap siswa belajar dengan caranya sendiri. Hambatan bukanlah label — melainkan sinyal. INKLUSA membantu Anda membaca sinyal itu dan meresponsnya dengan peduli.",
             eyebrowProblem: "Celahnya",
             eyebrowLoop: "Cara kerja",
             eyebrowSupports: "Pustaka dukungan",
@@ -505,7 +508,8 @@ export const translations: Record<Locale, TranslationDict> = {
             recentTitle: "Intervensi Terbaru",
             viewAll: "Lihat semua",
             noInterventions: "Belum ada intervensi",
-            noInterventionsDesc: "Ketika menemukan kendala di kelas, mulai Quick Check. Rencana Anda akan tampil di sini.",
+            noInterventionsDesc:
+                "Ketika menemukan kendala di kelas, mulai Quick Check. Rencana Anda akan tampil di sini.",
             btnStart: "Mulai Quick Check",
             generalClassroom: "Kelas umum",
         },
@@ -586,7 +590,8 @@ export const translations: Record<Locale, TranslationDict> = {
             reflectionSaved: "Refleksi Tersimpan",
             savedHint: "Pengamatan Anda telah dicatat ke riwayat intervensi.",
             insightHelpful: "Insight Guru: Strategi ini tampaknya sesuai untuk situasi tersebut.",
-            insightNotHelpful: "Insight Guru: Strategi ini menunjukkan sedikit perbaikan. Pendekatan lain mungkin diperlukan.",
+            insightNotHelpful:
+                "Insight Guru: Strategi ini menunjukkan sedikit perbaikan. Pendekatan lain mungkin diperlukan.",
             continueStrategy: "Lanjutkan Strategi",
             tryAnotherStrategy: "Coba Strategi Lain",
         },

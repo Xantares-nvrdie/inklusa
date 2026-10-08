@@ -30,7 +30,10 @@ export function LandingPrinciples() {
 
     return (
         <section id="principles" ref={ref} className="relative overflow-hidden bg-surface-2/70 py-32 lg:py-44">
-            <div className="pointer-events-none absolute left-1/2 top-0 h-[30rem] w-[60rem] -translate-x-1/2 rounded-full bg-primary/10 blur-[120px]" aria-hidden="true" />
+            <div
+                className="pointer-events-none absolute left-1/2 top-0 h-[30rem] w-[60rem] -translate-x-1/2 rounded-full bg-primary/10 blur-[120px]"
+                aria-hidden="true"
+            />
             <div className="relative mx-auto max-w-6xl px-5">
                 <motion.div style={{ y: yTitle }} className="mx-auto max-w-2xl text-center">
                     <Eyebrow>{t.landing.eyebrowPrinciples}</Eyebrow>
@@ -75,19 +78,41 @@ export function LandingCta() {
 
     return (
         <section ref={ref} className="mx-auto max-w-6xl px-5 py-28">
-            <motion.div style={{ scale, borderRadius: radius }} className="bg-ink relative overflow-hidden px-8 py-20 text-center text-white shadow-lift sm:py-28">
+            <motion.div
+                style={{ scale, borderRadius: radius }}
+                className="bg-ink relative overflow-hidden px-8 py-20 text-center text-white shadow-lift sm:py-28"
+            >
                 <div className="bg-grid-dark pointer-events-none absolute inset-0" aria-hidden="true" />
-                <motion.div style={{ y: yGlowA }} className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-accent/35 blur-[100px]" aria-hidden="true" />
-                <motion.div style={{ y: yGlowB }} className="pointer-events-none absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-primary/50 blur-[100px]" aria-hidden="true" />
+                <motion.div
+                    style={{ y: yGlowA }}
+                    className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-accent/35 blur-[100px]"
+                    aria-hidden="true"
+                />
+                <motion.div
+                    style={{ y: yGlowB }}
+                    className="pointer-events-none absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-primary/50 blur-[100px]"
+                    aria-hidden="true"
+                />
                 <motion.div style={{ y: yText }} className="relative">
-                    <h2 className="mx-auto max-w-3xl text-4xl font-bold leading-[1.08] sm:text-6xl">{t.landing.ctaBottomTitle}</h2>
+                    <h2 className="mx-auto max-w-3xl text-4xl font-bold leading-[1.08] sm:text-6xl">
+                        {t.landing.ctaBottomTitle}
+                    </h2>
                     <p className="mx-auto mt-5 max-w-xl text-lg text-white/70">{t.landing.ctaBottomSub}</p>
                     <div className="mt-10 flex flex-wrap justify-center gap-3">
                         <ButtonLink id="cta-bottom-start" href="/register" variant="accent" size="lg" className="group">
                             {t.landing.ctaQuickCheck}
-                            <ArrowRight size={18} aria-hidden="true" className="transition-transform group-hover:translate-x-1" />
+                            <ArrowRight
+                                size={18}
+                                aria-hidden="true"
+                                className="transition-transform group-hover:translate-x-1"
+                            />
                         </ButtonLink>
-                        <ButtonLink id="cta-bottom-login" href="/login" size="lg" className="border border-white/20 bg-white/5 text-white hover:bg-white/10">
+                        <ButtonLink
+                            id="cta-bottom-login"
+                            href="/login"
+                            size="lg"
+                            className="border border-white/20 bg-white/5 text-white hover:bg-white/10"
+                        >
                             {t.nav.signIn}
                         </ButtonLink>
                     </div>

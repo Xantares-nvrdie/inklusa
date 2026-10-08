@@ -4,8 +4,8 @@ import { AnimatePresence, motion, useMotionValueEvent, useScroll, useTransform }
 import { Check, Eye, Lightbulb, MessageSquareHeart, Route, Sparkles } from "lucide-react";
 import { useRef, useState } from "react";
 import { CategoryIcon } from "@/components/category-icon";
-import { useKnowledge } from "@/lib/knowledge-context";
 import { useLanguage } from "@/lib/i18n/context";
+import { useKnowledge } from "@/lib/knowledge-context";
 import { Eyebrow } from "./shared";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -32,7 +32,9 @@ function StepVisual({ index }: { index: number }) {
     const header = (label: string) => (
         <div className="mb-5 flex items-center justify-between">
             <p className="text-xs font-semibold uppercase tracking-widest text-white/50">{label}</p>
-            <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">{id ? "Kelas 5A · Raka" : "Class 5A · Raka"}</span>
+            <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">
+                {id ? "Kelas 5A · Raka" : "Class 5A · Raka"}
+            </span>
         </div>
     );
 
@@ -40,7 +42,9 @@ function StepVisual({ index }: { index: number }) {
         return (
             <div>
                 {header(id ? "Langkah 1 · Amati" : "Step 1 · Observe")}
-                <p className="font-display text-2xl font-semibold">{id ? "Hambatan apa yang Anda lihat?" : "What barrier do you see?"}</p>
+                <p className="font-display text-2xl font-semibold">
+                    {id ? "Hambatan apa yang Anda lihat?" : "What barrier do you see?"}
+                </p>
                 <div className="mt-6 grid gap-2.5">
                     {categories.map((c, i) => (
                         <motion.div
@@ -65,7 +69,9 @@ function StepVisual({ index }: { index: number }) {
         return (
             <div>
                 {header(id ? "Langkah 2 · Pahami" : "Step 2 · Understand")}
-                <p className="font-display text-2xl font-semibold">{id ? "Seperti apa hambatannya terlihat?" : "What does it look like?"}</p>
+                <p className="font-display text-2xl font-semibold">
+                    {id ? "Seperti apa hambatannya terlihat?" : "What does it look like?"}
+                </p>
                 <div className="mt-6 space-y-2.5">
                     {clar.map((c, i) => (
                         <motion.div
@@ -77,7 +83,9 @@ function StepVisual({ index }: { index: number }) {
                                 i === 0 ? "border-[#f4b06b] bg-[#f4b06b]/15" : "border-white/10 bg-white/5"
                             }`}
                         >
-                            <span className={`mt-0.5 h-4 w-4 shrink-0 rounded-full border-2 ${i === 0 ? "border-[#f4b06b] bg-[#f4b06b]" : "border-white/30"}`} />
+                            <span
+                                className={`mt-0.5 h-4 w-4 shrink-0 rounded-full border-2 ${i === 0 ? "border-[#f4b06b] bg-[#f4b06b]" : "border-white/30"}`}
+                            />
                             {c.label}
                         </motion.div>
                     ))}
@@ -100,7 +108,9 @@ function StepVisual({ index }: { index: number }) {
         return (
             <div>
                 {header(id ? "Langkah 3 · Tindakan" : "Step 3 · Act")}
-                <p className="text-xs font-semibold uppercase tracking-widest text-[#7fd1c4]">{id ? "Strategi yang disarankan" : "Suggested strategy"}</p>
+                <p className="text-xs font-semibold uppercase tracking-widest text-[#7fd1c4]">
+                    {id ? "Strategi yang disarankan" : "Suggested strategy"}
+                </p>
                 <p className="mt-2 font-display text-2xl font-semibold">{sample?.title}</p>
                 <p className="mt-3 line-clamp-2 text-sm text-white/65">{sample?.why}</p>
                 <ol className="mt-6 space-y-3">
@@ -112,7 +122,9 @@ function StepVisual({ index }: { index: number }) {
                             transition={{ delay: i * 0.08, duration: 0.5, ease: EASE }}
                             className="flex items-start gap-3 text-sm"
                         >
-                            <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[#7fd1c4] text-xs font-bold text-[#0c2421]">{i + 1}</span>
+                            <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[#7fd1c4] text-xs font-bold text-[#0c2421]">
+                                {i + 1}
+                            </span>
                             <span className="text-white/85">{s}</span>
                         </motion.li>
                     ))}
@@ -124,7 +136,9 @@ function StepVisual({ index }: { index: number }) {
     return (
         <div>
             {header(id ? "Langkah 4 · Refleksi" : "Step 4 · Reflect")}
-            <p className="font-display text-2xl font-semibold">{id ? "Apakah strategi ini membantu?" : "Did this support help?"}</p>
+            <p className="font-display text-2xl font-semibold">
+                {id ? "Apakah strategi ini membantu?" : "Did this support help?"}
+            </p>
             <div className="mt-6 grid grid-cols-3 gap-2.5">
                 {options.map((o, i) => (
                     <motion.div
@@ -197,7 +211,10 @@ export function LandingLoop() {
                             <p className="mt-4 max-w-md text-lg text-white/65">{t.landing.loopSub}</p>
 
                             <div className="relative mt-10 pl-8">
-                                <div className="absolute bottom-2 left-[11px] top-2 w-0.5 rounded-full bg-white/10" aria-hidden="true" />
+                                <div
+                                    className="absolute bottom-2 left-[11px] top-2 w-0.5 rounded-full bg-white/10"
+                                    aria-hidden="true"
+                                />
                                 <motion.div
                                     style={{ height: fill }}
                                     className="absolute left-[11px] top-2 w-0.5 rounded-full bg-gradient-to-b from-[#7fd1c4] to-accent"
@@ -212,13 +229,20 @@ export function LandingLoop() {
                                                 }`}
                                                 style={i <= active ? { background: s.accent } : undefined}
                                             >
-                                                {i < active && <Check size={12} className="text-[#0c2421]" aria-hidden="true" />}
+                                                {i < active && (
+                                                    <Check size={12} className="text-[#0c2421]" aria-hidden="true" />
+                                                )}
                                             </span>
-                                            <div className={`transition-all duration-500 ${i === active ? "opacity-100" : "opacity-40"}`}>
+                                            <div
+                                                className={`transition-all duration-500 ${i === active ? "opacity-100" : "opacity-40"}`}
+                                            >
                                                 <p className="font-display text-2xl font-semibold">{s.title}</p>
                                                 <motion.p
                                                     initial={false}
-                                                    animate={{ height: i === active ? "auto" : 0, opacity: i === active ? 1 : 0 }}
+                                                    animate={{
+                                                        height: i === active ? "auto" : 0,
+                                                        opacity: i === active ? 1 : 0,
+                                                    }}
                                                     transition={{ duration: 0.45, ease: EASE }}
                                                     className="overflow-hidden text-white/70"
                                                 >
@@ -240,7 +264,9 @@ export function LandingLoop() {
                             >
                                 <div
                                     className="h-full w-full rounded-full transition-colors duration-700"
-                                    style={{ background: `conic-gradient(from 0deg, ${steps[active].accent}55, transparent 40%, ${steps[active].accent}33, transparent 80%)` }}
+                                    style={{
+                                        background: `conic-gradient(from 0deg, ${steps[active].accent}55, transparent 40%, ${steps[active].accent}33, transparent 80%)`,
+                                    }}
                                 />
                             </motion.div>
                             <div className="relative min-h-[520px] rounded-[2rem] border border-white/10 bg-white/[0.06] p-8 shadow-2xl backdrop-blur-xl">
@@ -285,7 +311,10 @@ export function LandingLoop() {
                             className="rounded-[1.75rem] border border-white/10 bg-white/[0.06] p-6"
                         >
                             <div className="mb-5 flex items-center gap-3">
-                                <span className="grid h-10 w-10 place-items-center rounded-xl text-[#0c2421]" style={{ background: s.accent }}>
+                                <span
+                                    className="grid h-10 w-10 place-items-center rounded-xl text-[#0c2421]"
+                                    style={{ background: s.accent }}
+                                >
                                     <s.Icon size={18} aria-hidden="true" />
                                 </span>
                                 <div>

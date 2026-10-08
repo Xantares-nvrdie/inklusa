@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
-import { cn } from "@/lib/utils";
 import { Toaster } from "react-hot-toast";
-
 import { LanguageProvider } from "@/lib/i18n/context";
 import { KnowledgeProvider } from "@/lib/knowledge-context";
+import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
@@ -23,7 +22,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 <LanguageProvider>
                     <KnowledgeProvider>
                         {children}
-                        <Toaster position="top-right" toastOptions={{ duration: 4000, style: { borderRadius: '1rem', background: '#fff', color: '#16302d' } }} />
+                        <Toaster
+                            position="top-right"
+                            toastOptions={{
+                                duration: 4000,
+                                style: { borderRadius: "1rem", background: "#fff", color: "#16302d" },
+                            }}
+                        />
                     </KnowledgeProvider>
                 </LanguageProvider>
             </body>

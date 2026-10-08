@@ -11,13 +11,13 @@ export type PlanFilter = "all" | "active" | "completed";
 export const ActionPlanService = {
     async list(teacherId: string, filter: PlanFilter = "all", studentId?: string) {
         const filters = [eq(actionPlans.teacherId, teacherId)];
-        
+
         if (filter === "active") {
             filters.push(inArray(actionPlans.status, [...ACTIVE]));
         } else if (filter === "completed") {
             filters.push(eq(actionPlans.status, "COMPLETED"));
         }
-        
+
         if (studentId) {
             filters.push(eq(actionPlans.studentId, studentId));
         }
@@ -30,7 +30,10 @@ export const ActionPlanService = {
     },
 
     async summary(teacherId: string) {
-        const rows = await db.select({ status: actionPlans.status }).from(actionPlans).where(eq(actionPlans.teacherId, teacherId));
+        const rows = await db
+            .select({ status: actionPlans.status })
+            .from(actionPlans)
+            .where(eq(actionPlans.teacherId, teacherId));
         return {
             active: rows.filter((r) => r.status !== "COMPLETED").length,
             needsReflection: rows.filter((r) => r.status === "NEEDS_REFLECTION").length,
@@ -45,12 +48,17 @@ export const ActionPlanService = {
         });
     },
 
-    async history(teacherId: string, barrierCategory: "INSTRUCTION" | "READING" | "FOCUS" | "EXPRESSION" | "PARTICIPATION", clarificationId: string, studentId?: string | null) {
+    async history(
+        teacherId: string,
+        barrierCategory: "INSTRUCTION" | "READING" | "FOCUS" | "EXPRESSION" | "PARTICIPATION",
+        clarificationId: string,
+        studentId?: string | null,
+    ) {
         const filters = [
             eq(actionPlans.teacherId, teacherId),
             eq(actionPlans.barrierCategory, barrierCategory),
             eq(actionPlans.clarificationId, clarificationId),
-            eq(actionPlans.status, "COMPLETED")
+            eq(actionPlans.status, "COMPLETED"),
         ];
         if (studentId && studentId !== "general") {
             filters.push(eq(actionPlans.studentId, studentId));
@@ -60,10 +68,13 @@ export const ActionPlanService = {
         }
 
         // We can do it by querying all and reducing, since it's limited per teacher per barrier
-        const rows = await db.select({
-            slug: actionPlans.interventionSlug,
-            result: actionPlans.reflectionResult
-        }).from(actionPlans).where(and(...filters));
+        const rows = await db
+            .select({
+                slug: actionPlans.interventionSlug,
+                result: actionPlans.reflectionResult,
+            })
+            .from(actionPlans)
+            .where(and(...filters));
 
         const stats: Record<string, { helpful: number; limited: number }> = {};
         for (const r of rows) {
