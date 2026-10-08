@@ -100,6 +100,61 @@
     animation: float-slow 7s ease-in-out infinite;
 }
 
+/* ---------- Landing page (parallax) ---------- */
+.bg-grid {
+    background-image:
+        linear-gradient(to right, rgba(22, 48, 45, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(22, 48, 45, 0.06) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 40%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 40%, transparent 100%);
+}
+.bg-grid-dark {
+    background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 30%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 30%, transparent 100%);
+}
+.bg-ink {
+    background-color: #0c2421;
+    background-image:
+        radial-gradient(50rem 30rem at 0% 0%, rgba(31, 122, 112, 0.45), transparent 60%),
+        radial-gradient(40rem 30rem at 100% 100%, rgba(232, 145, 58, 0.18), transparent 60%);
+}
+.text-outline {
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(22, 48, 45, 0.12);
+}
+.text-gradient-warm {
+    background-image: linear-gradient(110deg, var(--primary) 0%, #3fae9f 40%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+@keyframes scroll-dot {
+    0% { transform: translateY(0); opacity: 1; }
+    80% { transform: translateY(14px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 0; }
+}
+.animate-scroll-dot {
+    animation: scroll-dot 1.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+@keyframes spin-slow {
+    to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+    animation: spin-slow 18s linear infinite;
+}
+@keyframes pulse-ring {
+    0% { transform: scale(0.9); opacity: 0.7; }
+    100% { transform: scale(1.8); opacity: 0; }
+}
+.animate-pulse-ring {
+    animation: pulse-ring 2.2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
         animation-duration: 0.01ms !important;

@@ -59,6 +59,13 @@ export interface TranslationDict {
         };
         ctaBottomTitle: string;
         ctaBottomSub: string;
+        scrollHint: string;
+        manifesto: string;
+        eyebrowProblem: string;
+        eyebrowLoop: string;
+        eyebrowSupports: string;
+        eyebrowPrinciples: string;
+        dragHint: string;
     };
     auth: {
         welcomeBack: string;
@@ -254,10 +261,17 @@ export const translations: Record<Locale, TranslationDict> = {
                 p2Title: "Teacher decides",
                 p2Desc: "You get possible strategies to try, guided by your context and professional judgement.",
                 p3Title: "Privacy first",
-                p3Desc: "Students are minimal identifiers like “Student A”. No personal data required.",
+                p3Desc: "Student data stays within the classes you teach. No diagnoses or medical labels are ever stored.",
             },
             ctaBottomTitle: "What are you dealing with today?",
             ctaBottomSub: "Find the right support for a classroom barrier in under two minutes.",
+            scrollHint: "Scroll to explore",
+            manifesto: "Every student learns differently. A barrier is not a label — it is a signal. INKLUSA helps you read that signal and respond with care.",
+            eyebrowProblem: "The gap",
+            eyebrowLoop: "How it works",
+            eyebrowSupports: "Support library",
+            eyebrowPrinciples: "Our principles",
+            dragHint: "Keep scrolling — the cards will follow",
         },
         auth: {
             welcomeBack: "Welcome back",
@@ -451,10 +465,17 @@ export const translations: Record<Locale, TranslationDict> = {
                 p2Title: "Guru Pemegang Keputusan",
                 p2Desc: "Sistem memberikan opsi strategi yang relevan; keputusan akhir tetap di tangan profesional guru.",
                 p3Title: "Privasi Siswa yang Utama",
-                p3Desc: "Hanya menggunakan identifier minimal seperti “Student A”. Data pribadi siswa tidak diminta.",
+                p3Desc: "Data siswa hanya terlihat di kelas yang Anda ampu. Tidak ada diagnosis atau label medis yang disimpan.",
             },
             ctaBottomTitle: "Situasi apa yang sedang Anda hadapi di kelas?",
             ctaBottomSub: "Temukan dukungan pembelajaran yang sesuai dalam waktu kurang dari dua menit.",
+            scrollHint: "Gulir untuk menjelajah",
+            manifesto: "Setiap siswa belajar dengan caranya sendiri. Hambatan bukanlah label — melainkan sinyal. INKLUSA membantu Anda membaca sinyal itu dan meresponsnya dengan peduli.",
+            eyebrowProblem: "Celahnya",
+            eyebrowLoop: "Cara kerja",
+            eyebrowSupports: "Pustaka dukungan",
+            eyebrowPrinciples: "Prinsip kami",
+            dragHint: "Terus gulir — kartu akan bergerak",
         },
         auth: {
             welcomeBack: "Selamat datang kembali",
