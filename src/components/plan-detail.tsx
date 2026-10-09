@@ -72,20 +72,29 @@ export function PlanDetail({ id }: { id: string }) {
     async function advance() {
         if (!nextAction) return;
         setBusy(true);
-        await api(`/action-plans/${id}/status`, { method: "PATCH", body: JSON.stringify({ status: nextAction.to }) });
-        await load();
-        setBusy(false);
+        try {
+            await api(`/action-plans/${id}/status`, {
+                method: "PATCH",
+                body: JSON.stringify({ status: nextAction.to }),
+            });
+            await load();
+        } finally {
+            setBusy(false);
+        }
     }
 
     async function reflect() {
         if (!result) return;
         setBusy(true);
-        await api(`/action-plans/${id}/reflection`, {
-            method: "POST",
-            body: JSON.stringify({ result, reason: needsReason ? reason : undefined, note }),
-        });
-        await load();
-        setBusy(false);
+        try {
+            await api(`/action-plans/${id}/reflection`, {
+                method: "POST",
+                body: JSON.stringify({ result, reason: needsReason ? reason : undefined, note }),
+            });
+            await load();
+        } finally {
+            setBusy(false);
+        }
     }
 
     return (

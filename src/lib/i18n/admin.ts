@@ -1,7 +1,13 @@
 import type { Locale } from "./translations";
 
 const en = {
-    nav: { overview: "Overview", teachers: "Teachers", classes: "Classes", knowledge: "Knowledge Base", badge: "Admin" },
+    nav: {
+        overview: "Overview",
+        teachers: "Teachers",
+        classes: "Classes",
+        knowledge: "Knowledge Base",
+        badge: "Admin",
+    },
     overview: {
         title: "Platform insights",
         sub: "What teachers are facing in classrooms, and how the knowledge base is performing.",
@@ -46,6 +52,7 @@ const en = {
         title: "Classes & Students",
         sub: "Manage school classes globally. All teachers share this list.",
         addClass: "Add Class",
+        save: "Save",
         name: "Class Name",
         students: "students",
         create: "Create Class",
@@ -143,6 +150,7 @@ const id: typeof en = {
         title: "Kelas & Siswa",
         sub: "Kelola kelas secara terpusat. Semua guru dapat melihat daftar ini.",
         addClass: "Tambah Kelas",
+        save: "Simpan",
         name: "Nama Kelas",
         students: "siswa",
         create: "Buat Kelas",

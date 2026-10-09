@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, Plus, UserRound, Users } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CategoryIcon } from "@/components/category-icon";
 import { Button, ButtonLink } from "@/components/ui/button";
@@ -32,6 +33,8 @@ function choiceCls(selected: boolean) {
 
 export function QuickCheck() {
     const { t, locale } = useLanguage();
+    const searchParams = useSearchParams();
+    const requestedStudent = searchParams.get("student");
     const [step, setStep] = useState(0); // 0..2 questions, 3 = result
     const [classesData, setClassesData] = useState<ClassData[]>([]);
     const [student, setStudent] = useState<string | null>(null);
@@ -41,6 +44,7 @@ export function QuickCheck() {
     const [newStudentName, setNewStudentName] = useState("");
     const [selectedCatId, setSelectedCatId] = useState<string | null>(null);
     const [clarId, setClarId] = useState<string | null>(null);
+    const [savingTarget, setSavingTarget] = useState<string | null>(null);
 
     const { categories } = useKnowledge();
     const cat = categories.find((c) => c.id === selectedCatId);
@@ -50,27 +54,42 @@ export function QuickCheck() {
 
     useEffect(() => {
         api<ClassData[]>("/students/classes")
-            .then(setClassesData)
+            .then((data) => {
+                setClassesData(data);
+                if (requestedStudent && data.some((c) => c.students.some((s) => s.id === requestedStudent))) {
+                    setStudent(requestedStudent);
+                }
+            })
             .catch(() => setClassesData([]));
-    }, []);
+    }, [requestedStudent]);
 
     async function addClass() {
         const name = newClassName.trim();
         if (!name) return;
-        const c = await api<ClassData>("/students/classes", { method: "POST", body: JSON.stringify({ name }) });
-        setClassesData((p) => [...p, { ...c, students: [] }]);
-        setAddingClass(false);
-        setNewClassName("");
+        setSavingTarget("class");
+        try {
+            const c = await api<ClassData>("/students/classes", { method: "POST", body: JSON.stringify({ name }) });
+            setClassesData((p) => [...p, { ...c, students: [] }]);
+            setAddingClass(false);
+            setNewClassName("");
+        } finally {
+            setSavingTarget(null);
+        }
     }
 
     async function addStudent(classId: string) {
         const name = newStudentName.trim();
         if (!name) return;
-        const s = await api<Student>("/students", { method: "POST", body: JSON.stringify({ classId, name }) });
-        setClassesData((p) => p.map((c) => (c.id === classId ? { ...c, students: [...c.students, s] } : c)));
-        setStudent(s.id);
-        setAddingStudentTo(null);
-        setNewStudentName("");
+        setSavingTarget(classId);
+        try {
+            const s = await api<Student>("/students", { method: "POST", body: JSON.stringify({ classId, name }) });
+            setClassesData((p) => p.map((c) => (c.id === classId ? { ...c, students: [...c.students, s] } : c)));
+            setStudent(s.id);
+            setAddingStudentTo(null);
+            setNewStudentName("");
+        } finally {
+            setSavingTarget(null);
+        }
     }
 
     const canNext = step === 0 ? !!student : step === 1 ? !!selectedCatId : step === 2 ? !!clarId : false;
@@ -79,7 +98,8 @@ export function QuickCheck() {
         <div className="mx-auto max-w-3xl space-y-8">
             {/* Progress */}
             {step < 3 && (
-                <div className="space-y-3" aria-label={`Step ${step + 1} of 3`}>
+                <fieldset className="m-0 space-y-3 border-0 p-0">
+                    <legend className="sr-only">{t.quickCheck.stepProgress(step + 1, stepsLabels.length)}</legend>
                     <ol className="flex items-center gap-3">
                         {stepsLabels.map((label, i) => (
                             <li key={label} className="flex flex-1 items-center gap-3">
@@ -99,7 +119,7 @@ export function QuickCheck() {
                             </li>
                         ))}
                     </ol>
-                </div>
+                </fieldset>
             )}
 
             <AnimatePresence mode="wait">
@@ -114,11 +134,16 @@ export function QuickCheck() {
                     {step === 0 && (
                         <>
                             <h1 className="text-4xl font-bold">{t.quickCheck.step1Title}</h1>
+                            <p className="-mt-3 text-muted">{t.quickCheck.step1Sub}</p>
                             <div className="space-y-6">
+                                <p className="rounded-2xl border border-sky/15 bg-sky-soft/70 px-4 py-3 text-sm text-foreground/80">
+                                    {t.quickCheck.privacyHint}
+                                </p>
                                 <button
                                     id="student-general"
                                     type="button"
                                     onClick={() => setStudent("general")}
+                                    aria-pressed={student === "general"}
                                     className={choiceCls(student === "general")}
                                 >
                                     <span className="grid h-11 w-11 place-items-center rounded-xl bg-accent-soft text-[#9a5612]">
@@ -146,6 +171,7 @@ export function QuickCheck() {
                                                         key={s.id}
                                                         type="button"
                                                         onClick={() => setStudent(s.id)}
+                                                        aria-pressed={student === s.id}
                                                         className={choiceCls(student === s.id)}
                                                     >
                                                         <span className="grid h-11 w-11 place-items-center rounded-xl bg-surface-2 text-primary-strong">
@@ -159,10 +185,10 @@ export function QuickCheck() {
                                             {addingStudentTo === c.id ? (
                                                 <div className="flex flex-col gap-3 sm:flex-row mt-2">
                                                     <input
-                                                        autoFocus
                                                         value={newStudentName}
                                                         onChange={(e) => setNewStudentName(e.target.value)}
-                                                        placeholder="Nama siswa"
+                                                        placeholder={t.quickCheck.studentNamePlaceholder}
+                                                        aria-label={t.quickCheck.studentNamePlaceholder}
                                                         maxLength={50}
                                                         className="h-12 flex-1 rounded-2xl border border-line px-4 outline-none focus:border-primary focus:ring-4 focus:ring-primary/15"
                                                     />
@@ -171,9 +197,14 @@ export function QuickCheck() {
                                                             variant="ghost"
                                                             onClick={() => setAddingStudentTo(null)}
                                                         >
-                                                            Batal
+                                                            {t.quickCheck.cancel}
                                                         </Button>
-                                                        <Button onClick={() => addStudent(c.id)}>Simpan</Button>
+                                                        <Button
+                                                            disabled={savingTarget === c.id}
+                                                            onClick={() => addStudent(c.id)}
+                                                        >
+                                                            {t.quickCheck.save}
+                                                        </Button>
                                                     </div>
                                                 </div>
                                             ) : (
@@ -182,7 +213,7 @@ export function QuickCheck() {
                                                     onClick={() => setAddingStudentTo(c.id)}
                                                     className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
                                                 >
-                                                    <Plus size={16} /> Tambah Siswa ke {c.name}
+                                                    <Plus size={16} /> {t.quickCheck.addStudentTo(c.name)}
                                                 </button>
                                             )}
                                         </Card>
@@ -192,18 +223,20 @@ export function QuickCheck() {
                                 {addingClass ? (
                                     <Card className="flex flex-col gap-3 sm:flex-row glass border-white/60">
                                         <input
-                                            autoFocus
                                             value={newClassName}
                                             onChange={(e) => setNewClassName(e.target.value)}
-                                            placeholder="Nama Kelas (misal: Kelas 7A)"
+                                            placeholder={t.quickCheck.classNamePlaceholder}
+                                            aria-label={t.quickCheck.classNamePlaceholder}
                                             maxLength={50}
                                             className="h-12 flex-1 rounded-2xl border border-line px-4 outline-none focus:border-primary focus:ring-4 focus:ring-primary/15"
                                         />
                                         <div className="flex gap-2">
                                             <Button variant="ghost" onClick={() => setAddingClass(false)}>
-                                                Batal
+                                                {t.quickCheck.cancel}
                                             </Button>
-                                            <Button onClick={addClass}>Simpan Kelas</Button>
+                                            <Button disabled={savingTarget === "class"} onClick={addClass}>
+                                                {t.quickCheck.saveClass}
+                                            </Button>
                                         </div>
                                     </Card>
                                 ) : (
@@ -212,7 +245,7 @@ export function QuickCheck() {
                                         onClick={() => setAddingClass(true)}
                                         className="inline-flex cursor-pointer items-center gap-2 font-semibold text-primary hover:underline"
                                     >
-                                        <Plus size={16} aria-hidden="true" /> Tambah Kelas Baru
+                                        <Plus size={16} aria-hidden="true" /> {t.quickCheck.addClass}
                                     </button>
                                 )}
                             </div>
@@ -232,6 +265,7 @@ export function QuickCheck() {
                                             setSelectedCatId(c.id);
                                             setClarId(null);
                                         }}
+                                        aria-pressed={selectedCatId === c.id}
                                         className={choiceCls(selectedCatId === c.id)}
                                     >
                                         <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary-strong">
@@ -250,14 +284,14 @@ export function QuickCheck() {
                     {step === 2 && cat && (
                         <>
                             <h1 className="text-4xl font-bold">{t.quickCheck.step3Title}</h1>
-                            <div className="space-y-3" role="radiogroup" aria-label="Clarification">
+                            <fieldset className="m-0 space-y-3 border-0 p-0">
+                                <legend className="sr-only">{t.quickCheck.step3Title}</legend>
                                 {cat.clarifications.map((c) => (
                                     <button
                                         key={c.id}
                                         id={`clar-${c.id}`}
                                         type="button"
-                                        role="radio"
-                                        aria-checked={clarId === c.id}
+                                        aria-pressed={clarId === c.id}
                                         onClick={() => setClarId(c.id)}
                                         className={choiceCls(clarId === c.id)}
                                     >
@@ -269,7 +303,7 @@ export function QuickCheck() {
                                         <span className="text-lg font-medium">{c.label}</span>
                                     </button>
                                 ))}
-                            </div>
+                            </fieldset>
                         </>
                     )}
 

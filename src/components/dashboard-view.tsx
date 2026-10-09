@@ -72,11 +72,14 @@ export function DashboardView() {
         const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
         return top ? top[0] : null;
     })();
+    const needsReflection = plans?.filter((plan) => plan.status === "NEEDS_REFLECTION") ?? [];
 
     return (
         <div className="space-y-10">
             <section className="space-y-2">
-                <p className="text-muted">{greeting()}, {t.dashboard.teacher}.</p>
+                <p className="text-muted">
+                    {greeting()}, {t.dashboard.teacher}.
+                </p>
                 <h1 className="text-4xl font-bold sm:text-5xl">{t.dashboard.heading}</h1>
             </section>
 
@@ -121,6 +124,30 @@ export function DashboardView() {
                 ))}
             </section>
 
+            {needsReflection.length > 0 && (
+                <section className="space-y-4" aria-labelledby="ready-for-reflection">
+                    <div className="flex flex-wrap items-end justify-between gap-3">
+                        <div>
+                            <p className="text-sm font-semibold uppercase tracking-wider text-[#9a5612]">
+                                {t.dashboard.needsReflection}
+                            </p>
+                            <h2 id="ready-for-reflection" className="text-2xl font-bold">
+                                {t.dashboard.attentionTitle}
+                            </h2>
+                            <p className="text-muted">{t.dashboard.attentionDesc}</p>
+                        </div>
+                        <Link href="/action-plans" className="text-sm font-semibold text-primary hover:underline">
+                            {t.dashboard.viewAll}
+                        </Link>
+                    </div>
+                    <div className="grid gap-4 md:grid-cols-2">
+                        {needsReflection.slice(0, 2).map((p) => (
+                            <PlanCard key={p.id} plan={p} />
+                        ))}
+                    </div>
+                </section>
+            )}
+
             {topEffective && (
                 <Card className="flex flex-col gap-4 bg-success/10 border-success/20 glass sm:flex-row sm:items-center">
                     <span className="grid h-12 w-12 place-items-center rounded-full bg-success text-white">
@@ -131,9 +158,7 @@ export function DashboardView() {
                             {t.dashboard.mostEffective}
                         </p>
                         <p className="text-xl font-bold">{getIntervention(topEffective)?.title ?? topEffective}</p>
-                        <p className="text-muted text-sm">
-                            {t.dashboard.mostEffectiveDesc}
-                        </p>
+                        <p className="text-muted text-sm">{t.dashboard.mostEffectiveDesc}</p>
                     </div>
                 </Card>
             )}

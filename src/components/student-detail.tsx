@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, ArrowRight, Sparkles, UserRound, Users } from "lucide-react";
+import { AlertTriangle, Sparkles, UserRound, Users } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { PlanCard } from "@/components/plan-card";
@@ -18,7 +18,7 @@ interface Student {
 }
 
 export function StudentDetail({ id }: { id: string }) {
-    const { t, locale } = useLanguage();
+    const { t } = useLanguage();
     const [student, setStudent] = useState<Student | "general" | null>(null);
     const [plans, setPlans] = useState<PlanRow[] | null>(null);
 
@@ -89,7 +89,7 @@ export function StudentDetail({ id }: { id: string }) {
                             </p>
                         </div>
                     </div>
-                    <ButtonLink href={`/quick-check${!isGeneral ? "?student=" + id : ""}`}>
+                    <ButtonLink href={`/quick-check${!isGeneral ? `?student=${id}` : ""}`}>
                         {t.students.newQuickCheck}
                     </ButtonLink>
                 </div>
@@ -108,9 +108,7 @@ export function StudentDetail({ id }: { id: string }) {
 
                     <div className="space-y-6">
                         <Card className="space-y-4 glass border-white/60">
-                            <h3 className="text-lg font-bold">
-                                {t.students.barrierPatterns}
-                            </h3>
+                            <h3 className="text-lg font-bold">{t.students.barrierPatterns}</h3>
                             {topBarriers.length > 0 ? (
                                 <ul className="space-y-3">
                                     {topBarriers.map(([title, count]) => (
@@ -123,15 +121,13 @@ export function StudentDetail({ id }: { id: string }) {
                                     ))}
                                 </ul>
                             ) : (
-                                <p className="text-sm text-muted">No data yet.</p>
+                                <p className="text-sm text-muted">{t.students.noData}</p>
                             )}
                         </Card>
 
                         {(helpful > 0 || notHelpful > 0) && (
                             <Card className="space-y-4 glass border-white/60">
-                                <h3 className="text-lg font-bold">
-                                    {t.students.successRate}
-                                </h3>
+                                <h3 className="text-lg font-bold">{t.students.successRate}</h3>
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between text-sm">
                                         <span className="flex items-center gap-2 text-success font-semibold">
@@ -153,11 +149,9 @@ export function StudentDetail({ id }: { id: string }) {
             ) : (
                 <Card className="text-center space-y-4 p-10 glass border-white/60">
                     <h3 className="text-xl font-bold">{t.dashboard.noInterventions}</h3>
-                    <p className="text-muted">
-                        {t.students.noInterventions}
-                    </p>
+                    <p className="text-muted">{t.students.noInterventions}</p>
                     <div>
-                        <ButtonLink href={`/quick-check${!isGeneral ? "?student=" + id : ""}`}>
+                        <ButtonLink href={`/quick-check${!isGeneral ? `?student=${id}` : ""}`}>
                             {t.dashboard.btnStart}
                         </ButtonLink>
                     </div>

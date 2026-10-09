@@ -1,7 +1,7 @@
 "use client";
 
-import { Search, Plus, Trash2, Pencil } from "lucide-react";
-import { useEffect, useState, useMemo } from "react";
+import { Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -39,15 +39,15 @@ export function ClassesManager() {
     const [editingStudentId, setEditingStudentId] = useState<string | null>(null);
     const [editStudentName, setEditStudentName] = useState("");
 
-    const loadClasses = () => {
+    const loadClasses = useCallback(() => {
         api<Class[]>("/students/classes")
             .then(setClasses)
             .catch(() => setClasses([]));
-    };
+    }, []);
 
     useEffect(() => {
         loadClasses();
-    }, []);
+    }, [loadClasses]);
 
     const handleCreateClass = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -156,23 +156,23 @@ export function ClassesManager() {
 
             <Card className="glass border-white/60 p-6 space-y-4">
                 <form onSubmit={handleCreateClass} className="flex gap-2">
-                    <Input 
-                        placeholder={a.name} 
-                        value={newClassName} 
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewClassName(e.target.value)} 
+                    <Input
+                        placeholder={a.name}
+                        value={newClassName}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewClassName(e.target.value)}
                         maxLength={50}
-                        required 
+                        required
                     />
-                    <Button type="submit" disabled={isCreatingClass || !newClassName.trim()}>{a.addClass}</Button>
+                    <Button type="submit" disabled={isCreatingClass || !newClassName.trim()}>
+                        {a.addClass}
+                    </Button>
                 </form>
             </Card>
 
             {!filtered ? (
                 <div className="h-40 animate-pulse rounded-card bg-surface-2" />
             ) : filtered.length === 0 ? (
-                <Card className="glass border-white/60 p-10 text-center text-muted">
-                    {a.empty}
-                </Card>
+                <Card className="glass border-white/60 p-10 text-center text-muted">{a.empty}</Card>
             ) : (
                 <div className="grid gap-6 md:grid-cols-2">
                     {filtered.map((c) => (
@@ -182,26 +182,52 @@ export function ClassesManager() {
                                     <form onSubmit={(e) => handleEditClass(e, c.id)} className="flex gap-2 flex-1 mr-2">
                                         <Input
                                             value={editClassName}
-                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditClassName(e.target.value)}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                                setEditClassName(e.target.value)
+                                            }
                                             maxLength={50}
                                             required
                                             autoFocus
                                             className="h-8 text-sm"
                                         />
-                                        <Button size="sm" type="submit">{t.admin.save}</Button>
-                                        <Button size="sm" type="button" variant="ghost" onClick={() => setEditingClassId(null)}>{a.cancel}</Button>
+                                        <Button size="sm" type="submit">
+                                            {a.save}
+                                        </Button>
+                                        <Button
+                                            size="sm"
+                                            type="button"
+                                            variant="ghost"
+                                            onClick={() => setEditingClassId(null)}
+                                        >
+                                            {a.cancel}
+                                        </Button>
                                     </form>
                                 ) : (
                                     <>
                                         <div>
                                             <h3 className="font-bold text-lg">{c.name}</h3>
-                                            <p className="text-xs text-muted">{c.students.length} {a.students}</p>
+                                            <p className="text-xs text-muted">
+                                                {c.students.length} {a.students}
+                                            </p>
                                         </div>
                                         <div className="flex gap-1">
-                                            <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-muted" onClick={() => { setEditingClassId(c.id); setEditClassName(c.name); }}>
+                                            <Button
+                                                size="sm"
+                                                variant="ghost"
+                                                className="h-8 w-8 p-0 text-muted"
+                                                onClick={() => {
+                                                    setEditingClassId(c.id);
+                                                    setEditClassName(c.name);
+                                                }}
+                                            >
                                                 <Pencil size={14} />
                                             </Button>
-                                            <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-danger hover:bg-danger/10 hover:text-danger" onClick={() => handleDeleteClass(c.id)}>
+                                            <Button
+                                                size="sm"
+                                                variant="ghost"
+                                                className="h-8 w-8 p-0 text-danger hover:bg-danger/10 hover:text-danger"
+                                                onClick={() => handleDeleteClass(c.id)}
+                                            >
                                                 <Trash2 size={14} />
                                             </Button>
                                         </div>
@@ -212,28 +238,57 @@ export function ClassesManager() {
                                 {c.students.length > 0 ? (
                                     <ul className="space-y-2 mb-4">
                                         {c.students.map((st) => (
-                                            <li key={st.id} className="text-sm font-medium px-3 py-1.5 bg-surface rounded-md border border-line/50 text-foreground flex items-center justify-between group">
+                                            <li
+                                                key={st.id}
+                                                className="text-sm font-medium px-3 py-1.5 bg-surface rounded-md border border-line/50 text-foreground flex items-center justify-between group"
+                                            >
                                                 {editingStudentId === st.id ? (
-                                                    <form onSubmit={(e) => handleEditStudent(e, st.id)} className="flex gap-2 flex-1">
+                                                    <form
+                                                        onSubmit={(e) => handleEditStudent(e, st.id)}
+                                                        className="flex gap-2 flex-1"
+                                                    >
                                                         <Input
                                                             value={editStudentName}
-                                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditStudentName(e.target.value)}
+                                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                                                setEditStudentName(e.target.value)
+                                                            }
                                                             maxLength={50}
                                                             required
                                                             autoFocus
                                                             className="h-7 text-sm py-1"
                                                         />
-                                                        <Button size="sm" type="submit" className="h-7 text-xs">{t.admin.save}</Button>
-                                                        <Button size="sm" type="button" variant="ghost" className="h-7 text-xs" onClick={() => setEditingStudentId(null)}>{a.cancel}</Button>
+                                                        <Button size="sm" type="submit" className="h-7 text-xs">
+                                                            {a.save}
+                                                        </Button>
+                                                        <Button
+                                                            size="sm"
+                                                            type="button"
+                                                            variant="ghost"
+                                                            className="h-7 text-xs"
+                                                            onClick={() => setEditingStudentId(null)}
+                                                        >
+                                                            {a.cancel}
+                                                        </Button>
                                                     </form>
                                                 ) : (
                                                     <>
                                                         <span>{st.name}</span>
                                                         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                            <button type="button" className="text-muted hover:text-foreground p-1 rounded" onClick={() => { setEditingStudentId(st.id); setEditStudentName(st.name); }}>
+                                                            <button
+                                                                type="button"
+                                                                className="text-muted hover:text-foreground p-1 rounded"
+                                                                onClick={() => {
+                                                                    setEditingStudentId(st.id);
+                                                                    setEditStudentName(st.name);
+                                                                }}
+                                                            >
                                                                 <Pencil size={12} />
                                                             </button>
-                                                            <button type="button" className="text-danger hover:text-danger p-1 rounded" onClick={() => handleDeleteStudent(st.id)}>
+                                                            <button
+                                                                type="button"
+                                                                className="text-danger hover:text-danger p-1 rounded"
+                                                                onClick={() => handleDeleteStudent(st.id)}
+                                                            >
                                                                 <Trash2 size={12} />
                                                             </button>
                                                         </div>
@@ -248,16 +303,30 @@ export function ClassesManager() {
 
                                 {addingToClassId === c.id ? (
                                     <form onSubmit={(e) => handleAddStudent(e, c.id)} className="flex gap-2">
-                                        <Input 
-                                            placeholder={a.studentName} 
-                                            value={newStudentName} 
-                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewStudentName(e.target.value)} 
+                                        <Input
+                                            placeholder={a.studentName}
+                                            value={newStudentName}
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                                setNewStudentName(e.target.value)
+                                            }
                                             maxLength={50}
-                                            required 
+                                            required
                                             autoFocus
                                         />
-                                        <Button size="sm" type="submit" disabled={!newStudentName.trim()}>{a.addStudent}</Button>
-                                        <Button size="sm" type="button" variant="ghost" onClick={() => { setAddingToClassId(null); setNewStudentName(""); }}>{a.cancel}</Button>
+                                        <Button size="sm" type="submit" disabled={!newStudentName.trim()}>
+                                            {a.addStudent}
+                                        </Button>
+                                        <Button
+                                            size="sm"
+                                            type="button"
+                                            variant="ghost"
+                                            onClick={() => {
+                                                setAddingToClassId(null);
+                                                setNewStudentName("");
+                                            }}
+                                        >
+                                            {a.cancel}
+                                        </Button>
                                     </form>
                                 ) : (
                                     <Button size="sm" variant="soft" onClick={() => setAddingToClassId(c.id)}>

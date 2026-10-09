@@ -12,7 +12,7 @@ import { useKnowledge } from "@/lib/knowledge-context";
 
 export function NewActionPlan() {
     const router = useRouter();
-    const { t, locale } = useLanguage();
+    const { t } = useLanguage();
     const { getClarification, getIntervention } = useKnowledge();
     const sp = useSearchParams();
     const cat = sp.get("cat") ?? "";
@@ -27,6 +27,7 @@ export function NewActionPlan() {
     const [goal, setGoal] = useState("");
     const [timing, setTiming] = useState(t.actionPlan.timings[0]);
     const [saving, setSaving] = useState(false);
+    const [starting, setStarting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [saved, setSaved] = useState<PlanRow | null>(null);
 
@@ -44,7 +45,7 @@ export function NewActionPlan() {
     if (!clar || !iv)
         return (
             <Card className="mx-auto max-w-xl text-center glass border-white/60">
-                <h1 className="text-2xl font-bold">Missing context. Start from Quick Check.</h1>
+                <h1 className="text-2xl font-bold">{t.actionPlan.missingContext}</h1>
             </Card>
         );
 
@@ -83,20 +84,35 @@ export function NewActionPlan() {
                 <div className="space-y-1 text-muted">
                     <p className="font-semibold text-foreground">{studentLabel}</p>
                     <p>{iv.title}</p>
-                    <p>Status: {t.actionPlan.statusPlanned}</p>
+                    <p>
+                        {t.actionPlan.currentStatus}: {t.actionPlan.statusPlanned}
+                    </p>
                 </div>
+                {error && (
+                    <p role="alert" className="rounded-xl bg-[#fbe9e7] px-4 py-3 text-sm text-danger">
+                        {error}
+                    </p>
+                )}
                 <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
                     <Button
                         id="btn-start-intervention"
                         onClick={async () => {
-                            await api(`/action-plans/${saved.id}/status`, {
-                                method: "PATCH",
-                                body: JSON.stringify({ status: "IN_PROGRESS" }),
-                            });
-                            router.push(`/action-plans/${saved.id}`);
+                            setStarting(true);
+                            try {
+                                await api(`/action-plans/${saved.id}/status`, {
+                                    method: "PATCH",
+                                    body: JSON.stringify({ status: "IN_PROGRESS" }),
+                                });
+                                router.push(`/action-plans/${saved.id}`);
+                            } catch (e) {
+                                setError((e as Error).message);
+                            } finally {
+                                setStarting(false);
+                            }
                         }}
+                        disabled={starting}
                     >
-                        {t.actionPlan.btnStartIntervention}
+                        {starting ? t.actionPlan.startingIntervention : t.actionPlan.btnStartIntervention}
                     </Button>
                     <Button variant="outline" onClick={() => router.push("/dashboard")}>
                         {t.actionPlan.btnBackDashboard}
@@ -133,8 +149,15 @@ export function NewActionPlan() {
                         rows={3}
                         maxLength={300}
                         placeholder={t.actionPlan.goalPlaceholder}
+                        aria-describedby="goal-hint goal-count"
                         className="w-full rounded-2xl border border-line bg-surface/80 glass p-4 text-base outline-none focus:border-primary focus:ring-4 focus:ring-primary/15"
                     />
+                    <div className="flex items-center justify-between gap-3 text-sm text-muted">
+                        <p id="goal-hint">{t.actionPlan.goalHint}</p>
+                        <p id="goal-count" aria-live="polite">
+                            {goal.length}/300
+                        </p>
+                    </div>
                 </div>
                 <div className="space-y-2">
                     <label htmlFor="timing" className="font-semibold">

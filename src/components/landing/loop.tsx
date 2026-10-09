@@ -22,7 +22,7 @@ function useSteps() {
 
 /** Mock product screens rendered for each loop step. */
 function StepVisual({ index }: { index: number }) {
-    const { t } = useLanguage();
+    const { t, locale } = useLanguage();
     const { categories, getIntervention } = useKnowledge();
     const cat = categories[1] ?? categories[0];
     const clar = cat?.clarifications.slice(0, 3) ?? [];
@@ -31,9 +31,7 @@ function StepVisual({ index }: { index: number }) {
     const header = (label: string) => (
         <div className="mb-5 flex items-center justify-between">
             <p className="text-xs font-semibold uppercase tracking-widest text-white/50">{label}</p>
-            <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">
-                {t.landing.loopMock.class}
-            </span>
+            <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">{t.landing.loopMock.class}</span>
         </div>
     );
 
@@ -41,9 +39,7 @@ function StepVisual({ index }: { index: number }) {
         return (
             <div>
                 {header(t.landing.loopMock.step1)}
-                <p className="font-display text-2xl font-semibold">
-                    {t.landing.loopMock.step1Title}
-                </p>
+                <p className="font-display text-2xl font-semibold">{t.landing.loopMock.step1Title}</p>
                 <div className="mt-6 grid gap-2.5">
                     {categories.map((c, i) => (
                         <motion.div
@@ -68,9 +64,7 @@ function StepVisual({ index }: { index: number }) {
         return (
             <div>
                 {header(t.landing.loopMock.step2)}
-                <p className="font-display text-2xl font-semibold">
-                    {t.landing.loopMock.step2Title}
-                </p>
+                <p className="font-display text-2xl font-semibold">{t.landing.loopMock.step2Title}</p>
                 <div className="mt-6 space-y-2.5">
                     {clar.map((c, i) => (
                         <motion.div
@@ -135,9 +129,7 @@ function StepVisual({ index }: { index: number }) {
     return (
         <div>
             {header(t.landing.loopMock.step4)}
-            <p className="font-display text-2xl font-semibold">
-                {t.landing.loopMock.step4Title}
-            </p>
+            <p className="font-display text-2xl font-semibold">{t.landing.loopMock.step4Title}</p>
             <div className="mt-6 grid grid-cols-3 gap-2.5">
                 {options.map((o, i) => (
                     <motion.div
@@ -159,7 +151,7 @@ function StepVisual({ index }: { index: number }) {
                 transition={{ delay: 0.3 }}
                 className="mt-5 rounded-2xl bg-white/5 p-4 text-sm text-white/75"
             >
-                {id
+                {locale === "id"
                     ? "“Raka mulai menulis 3 kalimat utuh setelah memakai peta konsep.”"
                     : "“Raka wrote three full sentences after using the concept map.”"}
             </motion.div>

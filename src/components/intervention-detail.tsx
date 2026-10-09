@@ -20,7 +20,7 @@ export function InterventionDetail({ slug }: { slug: string }) {
     if (!iv)
         return (
             <Card className="mx-auto max-w-xl text-center glass border-white/60">
-                <h1 className="text-2xl font-bold">Strategy not found</h1>
+                <h1 className="text-2xl font-bold">{t.interventionDetail.notFound}</h1>
             </Card>
         );
     const category = getCategory(iv.category);

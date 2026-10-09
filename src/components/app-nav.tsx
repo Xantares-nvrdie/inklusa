@@ -23,9 +23,9 @@ export function AppNav({ name }: { name: string }) {
 
     return (
         <header className="sticky top-0 z-40 border-b border-line/70 glass">
-            <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
+            <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-5">
                 <Logo href="/dashboard" />
-                <nav className="flex items-center gap-1" aria-label="App">
+                <nav className="hidden items-center gap-1 md:flex" aria-label="App">
                     {links.map(({ href, label, Icon }) => {
                         const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
                         return (
@@ -47,7 +47,7 @@ export function AppNav({ name }: { name: string }) {
                         );
                     })}
                 </nav>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                     <LanguageSwitcher />
                     <span className="hidden text-sm text-muted md:inline">{name}</span>
                     <button
@@ -66,6 +66,30 @@ export function AppNav({ name }: { name: string }) {
                     </button>
                 </div>
             </div>
+            <nav
+                className="fixed inset-x-3 bottom-3 z-50 grid grid-cols-4 rounded-2xl border border-line/70 bg-surface/95 p-1.5 shadow-lift backdrop-blur md:hidden"
+                aria-label="App"
+            >
+                {links.map(({ href, label, Icon }) => {
+                    const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
+                    return (
+                        <Link
+                            key={href}
+                            href={href}
+                            aria-current={active ? "page" : undefined}
+                            className={cn(
+                                "flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl px-1 text-[11px] font-semibold leading-tight transition-colors",
+                                active
+                                    ? "bg-primary-soft text-primary-strong"
+                                    : "text-muted hover:bg-surface-2 hover:text-foreground",
+                            )}
+                        >
+                            <Icon size={18} aria-hidden="true" />
+                            <span className="max-w-full truncate">{label}</span>
+                        </Link>
+                    );
+                })}
+            </nav>
         </header>
     );
 }

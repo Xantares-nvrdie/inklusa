@@ -1,6 +1,6 @@
 "use client";
 
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { CategoryIcon } from "@/components/category-icon";
@@ -14,9 +14,13 @@ export function Library() {
     const [q, setQ] = useState("");
     const [cat, setCat] = useState<string | null>(null);
 
-    const list = interventions.filter(
-        (i) => (!cat || i.category === cat) && (i.title + i.summary).toLowerCase().includes(q.toLowerCase()),
-    );
+    const list = interventions.filter((i) => {
+        const category = categories.find((c) => c.id === i.category);
+        const searchable = [i.title, i.summary, i.why, i.observe, i.steps.join(" "), category?.title ?? ""]
+            .join(" ")
+            .toLowerCase();
+        return (!cat || i.category === cat) && searchable.includes(q.trim().toLowerCase());
+    });
 
     return (
         <div className="space-y-8">
@@ -32,16 +36,29 @@ export function Library() {
                     value={q}
                     onChange={(e) => setQ(e.target.value)}
                     placeholder={t.library.searchPlaceholder}
-                    aria-label="Search interventions"
-                    className="h-14 w-full rounded-2xl border border-line bg-surface/80 glass pl-12 pr-4 text-base outline-none focus:border-primary focus:ring-4 focus:ring-primary/15"
+                    aria-label={t.library.searchLabel}
+                    className="h-14 w-full rounded-2xl border border-line bg-surface/80 glass pl-12 pr-12 text-base outline-none focus:border-primary focus:ring-4 focus:ring-primary/15"
                 />
+                {q && (
+                    <button
+                        type="button"
+                        onClick={() => setQ("")}
+                        className="absolute right-3 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-xl text-muted hover:bg-surface-2 hover:text-foreground"
+                        aria-label={t.library.clearSearch}
+                        title={t.library.clearSearch}
+                    >
+                        <X size={18} aria-hidden="true" />
+                    </button>
+                )}
             </div>
 
-            <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by category">
+            <fieldset className="m-0 flex flex-wrap items-center gap-2 border-0 p-0">
+                <legend className="sr-only">{t.library.filterLabel}</legend>
                 <button
                     id="filter-all"
                     type="button"
                     onClick={() => setCat(null)}
+                    aria-pressed={!cat}
                     className={`cursor-pointer rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${!cat ? "border-primary bg-primary text-white" : "glass border-line bg-surface/80 hover:border-primary"}`}
                 >
                     {t.library.all}
@@ -52,12 +69,26 @@ export function Library() {
                         id={`filter-${c.id.toLowerCase()}`}
                         type="button"
                         onClick={() => setCat(c.id)}
+                        aria-pressed={cat === c.id}
                         className={`inline-flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${cat === c.id ? "border-primary bg-primary text-white" : "glass border-line bg-surface/80 hover:border-primary"}`}
                     >
                         <CategoryIcon icon={c.icon} size={14} /> {c.title}
                     </button>
                 ))}
-            </div>
+                {cat && (
+                    <button
+                        type="button"
+                        onClick={() => setCat(null)}
+                        className="inline-flex items-center gap-1 rounded-full px-3 py-2 text-sm font-semibold text-muted hover:bg-surface-2 hover:text-foreground"
+                    >
+                        <X size={15} aria-hidden="true" /> {t.library.clearFilter}
+                    </button>
+                )}
+            </fieldset>
+
+            <p className="-mt-4 text-sm font-medium text-muted" aria-live="polite">
+                {t.library.resultCount(list.length)}
+            </p>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {list.map((i) => {
@@ -78,7 +109,9 @@ export function Library() {
                     );
                 })}
             </div>
-            {list.length === 0 && <p className="text-muted">{t.library.noMatch}</p>}
+            {list.length === 0 && (
+                <Card className="border-dashed bg-surface/50 py-10 text-center text-muted">{t.library.noMatch}</Card>
+            )}
         </div>
     );
 }

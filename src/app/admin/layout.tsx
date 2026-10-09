@@ -12,7 +12,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div className="bg-canvas relative min-h-screen overflow-x-hidden">
             <div className="bg-grid pointer-events-none absolute inset-0 -z-10" aria-hidden="true" />
             <AdminNav name={session.user.name} />
-            <main className="mx-auto w-full max-w-6xl px-5 py-10 relative z-10">{children}</main>
+            <main className="relative z-10 mx-auto w-full max-w-6xl px-5 py-10 pb-28 md:pb-10">{children}</main>
         </div>
     );
 }
