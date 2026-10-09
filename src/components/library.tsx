@@ -52,7 +52,7 @@ export function Library() {
                 )}
             </div>
 
-            <div className="space-y-3">
+            <div>
                 <fieldset className="m-0 flex flex-wrap items-center gap-2 border-0 p-0">
                     <legend className="sr-only">{t.library.filterLabel}</legend>
                     <button
@@ -87,7 +87,7 @@ export function Library() {
                     )}
                 </fieldset>
 
-                <p className="text-sm font-medium text-muted" aria-live="polite">
+                <p className="text-sm font-medium text-muted mt-6 mb-2 ml-1" aria-live="polite">
                     {t.library.resultCount(list.length)}
                 </p>
             </div>
