@@ -42,7 +42,7 @@ export function Library() {
                     id="filter-all"
                     type="button"
                     onClick={() => setCat(null)}
-                    className={`cursor-pointer rounded-full border px-4 py-2 text-sm font-semibold transition-colors glass ${!cat ? "border-primary bg-primary text-white" : "border-line bg-surface/80 hover:border-primary"}`}
+                    className={`cursor-pointer rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${!cat ? "border-primary bg-primary text-white" : "glass border-line bg-surface/80 hover:border-primary"}`}
                 >
                     {t.library.all}
                 </button>
@@ -52,7 +52,7 @@ export function Library() {
                         id={`filter-${c.id.toLowerCase()}`}
                         type="button"
                         onClick={() => setCat(c.id)}
-                        className={`inline-flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors glass ${cat === c.id ? "border-primary bg-primary text-white" : "border-line bg-surface/80 hover:border-primary"}`}
+                        className={`inline-flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${cat === c.id ? "border-primary bg-primary text-white" : "glass border-line bg-surface/80 hover:border-primary"}`}
                     >
                         <CategoryIcon icon={c.icon} size={14} /> {c.title}
                     </button>
