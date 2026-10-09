@@ -22,9 +22,8 @@ function useSteps() {
 
 /** Mock product screens rendered for each loop step. */
 function StepVisual({ index }: { index: number }) {
-    const { locale } = useLanguage();
+    const { t } = useLanguage();
     const { categories, getIntervention } = useKnowledge();
-    const id = locale === "id";
     const cat = categories[1] ?? categories[0];
     const clar = cat?.clarifications.slice(0, 3) ?? [];
     const sample = getIntervention("graphic-organizer");
@@ -33,7 +32,7 @@ function StepVisual({ index }: { index: number }) {
         <div className="mb-5 flex items-center justify-between">
             <p className="text-xs font-semibold uppercase tracking-widest text-white/50">{label}</p>
             <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">
-                {id ? "Kelas 5A · Raka" : "Class 5A · Raka"}
+                {t.landing.loopMock.class}
             </span>
         </div>
     );
@@ -41,9 +40,9 @@ function StepVisual({ index }: { index: number }) {
     if (index === 0) {
         return (
             <div>
-                {header(id ? "Langkah 1 · Amati" : "Step 1 · Observe")}
+                {header(t.landing.loopMock.step1)}
                 <p className="font-display text-2xl font-semibold">
-                    {id ? "Hambatan apa yang Anda lihat?" : "What barrier do you see?"}
+                    {t.landing.loopMock.step1Title}
                 </p>
                 <div className="mt-6 grid gap-2.5">
                     {categories.map((c, i) => (
@@ -68,9 +67,9 @@ function StepVisual({ index }: { index: number }) {
     if (index === 1) {
         return (
             <div>
-                {header(id ? "Langkah 2 · Pahami" : "Step 2 · Understand")}
+                {header(t.landing.loopMock.step2)}
                 <p className="font-display text-2xl font-semibold">
-                    {id ? "Seperti apa hambatannya terlihat?" : "What does it look like?"}
+                    {t.landing.loopMock.step2Title}
                 </p>
                 <div className="mt-6 space-y-2.5">
                     {clar.map((c, i) => (
@@ -107,9 +106,9 @@ function StepVisual({ index }: { index: number }) {
     if (index === 2) {
         return (
             <div>
-                {header(id ? "Langkah 3 · Tindakan" : "Step 3 · Act")}
+                {header(t.landing.loopMock.step3)}
                 <p className="text-xs font-semibold uppercase tracking-widest text-[#7fd1c4]">
-                    {id ? "Strategi yang disarankan" : "Suggested strategy"}
+                    {t.landing.loopMock.suggestedStrategy}
                 </p>
                 <p className="mt-2 font-display text-2xl font-semibold">{sample?.title}</p>
                 <p className="mt-3 line-clamp-2 text-sm text-white/65">{sample?.why}</p>
@@ -132,12 +131,12 @@ function StepVisual({ index }: { index: number }) {
             </div>
         );
     }
-    const options = id ? ["Membantu", "Sebagian", "Belum"] : ["Helped", "Partly", "Not yet"];
+    const options = t.landing.loopMock.reflectOptions;
     return (
         <div>
-            {header(id ? "Langkah 4 · Refleksi" : "Step 4 · Reflect")}
+            {header(t.landing.loopMock.step4)}
             <p className="font-display text-2xl font-semibold">
-                {id ? "Apakah strategi ini membantu?" : "Did this support help?"}
+                {t.landing.loopMock.step4Title}
             </p>
             <div className="mt-6 grid grid-cols-3 gap-2.5">
                 {options.map((o, i) => (

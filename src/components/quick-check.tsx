@@ -46,11 +46,7 @@ export function QuickCheck() {
     const cat = categories.find((c) => c.id === selectedCatId);
     const clar = cat?.clarifications.find((c) => c.id === clarId);
 
-    const stepsLabels = [
-        locale === "id" ? "Siswa" : "Student",
-        locale === "id" ? "Pengamatan" : "Observation",
-        locale === "id" ? "Klarifikasi" : "Clarify",
-    ];
+    const stepsLabels = t.quickCheck.steps;
 
     useEffect(() => {
         api<ClassData[]>("/students/classes")

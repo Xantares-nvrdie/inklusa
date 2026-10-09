@@ -19,8 +19,7 @@ interface BrowseResult {
 }
 
 export function MyInterventions() {
-    const { t, locale } = useLanguage();
-    const id = locale === "id";
+    const { t } = useLanguage();
     const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
     const [data, setData] = useState<BrowseResult | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -125,7 +124,7 @@ export function MyInterventions() {
                         disabled={!plans || plans.length === 0}
                         className="px-4 py-2 font-semibold text-sm border border-line rounded-xl hover:border-primary transition-colors disabled:opacity-50"
                     >
-                        Export CSV
+                        {t.myInterventions.exportCSV}
                     </button>
                     <ButtonLink id="btn-new-quick-check" href="/quick-check">
                         {t.myInterventions.btnNew}
@@ -147,25 +146,25 @@ export function MyInterventions() {
             </div>
             <div className="flex flex-wrap items-end gap-3">
                 <label className="flex min-w-52 flex-1 flex-col gap-1 text-xs font-semibold text-muted">
-                    {id ? "Cari siswa" : "Search student"}
+                    {t.myInterventions.searchStudent}
                     <input
                         id="filter-search"
                         type="search"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        placeholder={id ? "Nama siswa…" : "Student name…"}
+                        placeholder={t.myInterventions.searchStudentPlaceholder}
                         className={inputCls}
                     />
                 </label>
                 <label className="flex flex-col gap-1 text-xs font-semibold text-muted">
-                    {id ? "Guru" : "Teacher"}
+                    {t.myInterventions.teacher}
                     <select
                         id="filter-teacher"
                         value={teacher}
                         onChange={(e) => setTeacher(e.target.value)}
                         className={inputCls}
                     >
-                        <option value="">{id ? "Semua guru" : "All teachers"}</option>
+                        <option value="">{t.myInterventions.allTeachers}</option>
                         {teachers.map((tc) => (
                             <option key={tc.id} value={tc.id}>
                                 {tc.name}
@@ -174,7 +173,7 @@ export function MyInterventions() {
                     </select>
                 </label>
                 <label className="flex flex-col gap-1 text-xs font-semibold text-muted">
-                    {id ? "Dari tanggal" : "From date"}
+                    {t.myInterventions.fromDate}
                     <input
                         id="filter-from"
                         type="date"
@@ -185,7 +184,7 @@ export function MyInterventions() {
                     />
                 </label>
                 <label className="flex flex-col gap-1 text-xs font-semibold text-muted">
-                    {id ? "Sampai tanggal" : "To date"}
+                    {t.myInterventions.toDate}
                     <input
                         id="filter-to"
                         type="date"
@@ -201,7 +200,7 @@ export function MyInterventions() {
                         onClick={resetFilters}
                         className="cursor-pointer rounded-xl border border-line px-4 py-2 text-sm font-semibold hover:border-primary"
                     >
-                        {id ? "Reset" : "Reset"}
+                        {t.myInterventions.reset}
                     </button>
                 )}
             </div>
@@ -220,9 +219,7 @@ export function MyInterventions() {
             {data && data.total > 0 && (
                 <nav className="flex flex-wrap items-center justify-between gap-3" aria-label="Pagination">
                     <p className="text-sm text-muted">
-                        {id
-                            ? `Menampilkan ${(page - 1) * data.pageSize + 1}–${Math.min(page * data.pageSize, data.total)} dari ${data.total}`
-                            : `Showing ${(page - 1) * data.pageSize + 1}–${Math.min(page * data.pageSize, data.total)} of ${data.total}`}
+                        {t.myInterventions.showingTotal((page - 1) * data.pageSize + 1, page * data.pageSize, data.total)}
                     </p>
                     <div className="flex items-center gap-2">
                         <button
@@ -232,7 +229,7 @@ export function MyInterventions() {
                             onClick={() => setPage((p) => p - 1)}
                             className="cursor-pointer rounded-xl border border-line px-4 py-2 text-sm font-semibold hover:border-primary disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                            {id ? "Sebelumnya" : "Previous"}
+                            {t.myInterventions.previous}
                         </button>
                         <span className="text-sm font-semibold">
                             {page} / {totalPages}
@@ -244,7 +241,7 @@ export function MyInterventions() {
                             onClick={() => setPage((p) => p + 1)}
                             className="cursor-pointer rounded-xl border border-line px-4 py-2 text-sm font-semibold hover:border-primary disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                            {id ? "Berikutnya" : "Next"}
+                            {t.myInterventions.next}
                         </button>
                     </div>
                 </nav>

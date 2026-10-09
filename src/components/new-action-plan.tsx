@@ -83,7 +83,7 @@ export function NewActionPlan() {
                 <div className="space-y-1 text-muted">
                     <p className="font-semibold text-foreground">{studentLabel}</p>
                     <p>{iv.title}</p>
-                    <p>Status: {locale === "id" ? "Direncanakan" : "Planned"}</p>
+                    <p>Status: {t.actionPlan.statusPlanned}</p>
                 </div>
                 <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
                     <Button

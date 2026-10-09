@@ -96,7 +96,7 @@ export function LandingSupports() {
                                 <p className="mt-3 line-clamp-4 text-muted">{c.description}</p>
                                 <div className="mt-auto flex items-center justify-between border-t border-foreground/10 pt-5">
                                     <span className="text-sm font-semibold">
-                                        {count} {locale === "id" ? "strategi" : count === 1 ? "strategy" : "strategies"}
+                                        {t.landing.strategyCount(count)}
                                     </span>
                                     <span className="grid h-9 w-9 place-items-center rounded-full bg-surface text-foreground shadow-soft transition-transform duration-300 group-hover:translate-x-1">
                                         <ArrowRight size={16} aria-hidden="true" />

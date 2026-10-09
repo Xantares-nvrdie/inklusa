@@ -76,7 +76,7 @@ export function DashboardView() {
     return (
         <div className="space-y-10">
             <section className="space-y-2">
-                <p className="text-muted">{greeting()}, Teacher.</p>
+                <p className="text-muted">{greeting()}, {t.dashboard.teacher}.</p>
                 <h1 className="text-4xl font-bold sm:text-5xl">{t.dashboard.heading}</h1>
             </section>
 
@@ -90,7 +90,7 @@ export function DashboardView() {
                 <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                     <div className="space-y-2">
                         <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-sm font-semibold">
-                            <Plus size={14} aria-hidden="true" /> Quick Check
+                            <Plus size={14} aria-hidden="true" /> {t.dashboard.quickCheckBadge}
                         </span>
                         <h2 className="text-3xl font-bold sm:text-4xl">{t.dashboard.startQuickCheck}</h2>
                         <p className="max-w-md text-white/80">{t.dashboard.quickCheckDesc}</p>
@@ -128,11 +128,11 @@ export function DashboardView() {
                     </span>
                     <div>
                         <p className="text-sm font-semibold uppercase tracking-wider text-success">
-                            Your Most Effective Strategy
+                            {t.dashboard.mostEffective}
                         </p>
                         <p className="text-xl font-bold">{getIntervention(topEffective)?.title ?? topEffective}</p>
                         <p className="text-muted text-sm">
-                            Based on your past reflections, this strategy has been helpful multiple times.
+                            {t.dashboard.mostEffectiveDesc}
                         </p>
                     </div>
                 </Card>

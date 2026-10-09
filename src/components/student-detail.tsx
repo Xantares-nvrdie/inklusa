@@ -68,7 +68,7 @@ export function StudentDetail({ id }: { id: string }) {
         <div className="mx-auto max-w-4xl space-y-8">
             <div className="space-y-6">
                 <Link href="/students" className="text-sm font-medium text-muted hover:text-foreground">
-                    {locale === "id" ? "← Semua Siswa" : "← All Students"}
+                    {t.students.allStudents}
                 </Link>
 
                 <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
@@ -84,15 +84,13 @@ export function StudentDetail({ id }: { id: string }) {
                                 {isGeneral
                                     ? t.quickCheck.generalClassroomDesc
                                     : className
-                                      ? `${className} • ${locale === "id" ? "Profil Siswa" : "Student Profile"}`
-                                      : locale === "id"
-                                        ? "Profil Siswa"
-                                        : "Student Profile"}
+                                      ? `${className} • ${t.students.studentProfile}`
+                                      : t.students.studentProfile}
                             </p>
                         </div>
                     </div>
                     <ButtonLink href={`/quick-check${!isGeneral ? "?student=" + id : ""}`}>
-                        {locale === "id" ? "+ Pengecekan Baru" : "+ New Quick Check"}
+                        {t.students.newQuickCheck}
                     </ButtonLink>
                 </div>
             </div>
@@ -111,7 +109,7 @@ export function StudentDetail({ id }: { id: string }) {
                     <div className="space-y-6">
                         <Card className="space-y-4 glass border-white/60">
                             <h3 className="text-lg font-bold">
-                                {locale === "id" ? "Pola Hambatan" : "Barrier Patterns"}
+                                {t.students.barrierPatterns}
                             </h3>
                             {topBarriers.length > 0 ? (
                                 <ul className="space-y-3">
@@ -132,18 +130,18 @@ export function StudentDetail({ id }: { id: string }) {
                         {(helpful > 0 || notHelpful > 0) && (
                             <Card className="space-y-4 glass border-white/60">
                                 <h3 className="text-lg font-bold">
-                                    {locale === "id" ? "Tingkat Keberhasilan" : "Success Rate"}
+                                    {t.students.successRate}
                                 </h3>
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between text-sm">
                                         <span className="flex items-center gap-2 text-success font-semibold">
-                                            <Sparkles size={16} /> {locale === "id" ? "Membantu" : "Helpful"}
+                                            <Sparkles size={16} /> {t.students.helpful}
                                         </span>
                                         <span className="font-bold">{helpful}</span>
                                     </div>
                                     <div className="flex items-center justify-between text-sm">
                                         <span className="flex items-center gap-2 text-[#9a5612] font-semibold">
-                                            <AlertTriangle size={16} /> {locale === "id" ? "Terbatas" : "Limited"}
+                                            <AlertTriangle size={16} /> {t.students.limited}
                                         </span>
                                         <span className="font-bold">{notHelpful}</span>
                                     </div>
@@ -156,9 +154,7 @@ export function StudentDetail({ id }: { id: string }) {
                 <Card className="text-center space-y-4 p-10 glass border-white/60">
                     <h3 className="text-xl font-bold">{t.dashboard.noInterventions}</h3>
                     <p className="text-muted">
-                        {locale === "id"
-                            ? "Belum ada intervensi untuk siswa ini."
-                            : "No interventions recorded for this student yet."}
+                        {t.students.noInterventions}
                     </p>
                     <div>
                         <ButtonLink href={`/quick-check${!isGeneral ? "?student=" + id : ""}`}>

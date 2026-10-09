@@ -188,7 +188,7 @@ export function ClassesManager() {
                                             autoFocus
                                             className="h-8 text-sm"
                                         />
-                                        <Button size="sm" type="submit">{locale === "id" ? "Simpan" : "Save"}</Button>
+                                        <Button size="sm" type="submit">{t.admin.save}</Button>
                                         <Button size="sm" type="button" variant="ghost" onClick={() => setEditingClassId(null)}>{a.cancel}</Button>
                                     </form>
                                 ) : (
@@ -223,7 +223,7 @@ export function ClassesManager() {
                                                             autoFocus
                                                             className="h-7 text-sm py-1"
                                                         />
-                                                        <Button size="sm" type="submit" className="h-7 text-xs">{locale === "id" ? "Simpan" : "Save"}</Button>
+                                                        <Button size="sm" type="submit" className="h-7 text-xs">{t.admin.save}</Button>
                                                         <Button size="sm" type="button" variant="ghost" className="h-7 text-xs" onClick={() => setEditingStudentId(null)}>{a.cancel}</Button>
                                                     </form>
                                                 ) : (

@@ -31,9 +31,9 @@ export function StudentList() {
     return (
         <div className="space-y-8">
             <div className="flex flex-wrap items-end justify-between gap-4">
-                <h1 className="text-4xl font-bold">{locale === "id" ? "Siswa / Kelas" : "Students / Classes"}</h1>
+                <h1 className="text-4xl font-bold">{t.students.title}</h1>
                 <div className="flex gap-3">
-                    <ButtonLink href="/students/manage" variant="soft">{locale === "id" ? "Kelola Kelas" : "Manage Classes"}</ButtonLink>
+                    <ButtonLink href="/students/manage" variant="soft">{t.students.manageClasses}</ButtonLink>
                     <ButtonLink href="/quick-check">{t.myInterventions.btnNew}</ButtonLink>
                 </div>
             </div>
@@ -52,7 +52,7 @@ export function StudentList() {
                                 <p className="text-muted">{t.quickCheck.generalClassroomDesc}</p>
                             </div>
                             <p className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
-                                {locale === "id" ? "Lihat riwayat umum" : "View general history"}
+                                {t.students.viewGeneralHistory}
                                 <ArrowRight size={14} aria-hidden="true" />
                             </p>
                         </Card>
@@ -72,10 +72,10 @@ export function StudentList() {
                                             </span>
                                             <div>
                                                 <h3 className="text-xl font-bold">{s.name}</h3>
-                                                <p className="text-muted">{locale === "id" ? "Siswa" : "Student"}</p>
+                                                <p className="text-muted">{t.students.student}</p>
                                             </div>
                                             <p className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
-                                                {locale === "id" ? "Lihat profil" : "View profile"}
+                                                {t.students.viewProfile}
                                                 <ArrowRight size={14} aria-hidden="true" />
                                             </p>
                                         </Card>
@@ -83,9 +83,7 @@ export function StudentList() {
                                 ))}
                                 {c.students.length === 0 && (
                                     <p className="text-muted col-span-full">
-                                        {locale === "id"
-                                            ? "Belum ada siswa di kelas ini."
-                                            : "No students in this class yet."}
+                                        {t.students.noStudentsInClass}
                                     </p>
                                 )}
                             </div>

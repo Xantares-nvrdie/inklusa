@@ -166,11 +166,7 @@ export function LandingHero() {
                             />
                             <Image
                                 src="/landing/hero-clay.jpg"
-                                alt={
-                                    locale === "id"
-                                        ? "Ilustrasi buku, puzzle, dan bola lampu yang melambangkan dukungan belajar"
-                                        : "Illustration of a notebook, puzzle pieces and a lightbulb representing learning support"
-                                }
+                                alt={t.landing.heroImageAlt}
                                 fill
                                 priority
                                 sizes="(min-width: 1024px) 540px, 90vw"
@@ -229,11 +225,11 @@ export function LandingHero() {
                             className="rounded-2xl bg-primary-strong p-4 text-white shadow-lift"
                         >
                             <p className="text-[0.65rem] font-semibold uppercase tracking-widest text-white/60">
-                                {locale === "id" ? "Strategi dicoba" : "Strategy tried"}
+                                {t.landing.strategyTried}
                             </p>
                             <p className="mt-1 font-semibold">Graphic Organizer</p>
                             <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-xs font-medium">
-                                <Check size={12} aria-hidden="true" /> {locale === "id" ? "Membantu" : "Helped"}
+                                <Check size={12} aria-hidden="true" /> {t.landing.helped}
                             </p>
                         </motion.div>
                     </motion.div>
