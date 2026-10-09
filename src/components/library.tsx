@@ -52,43 +52,45 @@ export function Library() {
                 )}
             </div>
 
-            <fieldset className="m-0 flex flex-wrap items-center gap-2 border-0 p-0">
-                <legend className="sr-only">{t.library.filterLabel}</legend>
-                <button
-                    id="filter-all"
-                    type="button"
-                    onClick={() => setCat(null)}
-                    aria-pressed={!cat}
-                    className={`cursor-pointer rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${!cat ? "border-primary bg-primary text-white" : "glass border-line bg-surface/80 hover:border-primary"}`}
-                >
-                    {t.library.all}
-                </button>
-                {categories.map((c) => (
+            <div className="space-y-3">
+                <fieldset className="m-0 flex flex-wrap items-center gap-2 border-0 p-0">
+                    <legend className="sr-only">{t.library.filterLabel}</legend>
                     <button
-                        key={c.id}
-                        id={`filter-${c.id.toLowerCase()}`}
-                        type="button"
-                        onClick={() => setCat(c.id)}
-                        aria-pressed={cat === c.id}
-                        className={`inline-flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${cat === c.id ? "border-primary bg-primary text-white" : "glass border-line bg-surface/80 hover:border-primary"}`}
-                    >
-                        <CategoryIcon icon={c.icon} size={14} /> {c.title}
-                    </button>
-                ))}
-                {cat && (
-                    <button
+                        id="filter-all"
                         type="button"
                         onClick={() => setCat(null)}
-                        className="inline-flex items-center gap-1 rounded-full px-3 py-2 text-sm font-semibold text-muted hover:bg-surface-2 hover:text-foreground"
+                        aria-pressed={!cat}
+                        className={`cursor-pointer rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${!cat ? "border-primary bg-primary text-white" : "glass border-line bg-surface/80 hover:border-primary"}`}
                     >
-                        <X size={15} aria-hidden="true" /> {t.library.clearFilter}
+                        {t.library.all}
                     </button>
-                )}
-            </fieldset>
+                    {categories.map((c) => (
+                        <button
+                            key={c.id}
+                            id={`filter-${c.id.toLowerCase()}`}
+                            type="button"
+                            onClick={() => setCat(c.id)}
+                            aria-pressed={cat === c.id}
+                            className={`inline-flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${cat === c.id ? "border-primary bg-primary text-white" : "glass border-line bg-surface/80 hover:border-primary"}`}
+                        >
+                            <CategoryIcon icon={c.icon} size={14} /> {c.title}
+                        </button>
+                    ))}
+                    {cat && (
+                        <button
+                            type="button"
+                            onClick={() => setCat(null)}
+                            className="inline-flex items-center gap-1 rounded-full px-3 py-2 text-sm font-semibold text-muted hover:bg-surface-2 hover:text-foreground"
+                        >
+                            <X size={15} aria-hidden="true" /> {t.library.clearFilter}
+                        </button>
+                    )}
+                </fieldset>
 
-            <p className="-mt-4 text-sm font-medium text-muted" aria-live="polite">
-                {t.library.resultCount(list.length)}
-            </p>
+                <p className="text-sm font-medium text-muted" aria-live="polite">
+                    {t.library.resultCount(list.length)}
+                </p>
+            </div>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {list.map((i) => {
