@@ -593,7 +593,7 @@ export const translations: Record<Locale, TranslationDict> = {
             rights: "Kenali hambatannya. Dukung siswanya.",
         },
         landing: {
-            taglineBadge: "Classroom Intervention Assistant",
+            taglineBadge: "Asisten Intervensi Kelas",
             heroTitle1: "Kenali hambatannya.",
             heroTitleHighlight: "Dukung siswanya.",
             heroDescription:

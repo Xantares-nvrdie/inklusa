@@ -442,6 +442,11 @@ export function KnowledgeManager() {
     const [error, setError] = useState<string | null>(null);
     const [notice, setNotice] = useState<string | null>(null);
 
+    const [search, setSearch] = useState("");
+    const [filterCategory, setFilterCategory] = useState<string>("ALL");
+    const [page, setPage] = useState(1);
+    const ITEMS_PER_PAGE = 10;
+
     const load = useCallback(async () => {
         const [a, b] = await Promise.all([
             api<AdminIntervention[]>("/admin/knowledge/interventions"),
@@ -454,6 +459,10 @@ export function KnowledgeManager() {
     useEffect(() => {
         load().catch((e) => setError(e.message));
     }, [load]);
+
+    useEffect(() => {
+        setPage(1);
+    }, [search, filterCategory, tab]);
 
     const catName = (id: string) => categories.find((c) => c.id === id)?.title ?? id;
 
@@ -519,6 +528,38 @@ export function KnowledgeManager() {
         `cursor-pointer rounded-full px-5 py-2 text-sm font-semibold transition-colors ${on ? "bg-primary text-white" : "bg-surface border border-line hover:border-primary"}`;
 
     const empty = ivs?.length === 0 && cls?.length === 0;
+
+    const filteredIvs = (ivs || []).filter((i) => {
+        if (filterCategory !== "ALL" && i.category !== filterCategory) return false;
+        if (search) {
+            const q = search.toLowerCase();
+            return (
+                i.title[locale].toLowerCase().includes(q) ||
+                i.slug.toLowerCase().includes(q) ||
+                i.summary[locale].toLowerCase().includes(q)
+            );
+        }
+        return true;
+    });
+
+    const filteredCls = (cls || []).filter((c) => {
+        if (filterCategory !== "ALL" && c.category !== filterCategory) return false;
+        if (search) {
+            const q = search.toLowerCase();
+            return (
+                c.barrier[locale].toLowerCase().includes(q) ||
+                c.label[locale].toLowerCase().includes(q) ||
+                c.id.toLowerCase().includes(q)
+            );
+        }
+        return true;
+    });
+
+    const activeList = tab === "strategies" ? filteredIvs : filteredCls;
+    const totalItems = activeList.length;
+    const totalPages = Math.max(1, Math.ceil(totalItems / ITEMS_PER_PAGE));
+    const paginatedIvs = filteredIvs.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+    const paginatedCls = filteredCls.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
     return (
         <div className="space-y-8">
@@ -608,11 +649,35 @@ export function KnowledgeManager() {
                 />
             )}
 
+            <div className="flex flex-col gap-4 rounded-2xl bg-surface-2 p-4 md:flex-row md:items-center md:justify-between">
+                <div className="flex w-full flex-wrap items-center gap-3 md:flex-nowrap">
+                    <input
+                        type="text"
+                        placeholder={k.search}
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className={inputCls + " w-full md:max-w-sm"}
+                    />
+                    <select
+                        value={filterCategory}
+                        onChange={(e) => setFilterCategory(e.target.value)}
+                        className={inputCls + " w-full md:max-w-xs"}
+                    >
+                        <option value="ALL">— {k.allCategories} —</option>
+                        {categories.map((c) => (
+                            <option key={c.id} value={c.id}>
+                                {c.title}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+
             {empty && <Card className="text-center text-muted glass border-white/60">{k.empty}</Card>}
 
             {tab === "strategies" && (
                 <div className="grid gap-3">
-                    {ivs?.map((i) => {
+                    {paginatedIvs.map((i) => {
                         const used = cls?.filter((c) => c.supports.some((s) => s.slug === i.slug)).length ?? 0;
                         return (
                             <Card
@@ -673,7 +738,7 @@ export function KnowledgeManager() {
 
             {tab === "rules" && (
                 <div className="grid gap-3">
-                    {cls?.map((c) => (
+                    {paginatedCls.map((c) => (
                         <Card
                             key={c.id}
                             className="flex flex-col gap-4 md:flex-row md:items-center glass border-white/60"
@@ -729,6 +794,32 @@ export function KnowledgeManager() {
                             </div>
                         </Card>
                     ))}
+                </div>
+            )}
+
+            {totalItems > 0 && (
+                <div className="mt-8 flex items-center justify-between border-t border-line pt-6">
+                    <p className="text-sm text-muted">
+                        {k.pageOf.replace("{current}", String(page)).replace("{total}", String(totalPages))}
+                    </p>
+                    <div className="flex gap-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={page === 1}
+                            onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        >
+                            {k.previous}
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={page === totalPages}
+                            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                        >
+                            {k.next}
+                        </Button>
+                    </div>
                 </div>
             )}
         </div>

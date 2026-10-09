@@ -101,6 +101,11 @@ const en = {
         visible: "Visible to teachers",
         stepsCount: "steps",
         usedBy: "Used by rules",
+        search: "Search...",
+        allCategories: "All categories",
+        previous: "Previous",
+        next: "Next",
+        pageOf: "Page {current} of {total}",
     },
 };
 
@@ -199,6 +204,11 @@ const id: typeof en = {
         visible: "Terlihat oleh guru",
         stepsCount: "langkah",
         usedBy: "Dipakai aturan",
+        search: "Cari...",
+        allCategories: "Semua kategori",
+        previous: "Sebelumnya",
+        next: "Berikutnya",
+        pageOf: "Halaman {current} dari {total}",
     },
 };
 
