@@ -14,9 +14,21 @@ export function PlanCard({ plan }: { plan: PlanRow }) {
     const iv = getIntervention(plan.interventionSlug);
     const done = plan.status === "COMPLETED";
 
+    const locked = plan.isOwner === false;
+    const Wrapper = ({ children }: { children: React.ReactNode }) =>
+        locked ? (
+            <div className="block" id={`plan-${plan.id}`}>
+                {children}
+            </div>
+        ) : (
+            <Link href={`/action-plans/${plan.id}`} className="block" id={`plan-${plan.id}`}>
+                {children}
+            </Link>
+        );
+
     return (
-        <Link href={`/action-plans/${plan.id}`} className="block" id={`plan-${plan.id}`}>
-            <Card interactive className="h-full space-y-3 glass border-white/60">
+        <Wrapper>
+            <Card interactive={!locked} className="h-full space-y-3 glass border-white/60">
                 <div className="flex items-start justify-between gap-3">
                     <div>
                         <p className="text-sm font-semibold text-primary">
@@ -28,15 +40,17 @@ export function PlanCard({ plan }: { plan: PlanRow }) {
                     <StatusBadge status={plan.status} />
                 </div>
                 <p className="text-muted">{iv?.title ?? plan.interventionSlug}</p>
-                <p className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
-                    {done
-                        ? t.myInterventions.viewReflection
-                        : plan.status === "NEEDS_REFLECTION"
-                          ? t.myInterventions.reflect
-                          : t.myInterventions.continueBtn}
-                    <ArrowRight size={14} aria-hidden="true" />
-                </p>
+                {!locked && (
+                    <p className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
+                        {done
+                            ? t.myInterventions.viewReflection
+                            : plan.status === "NEEDS_REFLECTION"
+                              ? t.myInterventions.reflect
+                              : t.myInterventions.continueBtn}
+                        <ArrowRight size={14} aria-hidden="true" />
+                    </p>
+                )}
             </Card>
-        </Link>
+        </Wrapper>
     );
 }

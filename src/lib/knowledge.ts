@@ -1621,6 +1621,8 @@ export interface PlanRow {
     studentId: string | null;
     student: { id: string; name: string } | null;
     teacherName?: string | null;
+    teacherId?: string;
+    isOwner?: boolean;
     barrierCategory: BarrierCategory;
     clarificationId: string;
     barrierTitle: string;

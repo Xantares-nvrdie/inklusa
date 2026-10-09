@@ -27,6 +27,33 @@ const actionPlansModule = new Elysia({ prefix: "/action-plans", tags: ["Action P
         },
     )
 
+    .get(
+        "/browse",
+        ({ user, query }) =>
+            ActionPlanService.browse(user.id, {
+                filter: (query.filter ?? "all") as PlanFilter,
+                page: query.page ? Number(query.page) : 1,
+                pageSize: query.pageSize ? Number(query.pageSize) : 10,
+                from: query.from,
+                to: query.to,
+                teacher: query.teacher,
+                q: query.q,
+            }),
+        {
+            auth: true,
+            query: t.Object({
+                filter: t.Optional(t.String()),
+                page: t.Optional(t.String()),
+                pageSize: t.Optional(t.String()),
+                from: t.Optional(t.String()),
+                to: t.Optional(t.String()),
+                teacher: t.Optional(t.String()),
+                q: t.Optional(t.String()),
+            }),
+            detail: { summary: "Paginated, filterable list of all teachers' plans" },
+        },
+    )
+
     .get("/summary", ({ user }) => ActionPlanService.summary(user.id), {
         auth: true,
         detail: { summary: "Dashboard counters" },
