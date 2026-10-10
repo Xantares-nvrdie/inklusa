@@ -27,20 +27,10 @@ export const buttonVariants = cva(
 
 type Props = VariantProps<typeof buttonVariants> & { className?: string };
 
-export function Button({
-    className,
-    variant,
-    size,
-    ...props
-}: Props & React.ButtonHTMLAttributes<HTMLButtonElement>) {
+export function Button({ className, variant, size, ...props }: Props & React.ButtonHTMLAttributes<HTMLButtonElement>) {
     return <button className={cn(buttonVariants({ variant, size }), className)} {...props} />;
 }
 
-export function ButtonLink({
-    className,
-    variant,
-    size,
-    ...props
-}: Props & React.ComponentProps<typeof Link>) {
+export function ButtonLink({ className, variant, size, ...props }: Props & React.ComponentProps<typeof Link>) {
     return <Link className={cn(buttonVariants({ variant, size }), className)} {...props} />;
 }

@@ -1,7 +1,7 @@
 import { openapi } from "@elysiajs/openapi";
 import { Elysia } from "elysia";
-import adminModule from "@/backend/modules/admin";
 import actionPlansModule from "@/backend/modules/action-plans";
+import adminModule from "@/backend/modules/admin";
 import knowledgeModule from "@/backend/modules/knowledge";
 import studentsModule from "@/backend/modules/students";
 import betterAuthView from "@/backend/utils/better-auth";

@@ -25,4 +25,19 @@ export const auth = betterAuth({
         process.env.NEXT_PUBLIC_APP_URL as string,
         process.env.BETTER_AUTH_URL as string,
     ].filter(Boolean),
+    databaseHooks: {
+        user: {
+            create: {
+                before: async (user) => {
+                    return {
+                        data: {
+                            ...user,
+                            banned: true,
+                            banReason: "PENDING_APPROVAL",
+                        },
+                    };
+                },
+            },
+        },
+    },
 });

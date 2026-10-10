@@ -15,6 +15,24 @@ export interface TranslationDict {
         students: string;
         signOut: string;
     };
+    students: {
+        title: string;
+        manageClasses: string;
+        allStudents: string;
+        studentProfile: string;
+        newQuickCheck: string;
+        barrierPatterns: string;
+        successRate: string;
+        helpful: string;
+        limited: string;
+        noInterventions: string;
+        viewGeneralHistory: string;
+        student: string;
+        viewProfile: string;
+        noStudentsInClass: string;
+        save: string;
+        noData: string;
+    };
     footer: {
         disclaimer: string;
         sdg: string;
@@ -43,6 +61,19 @@ export interface TranslationDict {
             act: { title: string; desc: string };
             reflect: { title: string; desc: string };
         };
+        loopMock: {
+            step1: string;
+            step1Title: string;
+            step2: string;
+            step2Title: string;
+            step3: string;
+            step3Title: string;
+            step4: string;
+            step4Title: string;
+            class: string;
+            suggestedStrategy: string;
+            reflectOptions: [string, string, string];
+        };
         supportsTitle: string;
         supportsDesc: string;
         exampleStrategy: string;
@@ -59,6 +90,17 @@ export interface TranslationDict {
         };
         ctaBottomTitle: string;
         ctaBottomSub: string;
+        scrollHint: string;
+        manifesto: string;
+        eyebrowProblem: string;
+        eyebrowLoop: string;
+        eyebrowSupports: string;
+        eyebrowPrinciples: string;
+        dragHint: string;
+        strategyCount: (count: number) => string;
+        strategyTried: string;
+        helped: string;
+        heroImageAlt: string;
     };
     auth: {
         welcomeBack: string;
@@ -76,6 +118,7 @@ export interface TranslationDict {
         dontHaveAccount: string;
         alreadyHaveAccount: string;
         disclaimerPrivacy: string;
+        pendingApproval: string;
     };
     dashboard: {
         greeting: { morning: string; afternoon: string; evening: string };
@@ -91,6 +134,15 @@ export interface TranslationDict {
         noInterventionsDesc: string;
         btnStart: string;
         generalClassroom: string;
+        mostEffective: string;
+        mostEffectiveDesc: string;
+        teacher: string;
+        quickCheckBadge: string;
+        attentionTitle: string;
+        attentionDesc: string;
+    };
+    admin: {
+        save: string;
     };
     quickCheck: {
         step1Title: string;
@@ -102,6 +154,7 @@ export interface TranslationDict {
         privacyHint: string;
         step2Title: string;
         step3Title: string;
+        steps: [string, string, string];
         resultBadge: string;
         whatThisMeans: string;
         notADiagnosis: string;
@@ -110,6 +163,13 @@ export interface TranslationDict {
         continue: string;
         showInsight: string;
         cancel: string;
+        studentNamePlaceholder: string;
+        classNamePlaceholder: string;
+        save: string;
+        saveClass: string;
+        addClass: string;
+        addStudentTo: (className: string) => string;
+        stepProgress: (current: number, total: number) => string;
     };
     supports: {
         badge: string;
@@ -131,6 +191,7 @@ export interface TranslationDict {
         whatToObserve: string;
         useStrategy: string;
         startQuickCheckToUse: string;
+        notFound: string;
     };
     actionPlan: {
         createTitle: string;
@@ -141,11 +202,16 @@ export interface TranslationDict {
         goalPlaceholder: string;
         when: string;
         timings: [string, string, string, string];
+        statusPlanned: string;
         btnSave: string;
         saving: string;
         createdTitle: string;
         btnStartIntervention: string;
         btnBackDashboard: string;
+        missingContext: string;
+        currentStatus: string;
+        goalHint: string;
+        startingIntervention: string;
     };
     planDetail: {
         back: string;
@@ -181,6 +247,17 @@ export interface TranslationDict {
         viewReflection: string;
         reflect: string;
         continueBtn: string;
+        searchStudent: string;
+        searchStudentPlaceholder: string;
+        teacher: string;
+        allTeachers: string;
+        fromDate: string;
+        toDate: string;
+        reset: string;
+        showingTotal: (start: number, end: number, total: number) => string;
+        previous: string;
+        next: string;
+        exportCSV: string;
     };
     library: {
         title: string;
@@ -188,6 +265,11 @@ export interface TranslationDict {
         searchPlaceholder: string;
         all: string;
         noMatch: string;
+        searchLabel: string;
+        filterLabel: string;
+        resultCount: (count: number) => string;
+        clearSearch: string;
+        clearFilter: string;
     };
 }
 
@@ -205,6 +287,24 @@ export const translations: Record<Locale, TranslationDict> = {
             library: "Library",
             students: "Students",
             signOut: "Sign out",
+        },
+        students: {
+            title: "Students / Classes",
+            manageClasses: "Manage Classes",
+            allStudents: "← All Students",
+            studentProfile: "Student Profile",
+            newQuickCheck: "+ New Quick Check",
+            barrierPatterns: "Barrier Patterns",
+            successRate: "Success Rate",
+            helpful: "Helpful",
+            limited: "Limited",
+            noInterventions: "No interventions recorded for this student yet.",
+            viewGeneralHistory: "View general history",
+            student: "Student",
+            viewProfile: "View profile",
+            noStudentsInClass: "No students in this class yet.",
+            save: "Save",
+            noData: "No data yet.",
         },
         footer: {
             disclaimer: "A decision-support tool for teachers. INKLUSA does not diagnose students.",
@@ -241,6 +341,19 @@ export const translations: Record<Locale, TranslationDict> = {
                 act: { title: "Act", desc: "Choose a support to try." },
                 reflect: { title: "Reflect", desc: "Record whether it helped." },
             },
+            loopMock: {
+                step1: "Step 1 · Observe",
+                step1Title: "What barrier do you see?",
+                step2: "Step 2 · Understand",
+                step2Title: "What does it look like?",
+                step3: "Step 3 · Act",
+                step3Title: "Suggested strategy",
+                step4: "Step 4 · Reflect",
+                step4Title: "Did this support help?",
+                class: "Class 5A · Raka",
+                suggestedStrategy: "Suggested strategy",
+                reflectOptions: ["Helped", "Partly", "Not yet"],
+            },
             supportsTitle: "From barrier to a support you can try today.",
             supportsDesc:
                 "Five barrier categories lead to practical strategies with a short reason why, how to apply them, and what to watch for.",
@@ -254,10 +367,22 @@ export const translations: Record<Locale, TranslationDict> = {
                 p2Title: "Teacher decides",
                 p2Desc: "You get possible strategies to try, guided by your context and professional judgement.",
                 p3Title: "Privacy first",
-                p3Desc: "Students are minimal identifiers like “Student A”. No personal data required.",
+                p3Desc: "Student data stays within the classes you teach. No diagnoses or medical labels are ever stored.",
             },
             ctaBottomTitle: "What are you dealing with today?",
             ctaBottomSub: "Find the right support for a classroom barrier in under two minutes.",
+            scrollHint: "Scroll to explore",
+            manifesto:
+                "Every student learns differently. A barrier is not a label — it is a signal. INKLUSA helps you read that signal and respond with care.",
+            eyebrowProblem: "The gap",
+            eyebrowLoop: "How it works",
+            eyebrowSupports: "Support library",
+            eyebrowPrinciples: "Our principles",
+            dragHint: "Keep scrolling — the cards will follow",
+            strategyCount: (count) => `${count} ${count === 1 ? "strategy" : "strategies"}`,
+            strategyTried: "Strategy tried",
+            helped: "Helped",
+            heroImageAlt: "Illustration of a notebook, puzzle pieces and a lightbulb representing learning support",
         },
         auth: {
             welcomeBack: "Welcome back",
@@ -275,6 +400,7 @@ export const translations: Record<Locale, TranslationDict> = {
             dontHaveAccount: "Don't have an account? ",
             alreadyHaveAccount: "Already have an account? ",
             disclaimerPrivacy: "INKLUSA stores only minimal student identifiers. It never diagnoses.",
+            pendingApproval: "Your account is currently pending admin approval.",
         },
         dashboard: {
             greeting: { morning: "Good morning", afternoon: "Good afternoon", evening: "Good evening" },
@@ -290,6 +416,15 @@ export const translations: Record<Locale, TranslationDict> = {
             noInterventionsDesc: "When you find a barrier in class, start a Quick Check. Your plans will appear here.",
             btnStart: "Start Quick Check",
             generalClassroom: "General classroom",
+            mostEffective: "Your Most Effective Strategy",
+            mostEffectiveDesc: "Based on your past reflections, this strategy has been helpful multiple times.",
+            teacher: "Teacher",
+            quickCheckBadge: "Quick Check",
+            attentionTitle: "Ready for reflection",
+            attentionDesc: "These interventions are waiting for your observation.",
+        },
+        admin: {
+            save: "Save",
         },
         quickCheck: {
             step1Title: "Who needs support?",
@@ -301,6 +436,7 @@ export const translations: Record<Locale, TranslationDict> = {
             privacyHint: "Use simple identifiers like “Student A”. Please don't enter personal data.",
             step2Title: "What did you observe?",
             step3Title: "How does the difficulty appear?",
+            steps: ["Student", "Observation", "Clarify"],
             resultBadge: "Observed barrier",
             whatThisMeans: "What this means",
             notADiagnosis: "This describes what you observed. It is not a diagnosis.",
@@ -309,6 +445,13 @@ export const translations: Record<Locale, TranslationDict> = {
             continue: "Continue",
             showInsight: "Show insight",
             cancel: "Cancel",
+            studentNamePlaceholder: "Student identifier",
+            classNamePlaceholder: "Class name (e.g. Grade 7A)",
+            save: "Save",
+            saveClass: "Save class",
+            addClass: "Add a new class",
+            addStudentTo: (className) => `Add student to ${className}`,
+            stepProgress: (current, total) => `Step ${current} of ${total}`,
         },
         supports: {
             badge: "Possible supports",
@@ -330,6 +473,7 @@ export const translations: Record<Locale, TranslationDict> = {
             whatToObserve: "What to observe",
             useStrategy: "Use This Strategy",
             startQuickCheckToUse: "Start a Quick Check to use this",
+            notFound: "Strategy not found",
         },
         actionPlan: {
             createTitle: "Create Action Plan",
@@ -340,11 +484,16 @@ export const translations: Record<Locale, TranslationDict> = {
             goalPlaceholder: "e.g. Student can organise ideas before writing",
             when: "When will you try this?",
             timings: ["Next activity", "Next writing activity", "Tomorrow", "This week"],
+            statusPlanned: "Planned",
             btnSave: "Save Action Plan",
             saving: "Saving…",
             createdTitle: "Action Plan Created",
             btnStartIntervention: "Start Intervention",
             btnBackDashboard: "Back to dashboard",
+            missingContext: "This plan needs a Quick Check first.",
+            currentStatus: "Status",
+            goalHint: "Keep it specific and observable. You can revise it later.",
+            startingIntervention: "Starting…",
         },
         planDetail: {
             back: "← My Interventions",
@@ -368,7 +517,8 @@ export const translations: Record<Locale, TranslationDict> = {
             reflectionSaved: "Reflection saved",
             savedHint: "Your observation has been added to the intervention record.",
             insightHelpful: "Teacher insight: This strategy seems appropriate for the situation.",
-            insightNotHelpful: "Teacher insight: This strategy showed limited improvement. A different approach might be needed.",
+            insightNotHelpful:
+                "Teacher insight: This strategy showed limited improvement. A different approach might be needed.",
             continueStrategy: "Continue Strategy",
             tryAnotherStrategy: "Try Another Strategy",
         },
@@ -380,6 +530,17 @@ export const translations: Record<Locale, TranslationDict> = {
             viewReflection: "View reflection",
             reflect: "Reflect",
             continueBtn: "Continue",
+            searchStudent: "Search student",
+            searchStudentPlaceholder: "Student name…",
+            teacher: "Teacher",
+            allTeachers: "All teachers",
+            fromDate: "From date",
+            toDate: "To date",
+            reset: "Reset",
+            showingTotal: (start, end, total) => `Showing ${start}–${Math.min(end, total)} of ${total}`,
+            previous: "Previous",
+            next: "Next",
+            exportCSV: "Export CSV",
         },
         library: {
             title: "Intervention Library",
@@ -387,6 +548,11 @@ export const translations: Record<Locale, TranslationDict> = {
             searchPlaceholder: "Search intervention…",
             all: "All",
             noMatch: "No strategies match your search.",
+            searchLabel: "Search strategies",
+            filterLabel: "Filter by category",
+            resultCount: (count) => `${count} ${count === 1 ? "strategy" : "strategies"} found`,
+            clearSearch: "Clear search",
+            clearFilter: "Clear filter",
         },
     },
     id: {
@@ -403,13 +569,31 @@ export const translations: Record<Locale, TranslationDict> = {
             students: "Siswa",
             signOut: "Keluar",
         },
+        students: {
+            title: "Siswa / Kelas",
+            manageClasses: "Kelola Kelas",
+            allStudents: "← Semua Siswa",
+            studentProfile: "Profil Siswa",
+            newQuickCheck: "+ Pengecekan Baru",
+            barrierPatterns: "Pola Hambatan",
+            successRate: "Tingkat Keberhasilan",
+            helpful: "Membantu",
+            limited: "Terbatas",
+            noInterventions: "Belum ada intervensi untuk siswa ini.",
+            viewGeneralHistory: "Lihat riwayat umum",
+            student: "Siswa",
+            viewProfile: "Lihat profil",
+            noStudentsInClass: "Belum ada siswa di kelas ini.",
+            save: "Simpan",
+            noData: "Belum ada data.",
+        },
         footer: {
             disclaimer: "Decision-support tool untuk guru. INKLUSA tidak mendiagnosis siswa.",
             sdg: "Mendukung SDG 4 — Pendidikan Berkualitas",
             rights: "Kenali hambatannya. Dukung siswanya.",
         },
         landing: {
-            taglineBadge: "Classroom Intervention Assistant",
+            taglineBadge: "Asisten Intervensi Kelas",
             heroTitle1: "Kenali hambatannya.",
             heroTitleHighlight: "Dukung siswanya.",
             heroDescription:
@@ -438,6 +622,19 @@ export const translations: Record<Locale, TranslationDict> = {
                 act: { title: "Tindakan (Act)", desc: "Pilih strategi atau akomodasi yang akan dicoba." },
                 reflect: { title: "Refleksi (Reflect)", desc: "Catat apakah strategi tersebut membantu siswa." },
             },
+            loopMock: {
+                step1: "Langkah 1 · Amati",
+                step1Title: "Hambatan apa yang Anda lihat?",
+                step2: "Langkah 2 · Pahami",
+                step2Title: "Seperti apa hambatannya terlihat?",
+                step3: "Langkah 3 · Tindakan",
+                step3Title: "Strategi yang disarankan",
+                step4: "Langkah 4 · Refleksi",
+                step4Title: "Apakah strategi ini membantu?",
+                class: "Kelas 5A · Raka",
+                suggestedStrategy: "Strategi yang disarankan",
+                reflectOptions: ["Membantu", "Sebagian", "Belum"],
+            },
             supportsTitle: "Dari pengamatan menjadi strategi yang bisa dicoba hari ini.",
             supportsDesc:
                 "Lima kategori hambatan mengarah ke strategi praktis lengkap dengan alasan relevansi, langkah penerapan, dan hal yang perlu diamati.",
@@ -451,10 +648,22 @@ export const translations: Record<Locale, TranslationDict> = {
                 p2Title: "Guru Pemegang Keputusan",
                 p2Desc: "Sistem memberikan opsi strategi yang relevan; keputusan akhir tetap di tangan profesional guru.",
                 p3Title: "Privasi Siswa yang Utama",
-                p3Desc: "Hanya menggunakan identifier minimal seperti “Student A”. Data pribadi siswa tidak diminta.",
+                p3Desc: "Data siswa hanya terlihat di kelas yang Anda ampu. Tidak ada diagnosis atau label medis yang disimpan.",
             },
             ctaBottomTitle: "Situasi apa yang sedang Anda hadapi di kelas?",
             ctaBottomSub: "Temukan dukungan pembelajaran yang sesuai dalam waktu kurang dari dua menit.",
+            scrollHint: "Gulir untuk menjelajah",
+            manifesto:
+                "Setiap siswa belajar dengan caranya sendiri. Hambatan bukanlah label — melainkan sinyal. INKLUSA membantu Anda membaca sinyal itu dan meresponsnya dengan peduli.",
+            eyebrowProblem: "Celahnya",
+            eyebrowLoop: "Cara kerja",
+            eyebrowSupports: "Pustaka dukungan",
+            eyebrowPrinciples: "Prinsip kami",
+            dragHint: "Terus gulir — kartu akan bergerak",
+            strategyCount: (count) => `${count} strategi`,
+            strategyTried: "Strategi dicoba",
+            helped: "Membantu",
+            heroImageAlt: "Ilustrasi buku, puzzle, dan bola lampu yang melambangkan dukungan belajar",
         },
         auth: {
             welcomeBack: "Selamat datang kembali",
@@ -472,6 +681,7 @@ export const translations: Record<Locale, TranslationDict> = {
             dontHaveAccount: "Belum punya akun? ",
             alreadyHaveAccount: "Sudah punya akun? ",
             disclaimerPrivacy: "INKLUSA hanya menyimpan identifier minimal siswa. Tanpa diagnosis.",
+            pendingApproval: "Akun Anda sedang menunggu persetujuan admin.",
         },
         dashboard: {
             greeting: { morning: "Selamat pagi", afternoon: "Selamat siang", evening: "Selamat sore" },
@@ -484,9 +694,19 @@ export const translations: Record<Locale, TranslationDict> = {
             recentTitle: "Intervensi Terbaru",
             viewAll: "Lihat semua",
             noInterventions: "Belum ada intervensi",
-            noInterventionsDesc: "Ketika menemukan kendala di kelas, mulai Quick Check. Rencana Anda akan tampil di sini.",
+            noInterventionsDesc:
+                "Ketika menemukan kendala di kelas, mulai Quick Check. Rencana Anda akan tampil di sini.",
             btnStart: "Mulai Quick Check",
             generalClassroom: "Kelas umum",
+            mostEffective: "Strategi Paling Efektif Anda",
+            mostEffectiveDesc: "Berdasarkan refleksi Anda sebelumnya, strategi ini telah terbukti sangat membantu.",
+            teacher: "Guru",
+            quickCheckBadge: "Quick Check",
+            attentionTitle: "Siap direfleksikan",
+            attentionDesc: "Intervensi ini menunggu catatan pengamatan Anda.",
+        },
+        admin: {
+            save: "Simpan",
         },
         quickCheck: {
             step1Title: "Siapa yang membutuhkan dukungan?",
@@ -498,6 +718,7 @@ export const translations: Record<Locale, TranslationDict> = {
             privacyHint: "Gunakan identifier sederhana seperti “Student A”. Jangan masukkan data pribadi siswa.",
             step2Title: "Apa yang Anda amati di kelas?",
             step3Title: "Bagaimana hambatan tersebut terlihat?",
+            steps: ["Siswa", "Pengamatan", "Klarifikasi"],
             resultBadge: "Hambatan yang diamati",
             whatThisMeans: "Apa artinya ini",
             notADiagnosis: "Ini adalah pengamatan hambatan belajar nyata di kelas, bukan diagnosis medis.",
@@ -506,6 +727,13 @@ export const translations: Record<Locale, TranslationDict> = {
             continue: "Lanjutkan",
             showInsight: "Tampilkan insight",
             cancel: "Batal",
+            studentNamePlaceholder: "Identifier siswa",
+            classNamePlaceholder: "Nama kelas (misal: Kelas 7A)",
+            save: "Simpan",
+            saveClass: "Simpan kelas",
+            addClass: "Tambah kelas baru",
+            addStudentTo: (className) => `Tambah siswa ke ${className}`,
+            stepProgress: (current, total) => `Langkah ${current} dari ${total}`,
         },
         supports: {
             badge: "Pilihan dukungan",
@@ -527,6 +755,7 @@ export const translations: Record<Locale, TranslationDict> = {
             whatToObserve: "Apa yang perlu diamati guru",
             useStrategy: "Gunakan Strategi Ini",
             startQuickCheckToUse: "Mulai Quick Check untuk menggunakan ini",
+            notFound: "Strategi tidak ditemukan",
         },
         actionPlan: {
             createTitle: "Buat Rencana Intervensi",
@@ -537,11 +766,16 @@ export const translations: Record<Locale, TranslationDict> = {
             goalPlaceholder: "misal: Siswa mampu mengorganisir ide sebelum mulai menulis",
             when: "Kapan Anda akan mencobanya?",
             timings: ["Aktivitas berikutnya", "Tugas menulis berikutnya", "Besok", "Minggu ini"],
+            statusPlanned: "Direncanakan",
             btnSave: "Simpan Rencana Tindakan",
             saving: "Menyimpan…",
             createdTitle: "Rencana Tindakan Berhasil Dibuat",
             btnStartIntervention: "Mulai Intervensi",
             btnBackDashboard: "Kembali ke dashboard",
+            missingContext: "Rencana ini perlu dimulai dari Quick Check.",
+            currentStatus: "Status",
+            goalHint: "Buat tujuan yang spesifik dan mudah diamati. Anda dapat mengubahnya nanti.",
+            startingIntervention: "Memulai…",
         },
         planDetail: {
             back: "← Intervensi Saya",
@@ -565,7 +799,8 @@ export const translations: Record<Locale, TranslationDict> = {
             reflectionSaved: "Refleksi Tersimpan",
             savedHint: "Pengamatan Anda telah dicatat ke riwayat intervensi.",
             insightHelpful: "Insight Guru: Strategi ini tampaknya sesuai untuk situasi tersebut.",
-            insightNotHelpful: "Insight Guru: Strategi ini menunjukkan sedikit perbaikan. Pendekatan lain mungkin diperlukan.",
+            insightNotHelpful:
+                "Insight Guru: Strategi ini menunjukkan sedikit perbaikan. Pendekatan lain mungkin diperlukan.",
             continueStrategy: "Lanjutkan Strategi",
             tryAnotherStrategy: "Coba Strategi Lain",
         },
@@ -577,6 +812,17 @@ export const translations: Record<Locale, TranslationDict> = {
             viewReflection: "Lihat refleksi",
             reflect: "Isi Refleksi",
             continueBtn: "Lanjutkan",
+            searchStudent: "Cari siswa",
+            searchStudentPlaceholder: "Nama siswa…",
+            teacher: "Guru",
+            allTeachers: "Semua guru",
+            fromDate: "Dari tanggal",
+            toDate: "Sampai tanggal",
+            reset: "Reset",
+            showingTotal: (start, end, total) => `Menampilkan ${start}–${Math.min(end, total)} dari ${total}`,
+            previous: "Sebelumnya",
+            next: "Berikutnya",
+            exportCSV: "Export CSV",
         },
         library: {
             title: "Pustaka Strategi Intervensi",
@@ -584,6 +830,11 @@ export const translations: Record<Locale, TranslationDict> = {
             searchPlaceholder: "Cari strategi intervensi…",
             all: "Semua",
             noMatch: "Tidak ada strategi yang cocok dengan pencarian Anda.",
+            searchLabel: "Cari strategi",
+            filterLabel: "Filter berdasarkan kategori",
+            resultCount: (count) => `${count} strategi ditemukan`,
+            clearSearch: "Hapus pencarian",
+            clearFilter: "Hapus filter",
         },
     },
 };

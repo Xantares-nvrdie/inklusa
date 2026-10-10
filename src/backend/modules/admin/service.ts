@@ -1,14 +1,7 @@
-import { and, count, desc, eq, ne } from "drizzle-orm";
+import { and, count, desc, eq, ne, sql } from "drizzle-orm";
 import { auth } from "@/auth";
 import { db } from "@/db";
-import {
-    actionPlans,
-    knowledgeClarifications,
-    knowledgeInterventions,
-    session,
-    students,
-    user,
-} from "@/db/schema";
+import { actionPlans, knowledgeClarifications, knowledgeInterventions, session, students, user } from "@/db/schema";
 import type { BarrierCategory, ClarificationData, InterventionData } from "@/lib/knowledge";
 
 const TEACHER = eq(user.role, "TEACHER");
@@ -17,9 +10,15 @@ export const AdminService = {
     // ── Insights ─────────────────────────────────────────────────────────────
     async stats() {
         const [teachers] = await db.select({ n: count() }).from(user).where(TEACHER);
-        const [bannedTeachers] = await db.select({ n: count() }).from(user).where(and(TEACHER, eq(user.banned, true)));
+        const [bannedTeachers] = await db
+            .select({ n: count() })
+            .from(user)
+            .where(and(TEACHER, eq(user.banned, true)));
         const [plans] = await db.select({ n: count() }).from(actionPlans);
-        const [completed] = await db.select({ n: count() }).from(actionPlans).where(eq(actionPlans.status, "COMPLETED"));
+        const [completed] = await db
+            .select({ n: count() })
+            .from(actionPlans)
+            .where(eq(actionPlans.status, "COMPLETED"));
         const [ivs] = await db.select({ n: count() }).from(knowledgeInterventions);
         const [cls] = await db.select({ n: count() }).from(knowledgeClarifications);
 
@@ -67,9 +66,9 @@ export const AdminService = {
             .from(actionPlans)
             .groupBy(actionPlans.teacherId, actionPlans.status);
         const studs = await db
-            .select({ teacherId: students.teacherId, n: count() })
-            .from(students)
-            .groupBy(students.teacherId);
+            .select({ teacherId: actionPlans.teacherId, n: sql<number>`count(distinct ${actionPlans.studentId})` })
+            .from(actionPlans)
+            .groupBy(actionPlans.teacherId);
 
         return users.map((u) => {
             const mine = plans.filter((p) => p.teacherId === u.id);
@@ -89,13 +88,14 @@ export const AdminService = {
 
     async createTeacher(input: { name: string; email: string; password: string }) {
         const res = await auth.api.signUpEmail({ body: input });
+        await db.update(user).set({ banned: false, banReason: null }).where(eq(user.id, res.user.id));
         return { id: res.user.id, name: res.user.name, email: res.user.email };
     },
 
     async setBan(id: string, banned: boolean, reason?: string) {
         const [row] = await db
             .update(user)
-            .set({ banned, banReason: banned ? (reason?.trim() || null) : null })
+            .set({ banned, banReason: banned ? reason?.trim() || null : null })
             .where(and(eq(user.id, id), ne(user.role, "ADMIN")))
             .returning({ id: user.id });
         if (row && banned) await db.delete(session).where(eq(session.userId, id));
@@ -184,4 +184,3 @@ export const AdminService = {
         return row ?? null;
     },
 };
-

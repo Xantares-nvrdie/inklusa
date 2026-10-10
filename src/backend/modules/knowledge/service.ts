@@ -12,7 +12,9 @@ export const KnowledgeService = {
         ]);
         if (ivs.length === 0 && cls.length === 0) return DEFAULT_KNOWLEDGE;
         return {
-            interventions: ivs.filter((r) => r.isActive).map((r) => ({ slug: r.slug, category: r.category, ...r.data })),
+            interventions: ivs
+                .filter((r) => r.isActive)
+                .map((r) => ({ slug: r.slug, category: r.category, ...r.data })),
             clarifications: cls.filter((r) => r.isActive).map((r) => ({ id: r.id, category: r.category, ...r.data })),
         };
     },

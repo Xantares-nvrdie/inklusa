@@ -7,7 +7,10 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
     const { locale, setLocale } = useLanguage();
 
     return (
-        <div className={`inline-flex items-center gap-1 rounded-full border border-line bg-surface p-1 shadow-xs ${className}`} aria-label="Pilih Bahasa / Language">
+        <div
+            className={`inline-flex items-center gap-1 rounded-full border border-line bg-surface p-1 shadow-xs ${className}`}
+            aria-label="Pilih Bahasa / Language"
+        >
             <span className="grid h-7 w-7 place-items-center text-muted">
                 <Globe size={15} aria-hidden="true" />
             </span>

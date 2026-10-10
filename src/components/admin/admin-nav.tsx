@@ -19,19 +19,20 @@ export function AdminNav({ name }: { name: string }) {
     const links = [
         { href: "/admin", label: a.nav.overview, Icon: LayoutDashboard },
         { href: "/admin/teachers", label: a.nav.teachers, Icon: Users },
+        { href: "/admin/classes", label: a.nav.classes, Icon: Users },
         { href: "/admin/knowledge", label: a.nav.knowledge, Icon: BookMarked },
     ];
 
     return (
         <header className="sticky top-0 z-40 border-b border-line/70 glass">
-            <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
+            <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-5">
                 <div className="flex items-center gap-3">
                     <Logo href="/admin" />
-                    <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-[#9a5612]">
+                    <span className="hidden rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-[#9a5612] md:inline">
                         {a.nav.badge}
                     </span>
                 </div>
-                <nav className="flex items-center gap-1" aria-label="Admin">
+                <nav className="hidden items-center gap-1 md:flex" aria-label="Admin">
                     {links.map(({ href, label, Icon }) => {
                         const active = href === "/admin" ? pathname === href : pathname.startsWith(href);
                         return (
@@ -42,7 +43,9 @@ export function AdminNav({ name }: { name: string }) {
                                 aria-current={active ? "page" : undefined}
                                 className={cn(
                                     "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors",
-                                    active ? "bg-primary-soft text-primary-strong" : "text-muted hover:bg-surface-2 hover:text-foreground",
+                                    active
+                                        ? "bg-primary-soft text-primary-strong"
+                                        : "text-muted hover:bg-surface-2 hover:text-foreground",
                                 )}
                             >
                                 <Icon size={16} aria-hidden="true" />
@@ -51,7 +54,7 @@ export function AdminNav({ name }: { name: string }) {
                         );
                     })}
                 </nav>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                     <LanguageSwitcher />
                     <span className="hidden text-sm text-muted md:inline">{name}</span>
                     <button
@@ -69,6 +72,30 @@ export function AdminNav({ name }: { name: string }) {
                     </button>
                 </div>
             </div>
+            <nav
+                className="fixed inset-x-3 bottom-3 z-50 grid grid-cols-4 rounded-2xl border border-line/70 bg-surface/95 p-1.5 shadow-lift backdrop-blur md:hidden"
+                aria-label="Admin"
+            >
+                {links.map(({ href, label, Icon }) => {
+                    const active = href === "/admin" ? pathname === href : pathname.startsWith(href);
+                    return (
+                        <Link
+                            key={href}
+                            href={href}
+                            aria-current={active ? "page" : undefined}
+                            className={cn(
+                                "flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl px-1 text-[11px] font-semibold leading-tight transition-colors",
+                                active
+                                    ? "bg-primary-soft text-primary-strong"
+                                    : "text-muted hover:bg-surface-2 hover:text-foreground",
+                            )}
+                        >
+                            <Icon size={18} aria-hidden="true" />
+                            <span className="max-w-full truncate">{label}</span>
+                        </Link>
+                    );
+                })}
+            </nav>
         </header>
     );
 }
