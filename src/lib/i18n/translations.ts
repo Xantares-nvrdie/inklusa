@@ -566,7 +566,7 @@ export const translations: Record<Locale, TranslationDict> = {
         },
         myInterventions: {
             title: "Intervention Plans",
-            btnNew: "+ Quick Check",
+            btnNew: "Quick Check",
             filters: { all: "All", active: "Active", completed: "Completed", cancelled: "Cancelled" },
             empty: "Nothing here yet.",
             viewReflection: "View reflection",
@@ -869,7 +869,7 @@ export const translations: Record<Locale, TranslationDict> = {
         },
         myInterventions: {
             title: "Rencana Intervensi",
-            btnNew: "+ Quick Check",
+            btnNew: "Quick Check",
             filters: { all: "Semua", active: "Aktif", completed: "Selesai", cancelled: "Dibatalkan" },
             empty: "Belum ada data intervensi di sini.",
             viewReflection: "Lihat refleksi",

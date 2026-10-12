@@ -38,9 +38,11 @@ export function Supports() {
     }
 
     return (
-        <div className="mx-auto max-w-3xl space-y-8">
-            <div className="space-y-3">
-                <p className="text-sm font-semibold uppercase tracking-wider text-primary">{t.supports.badge}</p>
+        <div className="mx-auto max-w-3xl space-y-6 sm:space-y-8">
+            <div className="space-y-2 sm:space-y-3">
+                <p className="text-xs font-semibold uppercase tracking-wider text-primary sm:text-sm">
+                    {t.supports.badge}
+                </p>
                 <h1 className="text-2xl sm:text-4xl font-bold">{t.supports.title}</h1>
                 <p className="text-base sm:text-lg text-muted">
                     {t.supports.basedOn}
@@ -48,7 +50,7 @@ export function Supports() {
                 </p>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
                 {clar.supports.map((s, i) => {
                     const iv = getIntervention(s.slug);
                     if (!iv) return null;
@@ -60,13 +62,13 @@ export function Supports() {
                         <Card
                             key={s.slug}
                             interactive
-                            className="flex flex-col gap-4 sm:flex-row sm:items-start p-5 sm:p-6"
+                            className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-3.5 gap-y-4 p-5 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:gap-x-5 sm:p-6"
                         >
-                            <span className="grid h-10 w-10 sm:h-12 sm:w-12 shrink-0 place-items-center rounded-full bg-primary font-display text-base sm:text-lg font-bold text-white mt-0.5 sm:mt-1">
+                            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary font-display text-sm font-bold text-white sm:mt-1 sm:h-12 sm:w-12 sm:text-lg">
                                 {i + 1}
                             </span>
-                            <div className="flex-1 space-y-2">
-                                <h2 className="text-xl sm:text-2xl font-bold">{iv.title}</h2>
+                            <div className="min-w-0 space-y-2">
+                                <h2 className="text-lg font-bold leading-snug sm:text-2xl">{iv.title}</h2>
                                 {showHelpful && (
                                     <span className="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-3 py-1 text-xs font-semibold text-success">
                                         <History size={14} />{" "}
@@ -88,7 +90,7 @@ export function Supports() {
                                 id={`btn-view-${iv.slug}`}
                                 href={`/interventions/${iv.slug}?${flowQs(ctx)}`}
                                 variant="soft"
-                                className="w-full sm:w-auto sm:self-center justify-center text-center"
+                                className="col-span-2 w-full justify-center text-center sm:col-span-1 sm:w-auto sm:self-center"
                             >
                                 {t.supports.viewStrategy} <ArrowRight size={16} aria-hidden="true" />
                             </ButtonLink>
@@ -97,7 +99,10 @@ export function Supports() {
                 })}
             </div>
 
-            <Link href="/quick-check" className="inline-block text-sm font-medium text-muted hover:text-foreground">
+            <Link
+                href="/quick-check"
+                className="inline-flex min-h-11 items-center text-sm font-medium text-muted hover:text-foreground"
+            >
                 {t.supports.startDifferent}
             </Link>
         </div>

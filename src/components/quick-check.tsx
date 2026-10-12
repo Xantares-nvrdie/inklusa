@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CategoryIcon } from "@/components/category-icon";
+import { MobileActionBar } from "@/components/ui/action-bar";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { api } from "@/lib/api";
@@ -24,7 +25,7 @@ interface ClassData {
 }
 
 function choiceCls(selected: boolean) {
-    return `flex w-full cursor-pointer items-center gap-3.5 sm:gap-4 rounded-2xl border-[1.5px] p-4 sm:p-5 text-left transition-all duration-200 glass ${
+    return `flex w-full cursor-pointer items-center gap-3.5 sm:gap-4 rounded-2xl border-[1.5px] p-4 sm:p-5 text-left transition-all duration-200 glass active:scale-[0.99] ${
         selected
             ? "border-primary bg-primary-soft/80 shadow-soft"
             : "border-white/60 bg-surface/80 hover:border-primary/50 hover:-translate-y-0.5"
@@ -107,16 +108,16 @@ export function QuickCheck() {
     const currentClass = selectedClassId ? classesData.find((c) => c.id === selectedClassId) : null;
 
     return (
-        <div className="mx-auto max-w-3xl space-y-8">
+        <div className="mx-auto max-w-3xl space-y-6 sm:space-y-8">
             {/* Progress */}
             {step < 3 && (
-                <fieldset className="m-0 space-y-3 border-0 p-0">
+                <fieldset className="m-0 space-y-2.5 border-0 p-0">
                     <legend className="sr-only">{t.quickCheck.stepProgress(step + 1, stepsLabels.length)}</legend>
-                    <ol className="flex items-center gap-3">
+                    <ol className="flex items-center gap-2 sm:gap-3">
                         {stepsLabels.map((label, i) => (
-                            <li key={label} className="flex flex-1 items-center gap-3">
+                            <li key={label} className="flex flex-1 items-center gap-2 last:flex-none sm:gap-3">
                                 <span
-                                    className={`grid h-9 w-9 shrink-0 place-items-center rounded-full font-display text-sm font-bold transition-colors ${i <= step ? "bg-primary text-white" : "bg-surface-2 text-muted"}`}
+                                    className={`grid h-8 w-8 shrink-0 place-items-center rounded-full font-display text-sm font-bold transition-colors sm:h-9 sm:w-9 ${i <= step ? "bg-primary text-white" : "bg-surface-2 text-muted"} ${i === step ? "ring-4 ring-primary/15" : ""}`}
                                 >
                                     {i < step ? <Check size={16} aria-hidden="true" /> : i + 1}
                                 </span>
@@ -131,6 +132,11 @@ export function QuickCheck() {
                             </li>
                         ))}
                     </ol>
+                    {/* Labels are hidden next to the dots on phones — name the current step instead. */}
+                    <p className="text-xs font-semibold text-muted sm:hidden" aria-hidden="true">
+                        {t.quickCheck.stepProgress(step + 1, stepsLabels.length)} ·{" "}
+                        <span className="text-foreground">{stepsLabels[step]}</span>
+                    </p>
                 </fieldset>
             )}
 
@@ -180,7 +186,7 @@ export function QuickCheck() {
                                                 <Users size={20} aria-hidden="true" />
                                             </span>
                                             <span className="flex-1">
-                                                <span className="block text-lg font-semibold">
+                                                <span className="block text-base font-semibold xs:text-lg">
                                                     {t.quickCheck.generalClassroom}
                                                 </span>
                                                 <span className="block text-sm text-muted">
@@ -231,7 +237,7 @@ export function QuickCheck() {
                                                                 key={c.id}
                                                                 type="button"
                                                                 onClick={() => setSelectedClassId(c.id)}
-                                                                className={`group relative flex w-full cursor-pointer items-center justify-between gap-4 rounded-2xl border-[1.5px] p-5 text-left transition-all duration-200 glass ${
+                                                                className={`group relative flex w-full cursor-pointer items-center justify-between gap-3 sm:gap-4 rounded-2xl border-[1.5px] p-4 sm:p-5 text-left transition-all duration-200 glass active:scale-[0.99] ${
                                                                     isClassActive
                                                                         ? "border-primary bg-primary-soft/40 shadow-soft"
                                                                         : "border-white/60 bg-surface/80 hover:border-primary/50 hover:bg-surface hover:-translate-y-0.5"
@@ -278,7 +284,7 @@ export function QuickCheck() {
                                             )}
 
                                             {addingClass ? (
-                                                <Card className="flex flex-col gap-3 sm:flex-row glass border-white/60 mt-3">
+                                                <Card className="mt-3 flex flex-col gap-3 border-white/60 p-4 glass sm:flex-row sm:p-6">
                                                     <input
                                                         value={newClassName}
                                                         onChange={(e) => setNewClassName(e.target.value)}
@@ -293,7 +299,7 @@ export function QuickCheck() {
                                                         }}
                                                         className="h-12 flex-1 rounded-2xl border border-line px-4 outline-none focus:border-primary focus:ring-4 focus:ring-primary/15"
                                                     />
-                                                    <div className="flex gap-2">
+                                                    <div className="grid grid-cols-2 gap-2 sm:flex">
                                                         <Button
                                                             variant="ghost"
                                                             onClick={() => {
@@ -312,11 +318,11 @@ export function QuickCheck() {
                                                     </div>
                                                 </Card>
                                             ) : (
-                                                <div className="pt-2">
+                                                <div className="pt-1 sm:pt-2">
                                                     <button
                                                         type="button"
                                                         onClick={() => setAddingClass(true)}
-                                                        className="inline-flex cursor-pointer items-center gap-2 font-semibold text-primary hover:underline"
+                                                        className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border-[1.5px] border-dashed border-primary/35 py-3.5 font-semibold text-primary transition-colors hover:bg-primary-soft/40 sm:inline-flex sm:w-auto sm:border-0 sm:py-0 sm:hover:bg-transparent sm:hover:underline"
                                                     >
                                                         <Plus size={16} aria-hidden="true" /> {t.quickCheck.addClass}
                                                     </button>
@@ -336,18 +342,18 @@ export function QuickCheck() {
                                         <button
                                             type="button"
                                             onClick={() => setSelectedClassId(null)}
-                                            className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline hover:-translate-x-0.5 transition-transform cursor-pointer"
+                                            className="-my-2 inline-flex min-h-11 cursor-pointer items-center gap-2 text-sm font-semibold text-primary transition-transform hover:-translate-x-0.5 hover:underline"
                                         >
                                             <ArrowLeft size={16} /> {t.quickCheck.backToClasses}
                                         </button>
 
-                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-5 rounded-2xl glass border border-white/60 bg-surface/70">
-                                            <div className="flex items-center gap-3.5">
-                                                <span className="grid h-12 w-12 place-items-center rounded-xl bg-primary text-white shadow-soft">
-                                                    <GraduationCap size={24} />
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:p-5 rounded-2xl glass border border-white/60 bg-surface/70">
+                                            <div className="flex min-w-0 items-center gap-3.5">
+                                                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary text-white shadow-soft sm:h-12 sm:w-12">
+                                                    <GraduationCap size={22} aria-hidden="true" />
                                                 </span>
-                                                <div>
-                                                    <h2 className="text-2xl font-bold text-foreground">
+                                                <div className="min-w-0">
+                                                    <h2 className="truncate text-xl font-bold text-foreground sm:text-2xl">
                                                         {currentClass.name}
                                                     </h2>
                                                     <p className="text-sm text-muted">
@@ -424,7 +430,7 @@ export function QuickCheck() {
                                                     }}
                                                     className="h-12 flex-1 rounded-2xl border border-line px-4 outline-none focus:border-primary focus:ring-4 focus:ring-primary/15"
                                                 />
-                                                <div className="flex gap-2">
+                                                <div className="grid grid-cols-2 gap-2 sm:flex">
                                                     <Button
                                                         variant="ghost"
                                                         onClick={() => {
@@ -445,13 +451,16 @@ export function QuickCheck() {
                                                 </div>
                                             </div>
                                         ) : (
-                                            <div className="pt-2">
+                                            <div className="pt-1 sm:pt-2">
                                                 <button
                                                     type="button"
                                                     onClick={() => setAddingStudentTo(currentClass.id)}
-                                                    className="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-primary hover:underline"
+                                                    className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border-[1.5px] border-dashed border-primary/35 px-4 py-3.5 text-center text-sm font-semibold text-primary transition-colors hover:bg-primary-soft/40 sm:inline-flex sm:w-auto sm:border-0 sm:p-0 sm:hover:bg-transparent sm:hover:underline"
                                                 >
-                                                    <Plus size={16} /> {t.quickCheck.addStudentTo(currentClass.name)}
+                                                    <Plus size={16} aria-hidden="true" className="shrink-0" />
+                                                    <span className="truncate">
+                                                        {t.quickCheck.addStudentTo(currentClass.name)}
+                                                    </span>
                                                 </button>
                                             </div>
                                         )}
@@ -480,10 +489,19 @@ export function QuickCheck() {
                                         <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary-strong">
                                             <CategoryIcon icon={c.icon} />
                                         </span>
-                                        <span>
-                                            <span className="block text-lg font-semibold">{c.title}</span>
-                                            <span className="block text-sm text-muted">{c.description}</span>
+                                        <span className="min-w-0 flex-1">
+                                            <span className="block text-base font-semibold leading-snug xs:text-lg">
+                                                {c.title}
+                                            </span>
+                                            <span className="mt-0.5 block text-sm leading-snug text-muted">
+                                                {c.description}
+                                            </span>
                                         </span>
+                                        {selectedCatId === c.id && (
+                                            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-primary text-white">
+                                                <Check size={16} aria-hidden="true" />
+                                            </span>
+                                        )}
                                     </button>
                                 ))}
                             </div>
@@ -509,7 +527,9 @@ export function QuickCheck() {
                                         >
                                             {clarId === c.id && <span className="h-2 w-2 rounded-full bg-white" />}
                                         </span>
-                                        <span className="text-lg font-medium">{c.label}</span>
+                                        <span className="min-w-0 flex-1 text-base font-medium leading-snug xs:text-lg">
+                                            {c.label}
+                                        </span>
                                     </button>
                                 ))}
                             </fieldset>
@@ -534,36 +554,62 @@ export function QuickCheck() {
                             <p className="rounded-2xl bg-accent-soft px-4 sm:px-5 py-3.5 sm:py-4 text-sm text-[#7a4510]">
                                 {t.quickCheck.notADiagnosis}
                             </p>
-                            <ButtonLink
-                                id="btn-see-supports"
-                                href={`/quick-check/supports?${flowQs({ student, cat: cat.id, clar: clar.id })}`}
-                                size="lg"
-                                className="w-full sm:w-auto text-center justify-center"
-                            >
-                                {t.quickCheck.seeSupports} <ArrowRight size={18} aria-hidden="true" />
-                            </ButtonLink>
                         </>
                     )}
                 </motion.div>
             </AnimatePresence>
 
-            <div className="flex items-center justify-between pt-2">
+            {/* Primary navigation stays within thumb reach on phones. */}
+            <MobileActionBar className="flex items-center justify-between gap-2 md:pt-2">
                 {step > 0 ? (
-                    <Button id="btn-back" variant="ghost" onClick={() => setStep(step - 1)}>
+                    <Button
+                        id="btn-back"
+                        variant="ghost"
+                        onClick={() => setStep(step - 1)}
+                        className="h-12 shrink-0 px-4 md:h-11 md:px-6"
+                    >
                         <ArrowLeft size={16} aria-hidden="true" /> {t.quickCheck.back}
                     </Button>
                 ) : (
-                    <Link href="/dashboard" className="text-sm font-medium text-muted hover:text-foreground">
+                    <Link
+                        href="/dashboard"
+                        className="inline-flex h-12 shrink-0 items-center rounded-full px-4 text-sm font-medium text-muted hover:text-foreground md:h-auto md:px-0"
+                    >
                         {t.quickCheck.cancel}
                     </Link>
                 )}
-                {step < 3 && (
-                    <Button id="btn-next" size="lg" disabled={!canNext} onClick={() => setStep(step + 1)}>
-                        {step === 2 ? t.quickCheck.showInsight : t.quickCheck.continue}{" "}
-                        <ArrowRight size={18} aria-hidden="true" />
+                {step < 3 ? (
+                    <Button
+                        id="btn-next"
+                        size="lg"
+                        disabled={!canNext}
+                        onClick={() => {
+                            setStep(step + 1);
+                            window.scrollTo({ top: 0, behavior: "smooth" });
+                        }}
+                        className="h-12 min-w-0 flex-1 px-5 md:h-14 md:flex-none md:px-8"
+                    >
+                        <span className="truncate">
+                            {step === 2 ? t.quickCheck.showInsight : t.quickCheck.continue}
+                        </span>
+                        <ArrowRight size={18} aria-hidden="true" className="shrink-0" />
                     </Button>
+                ) : (
+                    cat &&
+                    clar &&
+                    student && (
+                        <ButtonLink
+                            id="btn-see-supports"
+                            href={`/quick-check/supports?${flowQs({ student, cat: cat.id, clar: clar.id })}`}
+                            size="lg"
+                            className="h-12 min-w-0 flex-1 px-5 md:h-14 md:flex-none md:px-8"
+                        >
+                            <span className="truncate">{t.quickCheck.seeSupports}</span>
+                            <ArrowRight size={18} aria-hidden="true" className="shrink-0" />
+                        </ButtonLink>
+                    )
                 )}
-            </div>
+            </MobileActionBar>
         </div>
     );
 }

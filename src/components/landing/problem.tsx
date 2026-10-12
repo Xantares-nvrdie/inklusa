@@ -4,6 +4,7 @@ import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "fr
 import { BookOpenText, Ear, ListOrdered, Users } from "lucide-react";
 import { useRef } from "react";
 import { useLanguage } from "@/lib/i18n/context";
+import { useMediaQuery } from "@/lib/use-media-query";
 import { Eyebrow, PARALLAX_SPRING } from "./shared";
 
 const ICONS = [Ear, BookOpenText, ListOrdered, Users];
@@ -19,7 +20,9 @@ export function LandingProblem() {
     const { t } = useLanguage();
     const ref = useRef<HTMLElement>(null);
     const reduce = useReducedMotion();
-    const k = reduce ? 0 : 1;
+    // Columns stack on phones, so drifting them would make the cards overlap.
+    const twoColumns = useMediaQuery("(min-width: 640px)");
+    const k = reduce || !twoColumns ? 0 : 1;
     const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
     const p = useSpring(scrollYProgress, PARALLAX_SPRING);
     const yColA = useTransform(p, [0, 1], [60 * k, -60 * k]);
@@ -43,12 +46,12 @@ export function LandingProblem() {
                     </blockquote>
                 </div>
 
-                <div className="grid gap-5 sm:grid-cols-2">
+                <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
                     {cols.map((col, ci) => (
                         <motion.div
                             key={col.join()}
                             style={{ y: ci === 0 ? yColA : yColB }}
-                            className={`space-y-5 ${ci === 1 ? "sm:mt-24" : ""}`}
+                            className={`space-y-4 sm:space-y-5 ${ci === 1 ? "sm:mt-24" : ""}`}
                         >
                             {col.map((idx) => {
                                 const Icon = ICONS[idx];
@@ -65,7 +68,7 @@ export function LandingProblem() {
                                         >
                                             <Icon size={22} aria-hidden="true" />
                                         </span>
-                                        <p className="relative mt-10 text-lg font-medium leading-snug">
+                                        <p className="relative mt-6 text-base font-medium leading-snug sm:mt-10 sm:text-lg">
                                             {t.landing.problems[idx]}
                                         </p>
                                     </article>

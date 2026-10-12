@@ -19,7 +19,9 @@ export function StatusBadge({ status }: { status: PlanStatus }) {
     const label = STATUS_LABELS_DATA[locale]?.[status] ?? status;
 
     return (
-        <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${cls}`}>
+        <span
+            className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-semibold sm:px-3 sm:text-xs ${cls}`}
+        >
             <Icon size={14} aria-hidden="true" />
             {label}
         </span>

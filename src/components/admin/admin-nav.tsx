@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { Logo } from "@/components/logo";
+import { MobileTabBar } from "@/components/mobile-tab-bar";
 import { signOut } from "@/lib/auth-client";
 import { adminDict } from "@/lib/i18n/admin";
 import { useLanguage } from "@/lib/i18n/context";
@@ -22,110 +23,92 @@ export function AdminNav({ name, image }: { name: string; image?: string | null 
         { href: "/admin/teachers", label: a.nav.teachers, Icon: Users },
         { href: "/admin/classes", label: a.nav.classes, Icon: GraduationCap },
         { href: "/admin/evaluations", label: a.nav.evaluations, Icon: BarChart3 },
-        { href: "/admin/knowledge", label: a.nav.knowledge, Icon: BookMarked },
-    ];
+        { href: "/admin/knowledge", label: a.nav.knowledge, shortLabel: a.nav.knowledgeShort, Icon: BookMarked },
+    ].map((l) => ({
+        ...l,
+        active: l.href === "/admin" ? pathname === l.href : pathname.startsWith(l.href),
+    }));
 
     return (
-        <header className="sticky top-0 z-40 border-b border-line/70 glass">
-            <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-5">
-                <div className="flex items-center gap-3">
-                    <Logo href="/admin" />
-                    <span className="hidden rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-[#9a5612] md:inline">
-                        {a.nav.badge}
-                    </span>
-                </div>
-                <nav className="hidden items-center gap-1 md:flex" aria-label="Admin">
-                    {links.map(({ href, label, Icon }) => {
-                        const active = href === "/admin" ? pathname === href : pathname.startsWith(href);
-                        return (
+        <>
+            <header className="sticky top-0 z-40 border-b border-line/70 glass pt-safe">
+                <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4 sm:h-16 sm:px-5">
+                    <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+                        <Logo href="/admin" />
+                        <span className="hidden rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-[#9a5612] xs:inline">
+                            {a.nav.badge}
+                        </span>
+                    </div>
+                    <nav className="hidden items-center gap-0.5 md:flex lg:gap-1" aria-label="Admin">
+                        {links.map(({ href, label, Icon, active }) => (
                             <Link
                                 key={href}
                                 href={href}
                                 id={`admin-nav-${href.split("/").pop() || "overview"}`}
                                 aria-current={active ? "page" : undefined}
+                                title={label}
                                 className={cn(
-                                    "inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-medium transition-colors whitespace-nowrap shrink-0",
+                                    "inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium transition-colors lg:px-3.5",
                                     active
                                         ? "bg-primary-soft text-primary-strong"
                                         : "text-muted hover:bg-surface-2 hover:text-foreground",
                                 )}
                             >
                                 <Icon size={16} aria-hidden="true" />
-                                <span className="hidden sm:inline whitespace-nowrap">{label}</span>
+                                {/* 5 links don't fit with labels between md and lg — show icons there. */}
+                                <span className="hidden whitespace-nowrap lg:inline">{label}</span>
+                                <span className="sr-only lg:hidden">{label}</span>
                             </Link>
-                        );
-                    })}
-                </nav>
-                <div className="flex items-center gap-2 sm:gap-3">
-                    <LanguageSwitcher />
-                    <Link
-                        href="/admin/profile"
-                        title={name || "Profil Admin"}
-                        aria-label="Profil Admin"
-                        className={cn(
-                            "flex items-center gap-2 rounded-full p-1 sm:px-2.5 sm:py-1 transition-all border shrink-0",
-                            pathname === "/admin/profile"
-                                ? "bg-primary-soft text-primary-strong border-primary/30 shadow-xs"
-                                : "border-line/70 hover:border-primary/40 hover:bg-surface-2 text-foreground",
-                        )}
-                    >
-                        <span className="relative h-7 w-7 sm:h-8 sm:w-8 rounded-full overflow-hidden bg-primary-soft text-primary-strong flex items-center justify-center font-bold text-xs shrink-0 border border-primary/20">
-                            {image ? (
-                                <Image
-                                    src={image}
-                                    alt={name || "Admin"}
-                                    width={32}
-                                    height={32}
-                                    className="h-full w-full object-cover"
-                                    unoptimized
-                                />
-                            ) : (
-                                <span>{(name || "A")[0]?.toUpperCase()}</span>
-                            )}
-                        </span>
-                        <span className="hidden text-xs sm:text-sm font-semibold max-w-28 truncate md:inline">
-                            {name}
-                        </span>
-                    </Link>
-                    <button
-                        id="admin-sign-out"
-                        type="button"
-                        onClick={async () => {
-                            await signOut();
-                            router.push("/");
-                            router.refresh();
-                        }}
-                        className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-muted transition-colors hover:bg-surface-2 hover:text-foreground"
-                        aria-label="Sign out"
-                    >
-                        <LogOut size={18} aria-hidden="true" />
-                    </button>
-                </div>
-            </div>
-            <nav
-                className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-50 grid grid-cols-5 rounded-2xl border border-line/70 bg-surface/95 p-1 sm:p-1.5 shadow-lift backdrop-blur md:hidden"
-                aria-label="Admin"
-            >
-                {links.map(({ href, label, Icon }) => {
-                    const active = href === "/admin" ? pathname === href : pathname.startsWith(href);
-                    return (
+                        ))}
+                    </nav>
+                    <div className="flex items-center gap-2 sm:gap-3">
+                        <LanguageSwitcher />
                         <Link
-                            key={href}
-                            href={href}
-                            aria-current={active ? "page" : undefined}
+                            href="/admin/profile"
+                            title={name || "Profil Admin"}
+                            aria-label="Profil Admin"
+                            aria-current={pathname === "/admin/profile" ? "page" : undefined}
                             className={cn(
-                                "flex min-h-13 sm:min-h-14 flex-col items-center justify-center gap-1 rounded-xl px-0.5 sm:px-1 text-[9.5px] xs:text-[10px] sm:text-[11px] font-semibold leading-tight transition-colors",
-                                active
-                                    ? "bg-primary-soft text-primary-strong"
-                                    : "text-muted hover:bg-surface-2 hover:text-foreground",
+                                "flex shrink-0 items-center gap-2 rounded-full border p-0.5 transition-all sm:p-1 xl:px-2.5 xl:py-1",
+                                pathname === "/admin/profile"
+                                    ? "border-primary/30 bg-primary-soft text-primary-strong shadow-xs"
+                                    : "border-line/70 text-foreground hover:border-primary/40 hover:bg-surface-2",
                             )}
                         >
-                            <Icon size={16} aria-hidden="true" />
-                            <span className="max-w-full truncate whitespace-nowrap">{label}</span>
+                            <span className="relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-primary/20 bg-primary-soft text-xs font-bold text-primary-strong">
+                                {image ? (
+                                    <Image
+                                        src={image}
+                                        alt={name || "Admin"}
+                                        width={32}
+                                        height={32}
+                                        className="h-full w-full object-cover"
+                                        unoptimized
+                                    />
+                                ) : (
+                                    <span>{(name || "A")[0]?.toUpperCase()}</span>
+                                )}
+                            </span>
+                            <span className="hidden max-w-28 truncate text-sm font-semibold xl:inline">{name}</span>
                         </Link>
-                    );
-                })}
-            </nav>
-        </header>
+                        <button
+                            id="admin-sign-out"
+                            type="button"
+                            onClick={async () => {
+                                await signOut();
+                                router.push("/");
+                                router.refresh();
+                            }}
+                            className="hidden h-9 w-9 cursor-pointer items-center justify-center rounded-full text-muted transition-colors hover:bg-surface-2 hover:text-foreground md:inline-flex"
+                            aria-label="Sign out"
+                            title="Sign out"
+                        >
+                            <LogOut size={18} aria-hidden="true" />
+                        </button>
+                    </div>
+                </div>
+            </header>
+            <MobileTabBar items={links} label="Admin" />
+        </>
     );
 }

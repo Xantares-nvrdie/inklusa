@@ -5,6 +5,7 @@ import { ArrowRight, Check, ShieldCheck, UserRoundCheck } from "lucide-react";
 import { useRef } from "react";
 import { ButtonLink } from "@/components/ui/button";
 import { useLanguage } from "@/lib/i18n/context";
+import { useMediaQuery } from "@/lib/use-media-query";
 import { Eyebrow, PARALLAX_SPRING } from "./shared";
 
 /** Three principle cards, each sitting on a different depth plane. */
@@ -12,7 +13,9 @@ export function LandingPrinciples() {
     const { t } = useLanguage();
     const ref = useRef<HTMLElement>(null);
     const reduce = useReducedMotion();
-    const k = reduce ? 0 : 1;
+    // Cards stack below md; per-card depth offsets would make them overlap there.
+    const threeColumns = useMediaQuery("(min-width: 768px)");
+    const k = reduce || !threeColumns ? 0 : 1;
     const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
     const p = useSpring(scrollYProgress, PARALLAX_SPRING);
     const ys = [

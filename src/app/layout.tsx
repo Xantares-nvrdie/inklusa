@@ -13,6 +13,7 @@ export const viewport: Viewport = {
     width: "device-width",
     initialScale: 1,
     maximumScale: 5,
+    viewportFit: "cover",
     themeColor: "#1f7a70",
 };
 
@@ -31,9 +32,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                         {children}
                         <Toaster
                             position="top-center"
+                            containerStyle={{ top: "calc(env(safe-area-inset-top) + 4.5rem)" }}
                             toastOptions={{
                                 duration: 4000,
-                                style: { borderRadius: "1rem", background: "#fff", color: "#16302d", maxWidth: "90vw" },
+                                style: {
+                                    borderRadius: "1rem",
+                                    background: "#fff",
+                                    color: "#16302d",
+                                    maxWidth: "min(28rem, calc(100vw - 2rem))",
+                                    fontSize: "0.9rem",
+                                    boxShadow: "0 2px 4px rgba(25,60,55,.05), 0 20px 44px -16px rgba(25,60,55,.22)",
+                                },
                             }}
                         />
                     </KnowledgeProvider>

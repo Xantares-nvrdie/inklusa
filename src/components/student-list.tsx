@@ -81,7 +81,7 @@ export function StudentList() {
                     >
                         {/* Header */}
                         <div className="flex flex-wrap items-end justify-between gap-4">
-                            <div className="space-y-1">
+                            <div className="min-w-0 space-y-1">
                                 <h1 className="text-2xl sm:text-4xl font-bold tracking-tight">{t.students.title}</h1>
                                 <p className="text-sm sm:text-base text-muted">
                                     {locale === "id"
@@ -89,18 +89,14 @@ export function StudentList() {
                                         : `Select a class to view ${totalStudents} students or manage classes.`}
                                 </p>
                             </div>
-                            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
-                                <ButtonLink
-                                    href="/students/manage"
-                                    variant="soft"
-                                    className="w-full xs:w-auto justify-center"
-                                >
-                                    <Settings size={16} aria-hidden="true" />
-                                    <span>{t.students.manageClasses}</span>
+                            <div className="grid w-full grid-cols-2 gap-2.5 sm:flex sm:w-auto sm:gap-3">
+                                <ButtonLink href="/students/manage" variant="soft" className="min-w-0 px-4">
+                                    <Settings size={16} aria-hidden="true" className="shrink-0" />
+                                    <span className="truncate">{t.students.manageClasses}</span>
                                 </ButtonLink>
-                                <ButtonLink href="/quick-check" className="w-full xs:w-auto justify-center">
-                                    <Plus size={16} aria-hidden="true" />
-                                    <span>{t.myInterventions.btnNew}</span>
+                                <ButtonLink href="/quick-check" className="min-w-0 px-4">
+                                    <Plus size={16} aria-hidden="true" className="shrink-0" />
+                                    <span className="truncate">{t.myInterventions.btnNew}</span>
                                 </ButtonLink>
                             </div>
                         </div>
@@ -159,75 +155,81 @@ export function StudentList() {
                                 </p>
                             </Card>
                         ) : (
-                            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
                                 {filteredClasses.map((c) => (
-                                    <Card
+                                    <button
                                         key={c.id}
-                                        interactive
+                                        type="button"
                                         onClick={() => {
                                             setSelectedClassId(c.id);
                                             setStudentSearch("");
+                                            window.scrollTo({ top: 0, behavior: "smooth" });
                                         }}
-                                        className="group cursor-pointer glass border-white/60 p-5 flex flex-col justify-between transition-all duration-200 hover:border-primary/50 hover:shadow-soft hover:-translate-y-0.5 space-y-4"
+                                        className="group block h-full w-full cursor-pointer rounded-[var(--radius-card)] text-left"
                                     >
-                                        <div className="space-y-3">
-                                            <div className="flex items-start justify-between gap-3">
-                                                <div className="flex items-center gap-3 min-w-0 flex-1">
-                                                    <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-primary-soft text-primary-strong group-hover:bg-primary group-hover:text-white transition-colors shadow-xs">
-                                                        <GraduationCap size={24} aria-hidden="true" />
-                                                    </span>
-                                                    <div className="min-w-0 flex-1">
-                                                        <h2 className="font-bold text-lg sm:text-xl text-foreground truncate group-hover:text-primary transition-colors">
-                                                            {c.name}
-                                                        </h2>
-                                                        <span className="inline-flex items-center text-xs font-semibold px-2.5 py-0.5 mt-1 rounded-full bg-surface-2 text-muted">
-                                                            {c.students.length} {t.students.student}
+                                        <Card
+                                            interactive
+                                            className="flex h-full flex-col justify-between space-y-4 border-white/60 p-4 glass transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-soft sm:p-5"
+                                        >
+                                            <div className="space-y-3">
+                                                <div className="flex items-start justify-between gap-3">
+                                                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                                                        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-primary-soft text-primary-strong group-hover:bg-primary group-hover:text-white transition-colors shadow-xs">
+                                                            <GraduationCap size={24} aria-hidden="true" />
                                                         </span>
+                                                        <div className="min-w-0 flex-1">
+                                                            <h2 className="font-bold text-lg sm:text-xl text-foreground truncate group-hover:text-primary transition-colors">
+                                                                {c.name}
+                                                            </h2>
+                                                            <span className="inline-flex items-center text-xs font-semibold px-2.5 py-0.5 mt-1 rounded-full bg-surface-2 text-muted">
+                                                                {c.students.length} {t.students.student}
+                                                            </span>
+                                                        </div>
                                                     </div>
+                                                </div>
+
+                                                {/* Preview first students */}
+                                                <div className="pt-2.5 border-t border-line/50 min-h-12 flex flex-col justify-center">
+                                                    {c.students.length > 0 ? (
+                                                        <div className="flex flex-wrap gap-1.5 items-center">
+                                                            {c.students.slice(0, 3).map((st) => (
+                                                                <span
+                                                                    key={st.id}
+                                                                    className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs bg-surface-2 text-foreground/80 max-w-28 truncate"
+                                                                >
+                                                                    <UserRound
+                                                                        size={11}
+                                                                        className="text-muted shrink-0"
+                                                                        aria-hidden="true"
+                                                                    />
+                                                                    <span className="truncate">{st.name}</span>
+                                                                </span>
+                                                            ))}
+                                                            {c.students.length > 3 && (
+                                                                <span className="text-xs font-semibold text-muted pl-0.5">
+                                                                    +{c.students.length - 3}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    ) : (
+                                                        <p className="text-xs text-muted italic">
+                                                            {t.students.noStudentsInClass}
+                                                        </p>
+                                                    )}
                                                 </div>
                                             </div>
 
-                                            {/* Preview first students */}
-                                            <div className="pt-2.5 border-t border-line/50 min-h-12 flex flex-col justify-center">
-                                                {c.students.length > 0 ? (
-                                                    <div className="flex flex-wrap gap-1.5 items-center">
-                                                        {c.students.slice(0, 3).map((st) => (
-                                                            <span
-                                                                key={st.id}
-                                                                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs bg-surface-2 text-foreground/80 max-w-28 truncate"
-                                                            >
-                                                                <UserRound
-                                                                    size={11}
-                                                                    className="text-muted shrink-0"
-                                                                    aria-hidden="true"
-                                                                />
-                                                                <span className="truncate">{st.name}</span>
-                                                            </span>
-                                                        ))}
-                                                        {c.students.length > 3 && (
-                                                            <span className="text-xs font-semibold text-muted pl-0.5">
-                                                                +{c.students.length - 3}
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                ) : (
-                                                    <p className="text-xs text-muted italic">
-                                                        {t.students.noStudentsInClass}
-                                                    </p>
-                                                )}
+                                            {/* Action footer */}
+                                            <div className="flex items-center justify-between pt-2 text-xs font-bold text-primary group-hover:translate-x-0.5 transition-transform">
+                                                <span>
+                                                    {locale === "id"
+                                                        ? `Buka Kelas (${c.students.length} Siswa)`
+                                                        : `Open Class (${c.students.length} Students)`}
+                                                </span>
+                                                <ChevronRight size={16} aria-hidden="true" />
                                             </div>
-                                        </div>
-
-                                        {/* Action footer */}
-                                        <div className="flex items-center justify-between pt-2 text-xs font-bold text-primary group-hover:translate-x-0.5 transition-transform">
-                                            <span>
-                                                {locale === "id"
-                                                    ? `Buka Kelas (${c.students.length} Siswa)`
-                                                    : `Open Class (${c.students.length} Students)`}
-                                            </span>
-                                            <ChevronRight size={16} aria-hidden="true" />
-                                        </div>
-                                    </Card>
+                                        </Card>
+                                    </button>
                                 ))}
                             </div>
                         )}
@@ -250,7 +252,7 @@ export function StudentList() {
                                     setSelectedClassId(null);
                                     setStudentSearch("");
                                 }}
-                                className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline hover:-translate-x-0.5 transition-transform cursor-pointer"
+                                className="-my-2 inline-flex min-h-11 cursor-pointer items-center gap-2 text-sm font-semibold text-primary transition-transform hover:-translate-x-0.5 hover:underline"
                             >
                                 <ArrowLeft size={16} aria-hidden="true" />
                                 <span>{locale === "id" ? "Kembali ke Semua Kelas" : "Back to All Classes"}</span>
@@ -276,19 +278,19 @@ export function StudentList() {
                                 </div>
                             </div>
 
-                            <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto w-full sm:w-auto">
+                            <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto">
                                 <ButtonLink
                                     href="/students/manage"
                                     variant="outline"
                                     size="sm"
-                                    className="w-full sm:w-auto justify-center"
+                                    className="h-11 min-w-0 px-3 sm:h-9 sm:px-4"
                                 >
-                                    <Settings size={15} aria-hidden="true" />
-                                    <span>{t.students.manageClasses}</span>
+                                    <Settings size={15} aria-hidden="true" className="shrink-0" />
+                                    <span className="truncate">{t.students.manageClasses}</span>
                                 </ButtonLink>
-                                <ButtonLink href="/quick-check" size="sm" className="w-full sm:w-auto justify-center">
-                                    <Plus size={15} aria-hidden="true" />
-                                    <span>{t.myInterventions.btnNew}</span>
+                                <ButtonLink href="/quick-check" size="sm" className="h-11 min-w-0 px-3 sm:h-9 sm:px-4">
+                                    <Plus size={15} aria-hidden="true" className="shrink-0" />
+                                    <span className="truncate">{t.myInterventions.btnNew}</span>
                                 </ButtonLink>
                             </div>
                         </Card>
@@ -337,12 +339,16 @@ export function StudentList() {
                                 )}
                             </Card>
                         ) : (
-                            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
                                 {filteredStudents.map((s) => (
-                                    <Link key={s.id} href={`/students/${s.id}`} className="block group">
+                                    <Link
+                                        key={s.id}
+                                        href={`/students/${s.id}`}
+                                        className="group block rounded-[var(--radius-card)]"
+                                    >
                                         <Card
                                             interactive
-                                            className="h-full p-5 glass border-white/60 flex flex-col justify-between space-y-4 transition-all duration-200 hover:border-primary/50 hover:shadow-soft"
+                                            className="flex h-full flex-col justify-between space-y-3 border-white/60 p-4 glass transition-all duration-200 hover:border-primary/50 hover:shadow-soft sm:space-y-4 sm:p-5"
                                         >
                                             <div className="flex items-center gap-3.5">
                                                 <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary-soft text-primary-strong group-hover:scale-105 group-hover:bg-primary group-hover:text-white transition-all shadow-xs shrink-0">

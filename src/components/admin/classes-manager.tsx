@@ -155,7 +155,7 @@ export function ClassesManager() {
     }, [currentClass, studentSearch]);
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-5 sm:space-y-6">
             <AnimatePresence mode="wait">
                 {!selectedClassId || !currentClass ? (
                     <motion.div
@@ -173,7 +173,7 @@ export function ClassesManager() {
                         </div>
 
                         {/* Search and Add Class Card */}
-                        <div className="grid gap-4 md:grid-cols-2">
+                        <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
                             <Card className="glass border-white/60 p-4 flex items-center gap-3">
                                 <Search className="text-muted shrink-0" size={18} />
                                 <Input
@@ -195,7 +195,7 @@ export function ClassesManager() {
                                         }
                                         maxLength={50}
                                         required
-                                        className="h-10 text-sm"
+                                        className="h-11 rounded-xl text-sm"
                                     />
                                     <Button
                                         type="submit"
@@ -210,7 +210,7 @@ export function ClassesManager() {
 
                         {/* Class Grid */}
                         {!filteredClasses ? (
-                            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
                                 {[1, 2, 3, 4, 5, 6].map((idx) => (
                                     <div key={idx} className="h-32 animate-pulse rounded-2xl bg-surface-2" />
                                 ))}
@@ -221,14 +221,14 @@ export function ClassesManager() {
                                 <p className="font-medium">{a.empty}</p>
                             </Card>
                         ) : (
-                            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
                                 {filteredClasses.map((c) => {
                                     const isEditing = editingClassId === c.id;
 
                                     return (
                                         <Card
                                             key={c.id}
-                                            className="group relative glass border-white/60 p-5 flex flex-col justify-between transition-all duration-200 hover:border-primary/50 hover:shadow-soft hover:-translate-y-0.5"
+                                            className="group relative flex flex-col justify-between border-white/60 p-4 glass transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-soft sm:p-5"
                                         >
                                             <div className="space-y-3">
                                                 <div className="flex items-start justify-between gap-3">
@@ -286,7 +286,7 @@ export function ClassesManager() {
                                                             <Button
                                                                 size="sm"
                                                                 variant="ghost"
-                                                                className="h-8 w-8 p-0 text-muted hover:text-foreground"
+                                                                className="h-9 w-9 p-0 text-muted hover:text-foreground sm:h-8 sm:w-8"
                                                                 title={a.edit}
                                                                 onClick={() => {
                                                                     setEditingClassId(c.id);
@@ -298,7 +298,7 @@ export function ClassesManager() {
                                                             <Button
                                                                 size="sm"
                                                                 variant="ghost"
-                                                                className="h-8 w-8 p-0 text-danger hover:bg-danger/10 hover:text-danger"
+                                                                className="h-9 w-9 p-0 text-danger hover:bg-danger/10 hover:text-danger sm:h-8 sm:w-8"
                                                                 title={a.del}
                                                                 onClick={() => handleDeleteClass(c.id)}
                                                             >
@@ -375,23 +375,23 @@ export function ClassesManager() {
                                     setEditingStudentId(null);
                                     setStudentSearch("");
                                 }}
-                                className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline hover:-translate-x-0.5 transition-transform cursor-pointer"
+                                className="-my-2 inline-flex min-h-11 cursor-pointer items-center gap-2 text-sm font-semibold text-primary transition-transform hover:-translate-x-0.5 hover:underline"
                             >
                                 <ArrowLeft size={16} /> {a.backToClasses}
                             </button>
                         </div>
 
                         {/* Class Header Banner */}
-                        <Card className="glass border-white/60 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <div className="flex items-center gap-4">
-                                <span className="grid h-14 w-14 place-items-center rounded-2xl bg-primary text-white shadow-soft shrink-0">
-                                    <GraduationCap size={28} />
+                        <Card className="flex flex-col justify-between gap-4 border-white/60 p-5 glass sm:flex-row sm:items-center sm:p-6">
+                            <div className="flex min-w-0 flex-1 items-center gap-3.5 sm:gap-4">
+                                <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-primary text-white shadow-soft sm:h-14 sm:w-14">
+                                    <GraduationCap size={26} aria-hidden="true" />
                                 </span>
-                                <div>
+                                <div className="min-w-0 flex-1">
                                     {editingClassId === currentClass.id ? (
                                         <form
                                             onSubmit={(e) => handleEditClass(e, currentClass.id)}
-                                            className="flex items-center gap-2"
+                                            className="flex flex-wrap items-center gap-2"
                                         >
                                             <Input
                                                 value={editClassName}
@@ -400,7 +400,7 @@ export function ClassesManager() {
                                                 }
                                                 maxLength={50}
                                                 required
-                                                className="h-9 font-bold text-lg"
+                                                className="h-10 min-w-0 flex-1 basis-full rounded-xl text-lg font-bold sm:basis-auto"
                                             />
                                             <Button size="sm" type="submit">
                                                 {a.save}
@@ -415,14 +415,14 @@ export function ClassesManager() {
                                             </Button>
                                         </form>
                                     ) : (
-                                        <div className="flex items-center gap-2.5">
-                                            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+                                        <div className="flex min-w-0 items-center gap-1.5 sm:gap-2.5">
+                                            <h2 className="truncate text-xl font-bold tracking-tight text-foreground sm:text-3xl">
                                                 {currentClass.name}
                                             </h2>
                                             <Button
                                                 size="sm"
                                                 variant="ghost"
-                                                className="h-8 w-8 p-0 text-muted hover:text-foreground"
+                                                className="h-9 w-9 p-0 text-muted hover:text-foreground sm:h-8 sm:w-8"
                                                 title={a.edit}
                                                 onClick={() => {
                                                     setEditingClassId(currentClass.id);
@@ -439,11 +439,11 @@ export function ClassesManager() {
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-2 self-start sm:self-auto">
+                            <div className="flex items-center gap-2 sm:self-auto">
                                 <Button
                                     size="sm"
                                     variant="outline"
-                                    className="text-danger hover:bg-danger/10 hover:text-danger"
+                                    className="h-11 w-full text-danger hover:bg-danger/10 hover:text-danger sm:h-9 sm:w-auto"
                                     onClick={() => handleDeleteClass(currentClass.id)}
                                 >
                                     <Trash2 size={15} className="mr-1.5" /> {a.del} {a.name}
@@ -454,7 +454,7 @@ export function ClassesManager() {
                         {/* Student Management Area */}
                         <div className="space-y-4">
                             {/* Toolbar: Add Student and Search */}
-                            <div className="grid gap-4 md:grid-cols-2">
+                            <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
                                 <Card className="glass border-white/60 p-4 flex items-center gap-3">
                                     <Search className="text-muted shrink-0" size={18} />
                                     <Input
@@ -478,7 +478,7 @@ export function ClassesManager() {
                                             }
                                             maxLength={50}
                                             required
-                                            className="h-10 text-sm"
+                                            className="h-11 rounded-xl text-sm"
                                         />
                                         <Button
                                             type="submit"
@@ -566,11 +566,11 @@ export function ClassesManager() {
                                                 </div>
 
                                                 {!isEditingThisStudent && (
-                                                    <div className="flex items-center gap-1 shrink-0 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                                                    <div className="flex items-center gap-1 shrink-0 transition-opacity [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 [@media(hover:hover)]:group-focus-within:opacity-100">
                                                         <Button
                                                             size="sm"
                                                             variant="ghost"
-                                                            className="h-7 w-7 p-0 text-muted hover:text-foreground"
+                                                            className="h-9 w-9 p-0 text-muted hover:text-foreground sm:h-8 sm:w-8"
                                                             title={a.edit}
                                                             onClick={() => {
                                                                 setEditingStudentId(st.id);
@@ -582,7 +582,7 @@ export function ClassesManager() {
                                                         <Button
                                                             size="sm"
                                                             variant="ghost"
-                                                            className="h-7 w-7 p-0 text-danger hover:bg-danger/10 hover:text-danger"
+                                                            className="h-9 w-9 p-0 text-danger hover:bg-danger/10 hover:text-danger sm:h-8 sm:w-8"
                                                             title={a.del}
                                                             onClick={() => handleDeleteStudent(st.id)}
                                                         >

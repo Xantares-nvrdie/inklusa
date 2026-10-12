@@ -34,7 +34,7 @@ export function LandingManifesto() {
 
     return (
         <section id="manifesto" ref={ref} className="relative h-[240vh]" aria-label="Manifesto">
-            <div className="sticky top-0 flex h-screen items-center overflow-hidden">
+            <div className="sticky top-0 flex h-svh items-center overflow-hidden">
                 <motion.p
                     aria-hidden="true"
                     style={{ x: xMark }}

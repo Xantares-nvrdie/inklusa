@@ -53,7 +53,7 @@ export function LandingSupports() {
 
     return (
         <section id="supports" ref={ref} className="relative h-[320vh] bg-background">
-            <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
+            <div className="sticky top-0 flex h-svh flex-col justify-center overflow-hidden">
                 <motion.div
                     ref={trackRef}
                     style={{ x }}
@@ -77,7 +77,7 @@ export function LandingSupports() {
                         return (
                             <article
                                 key={c.id}
-                                className={`group relative flex h-[min(30rem,70vh)] w-[min(21rem,78vw)] shrink-0 flex-col overflow-hidden rounded-[2rem] bg-gradient-to-br ${tone.bg} p-5 xs:p-6 sm:p-7 ring-1 ring-line transition-all duration-500 hover:-translate-y-2 hover:shadow-lift ${tone.ring} hover:ring-4`}
+                                className={`group relative flex h-[min(30rem,68svh)] w-[min(21rem,78vw)] shrink-0 flex-col overflow-hidden rounded-[2rem] bg-gradient-to-br ${tone.bg} p-5 xs:p-6 sm:p-7 ring-1 ring-line transition-all duration-500 hover:-translate-y-2 hover:shadow-lift ${tone.ring} hover:ring-4`}
                             >
                                 <motion.div
                                     style={{ x: iconX }}
@@ -109,7 +109,7 @@ export function LandingSupports() {
                     })}
 
                     {sample && (
-                        <article className="relative flex h-[min(30rem,70vh)] w-[min(26rem,85vw)] shrink-0 flex-col overflow-hidden rounded-[2rem] bg-primary-strong p-5 xs:p-6 sm:p-8 text-white shadow-lift">
+                        <article className="relative flex h-[min(30rem,68svh)] w-[min(26rem,85vw)] shrink-0 flex-col overflow-hidden rounded-[2rem] bg-primary-strong p-5 xs:p-6 sm:p-8 text-white shadow-lift">
                             <div
                                 className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-accent/40 blur-3xl"
                                 aria-hidden="true"

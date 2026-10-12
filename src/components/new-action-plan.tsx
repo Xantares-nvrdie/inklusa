@@ -76,11 +76,11 @@ export function NewActionPlan() {
 
     if (saved) {
         return (
-            <Card className="mx-auto max-w-xl space-y-6 p-10 text-center shadow-lift glass border-white/60">
-                <span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-primary-soft text-primary">
-                    <CheckCircle2 size={34} aria-hidden="true" />
+            <Card className="mx-auto max-w-xl space-y-5 border-white/60 p-6 text-center shadow-lift glass sm:space-y-6 sm:p-10">
+                <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-primary-soft text-primary animate-pop-in sm:h-16 sm:w-16">
+                    <CheckCircle2 size={32} aria-hidden="true" />
                 </span>
-                <h1 className="text-3xl font-bold">{t.actionPlan.createdTitle}</h1>
+                <h1 className="text-2xl font-bold sm:text-3xl">{t.actionPlan.createdTitle}</h1>
                 <div className="space-y-1 text-muted">
                     <p className="font-semibold text-foreground">{studentLabel}</p>
                     <p>{iv.title}</p>
@@ -123,17 +123,20 @@ export function NewActionPlan() {
     }
 
     const row = (label: string, value: string) => (
-        <div className="space-y-1">
-            <p className="text-sm font-semibold uppercase tracking-wider text-muted">{label}</p>
-            <p className="text-lg font-semibold">{value}</p>
+        <div className="min-w-0 space-y-0.5 py-3 first:pt-0 last:pb-0 sm:space-y-1 sm:py-0">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted sm:text-sm">{label}</p>
+            <p className="text-base font-semibold leading-snug sm:text-lg">{value}</p>
         </div>
     );
 
     return (
-        <div className="mx-auto max-w-2xl space-y-8">
-            <h1 className="text-4xl font-bold">{t.actionPlan.createTitle}</h1>
-            <Card className="space-y-6 p-8 glass border-white/60">
-                <div className="grid gap-6 sm:grid-cols-3">
+        <div className="mx-auto max-w-2xl space-y-6 sm:space-y-8">
+            <h1 className="text-[1.75rem] font-bold leading-tight xs:text-3xl sm:text-4xl">
+                {t.actionPlan.createTitle}
+            </h1>
+            <Card className="space-y-6 border-white/60 p-5 glass sm:p-8">
+                {/* Context summary: a divided list on phones, three columns from sm. */}
+                <div className="grid divide-y divide-line/60 rounded-2xl bg-surface-2/60 p-4 sm:grid-cols-3 sm:gap-6 sm:divide-y-0 sm:bg-transparent sm:p-0">
                     {row(t.actionPlan.student, studentLabel)}
                     {row(t.actionPlan.barrier, clar.barrier)}
                     {row(t.actionPlan.strategy, iv.title)}
@@ -152,9 +155,9 @@ export function NewActionPlan() {
                         aria-describedby="goal-hint goal-count"
                         className="w-full rounded-2xl border border-line bg-surface/80 glass p-4 text-base outline-none focus:border-primary focus:ring-4 focus:ring-primary/15"
                     />
-                    <div className="flex items-center justify-between gap-3 text-sm text-muted">
+                    <div className="flex items-start justify-between gap-3 text-xs text-muted sm:text-sm">
                         <p id="goal-hint">{t.actionPlan.goalHint}</p>
-                        <p id="goal-count" aria-live="polite">
+                        <p id="goal-count" aria-live="polite" className="shrink-0 tabular-nums">
                             {goal.length}/300
                         </p>
                     </div>

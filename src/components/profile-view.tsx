@@ -269,7 +269,7 @@ export function ProfileView({ isAdmin = false }: { isAdmin?: boolean }) {
         : "—";
 
     return (
-        <div className="mx-auto max-w-4xl space-y-8">
+        <div className="mx-auto max-w-4xl space-y-5 sm:space-y-8">
             {/* Page Title & Breadcrumb */}
             <div className="space-y-1">
                 <h1 className="text-2xl sm:text-4xl font-bold tracking-tight">
@@ -285,12 +285,12 @@ export function ProfileView({ isAdmin = false }: { isAdmin?: boolean }) {
             {loading ? (
                 <div className="h-64 animate-pulse rounded-3xl bg-surface-2" />
             ) : (
-                <div className="space-y-8">
+                <div className="space-y-5 sm:space-y-8">
                     {/* Header Banner: Avatar & Identity Card */}
-                    <Card className="glass border-white/60 p-6 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start gap-6 relative overflow-hidden">
+                    <Card className="glass border-white/60 p-5 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start gap-6 relative overflow-hidden">
                         {/* Avatar */}
                         <div className="relative group shrink-0">
-                            <div className="relative h-28 w-28 sm:h-32 sm:w-32 rounded-3xl overflow-hidden shadow-lift border-2 border-white/80 bg-surface-2 flex items-center justify-center">
+                            <div className="relative h-24 w-24 sm:h-32 sm:w-32 rounded-3xl overflow-hidden shadow-lift border-2 border-white/80 bg-surface-2 flex items-center justify-center">
                                 {image ? (
                                     <Image
                                         src={image}
@@ -358,7 +358,7 @@ export function ProfileView({ isAdmin = false }: { isAdmin?: boolean }) {
 
                             <p className="text-sm text-muted flex items-center justify-center sm:justify-start gap-1.5">
                                 <Mail size={15} className="shrink-0" />
-                                <span>{profile?.email}</span>
+                                <span className="min-w-0 break-all">{profile?.email}</span>
                             </p>
 
                             <p className="text-xs text-muted pt-1">
@@ -368,7 +368,7 @@ export function ProfileView({ isAdmin = false }: { isAdmin?: boolean }) {
                     </Card>
 
                     {/* Section 1: Edit Profile (Name & Picture) */}
-                    <Card className="glass border-white/60 p-6 sm:p-8 space-y-6">
+                    <Card className="glass border-white/60 p-5 sm:p-8 space-y-6">
                         <div className="flex items-center gap-2.5 border-b border-line/50 pb-4">
                             <User size={20} className="text-primary" />
                             <h3 className="text-xl font-bold text-foreground">
@@ -543,7 +543,7 @@ export function ProfileView({ isAdmin = false }: { isAdmin?: boolean }) {
                     </Card>
 
                     {/* Section 2: Change Password */}
-                    <Card className="glass border-white/60 p-6 sm:p-8 space-y-6">
+                    <Card className="glass border-white/60 p-5 sm:p-8 space-y-6">
                         <div className="flex items-center gap-2.5 border-b border-line/50 pb-4">
                             <KeyRound size={20} className="text-primary" />
                             <h3 className="text-xl font-bold text-foreground">

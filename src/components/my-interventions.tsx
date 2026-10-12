@@ -1,10 +1,11 @@
 "use client";
 
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, Plus, Search, SlidersHorizontal, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PlanCard } from "@/components/plan-card";
 import { ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Modal, ModalBody, ModalFooter, ModalHeader } from "@/components/ui/modal";
 import { api } from "@/lib/api";
 import { useLanguage } from "@/lib/i18n/context";
 import type { PlanRow } from "@/lib/knowledge";
@@ -34,17 +35,6 @@ export function MyInterventions() {
     const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
     const activeFilterCount = (search ? 1 : 0) + (teacher ? 1 : 0) + (from ? 1 : 0) + (to ? 1 : 0);
-
-    // Close mobile filter on escape key
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "Escape") setMobileFilterOpen(false);
-        };
-        if (mobileFilterOpen) {
-            window.addEventListener("keydown", handleKeyDown);
-            return () => window.removeEventListener("keydown", handleKeyDown);
-        }
-    }, [mobileFilterOpen]);
 
     const plans = data?.items ?? null;
     const totalPages = data ? Math.max(1, Math.ceil(data.total / data.pageSize)) : 1;
@@ -129,31 +119,35 @@ export function MyInterventions() {
     };
 
     return (
-        <div className="space-y-8">
-            <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="space-y-5 sm:space-y-8">
+            <div className="flex flex-wrap items-end justify-between gap-3 sm:gap-4">
                 <h1 className="text-2xl sm:text-4xl font-bold">{t.myInterventions.title}</h1>
-                <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                <div className="flex w-full items-center gap-2.5 sm:w-auto sm:gap-3">
                     <button
                         type="button"
                         onClick={exportCSV}
                         disabled={!plans || plans.length === 0}
-                        className="px-3.5 sm:px-4 py-2 font-semibold text-xs sm:text-sm border border-line rounded-xl hover:border-primary transition-colors disabled:opacity-50"
+                        className="inline-flex h-11 shrink-0 cursor-pointer items-center gap-2 rounded-full border border-line bg-surface px-4 text-sm font-semibold transition-colors hover:border-primary disabled:cursor-not-allowed disabled:opacity-50"
                     >
+                        <Download size={16} aria-hidden="true" />
                         {t.myInterventions.exportCSV}
                     </button>
-                    <ButtonLink id="btn-new-quick-check" href="/quick-check">
+                    <ButtonLink id="btn-new-quick-check" href="/quick-check" className="flex-1 sm:flex-none">
+                        <Plus size={16} aria-hidden="true" />
                         {t.myInterventions.btnNew}
                     </ButtonLink>
                 </div>
             </div>
-            <div className="flex gap-2 overflow-x-auto no-scrollbar flex-nowrap pb-1 sm:flex-wrap">
+            {/* Status chips scroll edge-to-edge on phones. */}
+            <div className="-mx-4 flex flex-nowrap gap-2 overflow-x-auto px-4 pb-1 no-scrollbar sm:mx-0 sm:flex-wrap sm:px-0">
                 {filters.map((f) => (
                     <button
                         key={f.id}
                         id={`filter-${f.id}`}
                         type="button"
                         onClick={() => setFilter(f.id)}
-                        className={`cursor-pointer rounded-full border px-3.5 sm:px-5 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap shrink-0 ${filter === f.id ? "border-primary bg-primary text-white" : "border-line bg-surface hover:border-primary"}`}
+                        aria-pressed={filter === f.id}
+                        className={`h-9 shrink-0 cursor-pointer whitespace-nowrap rounded-full border px-4 text-sm font-semibold transition-colors sm:h-10 sm:px-5 ${filter === f.id ? "border-primary bg-primary text-white" : "border-line bg-surface hover:border-primary"}`}
                     >
                         {f.label}
                     </button>
@@ -173,13 +167,16 @@ export function MyInterventions() {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder={t.myInterventions.searchStudentPlaceholder}
-                        className="w-full rounded-xl border border-line bg-surface pl-9 pr-3 py-2 text-sm outline-none focus:border-primary shadow-xs"
+                        aria-label={t.myInterventions.searchStudent}
+                        enterKeyHint="search"
+                        className="h-11 w-full rounded-xl border border-line bg-surface pl-9 pr-3 text-sm shadow-xs outline-none focus:border-primary focus:ring-4 focus:ring-primary/15"
                     />
                 </div>
                 <button
                     type="button"
                     onClick={() => setMobileFilterOpen(true)}
-                    className={`relative inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-sm font-semibold transition-colors shrink-0 shadow-xs cursor-pointer ${
+                    aria-haspopup="dialog"
+                    className={`relative inline-flex h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-xl border px-3.5 text-sm font-semibold shadow-xs transition-colors ${
                         activeFilterCount > 0
                             ? "border-primary bg-primary/10 text-primary font-bold"
                             : "border-line bg-surface text-foreground hover:border-primary"
@@ -199,20 +196,22 @@ export function MyInterventions() {
             {hasActiveFilters && (
                 <div className="flex sm:hidden flex-wrap items-center gap-1.5">
                     {teacher && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 border border-primary/20 px-2.5 py-0.5 text-xs text-primary font-medium">
-                            <span>{teachers.find((tc) => tc.id === teacher)?.name || t.myInterventions.teacher}</span>
+                        <span className="inline-flex items-center gap-1 rounded-full border border-primary/20 bg-primary/10 py-0.5 pl-3 pr-1 text-xs font-medium text-primary">
+                            <span className="max-w-40 truncate">
+                                {teachers.find((tc) => tc.id === teacher)?.name || t.myInterventions.teacher}
+                            </span>
                             <button
                                 type="button"
                                 onClick={() => setTeacher("")}
-                                className="cursor-pointer hover:opacity-70"
+                                className="grid h-6 w-6 cursor-pointer place-items-center rounded-full hover:bg-primary/15"
                                 aria-label="Hapus filter guru"
                             >
-                                <X size={12} />
+                                <X size={12} aria-hidden="true" />
                             </button>
                         </span>
                     )}
                     {(from || to) && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 border border-primary/20 px-2.5 py-0.5 text-xs text-primary font-medium">
+                        <span className="inline-flex items-center gap-1 rounded-full border border-primary/20 bg-primary/10 py-0.5 pl-3 pr-1 text-xs font-medium text-primary">
                             <span>
                                 {from || "..."} — {to || "..."}
                             </span>
@@ -222,17 +221,17 @@ export function MyInterventions() {
                                     setFrom("");
                                     setTo("");
                                 }}
-                                className="cursor-pointer hover:opacity-70"
+                                className="grid h-6 w-6 cursor-pointer place-items-center rounded-full hover:bg-primary/15"
                                 aria-label="Hapus filter tanggal"
                             >
-                                <X size={12} />
+                                <X size={12} aria-hidden="true" />
                             </button>
                         </span>
                     )}
                     <button
                         type="button"
                         onClick={resetFilters}
-                        className="text-xs text-muted hover:text-danger underline font-medium cursor-pointer ml-1"
+                        className="ml-1 cursor-pointer px-1 py-1 text-xs font-medium text-muted underline hover:text-danger"
                     >
                         {t.myInterventions.reset}
                     </button>
@@ -301,165 +300,167 @@ export function MyInterventions() {
                 )}
             </div>
 
-            {/* Mobile Filter Modal / Pop-Up */}
-            {mobileFilterOpen && (
-                <div
-                    role="dialog"
-                    aria-modal="true"
-                    aria-labelledby="mobile-filter-title"
-                    className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
-                >
-                    <div className="flex max-h-[85vh] w-full max-w-lg flex-col rounded-t-3xl sm:rounded-3xl border border-line/80 bg-surface shadow-2xl glass overflow-hidden">
-                        {/* Modal Header */}
-                        <div className="flex items-center justify-between border-b border-line/60 px-5 py-4 bg-surface/90">
-                            <div className="flex items-center gap-2">
-                                <SlidersHorizontal size={18} className="text-primary" />
-                                <h2 id="mobile-filter-title" className="text-base font-bold text-foreground">
-                                    {locale === "id" ? "Filter Intervensi" : "Filter Interventions"}
-                                </h2>
-                                {activeFilterCount > 0 && (
-                                    <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-bold text-primary">
-                                        {activeFilterCount} {locale === "id" ? "aktif" : "active"}
-                                    </span>
-                                )}
-                            </div>
-                            <button
-                                type="button"
-                                onClick={() => setMobileFilterOpen(false)}
-                                className="cursor-pointer rounded-full p-1.5 text-muted hover:bg-surface-2 hover:text-foreground"
-                                aria-label="Tutup filter"
-                            >
-                                <X size={20} />
-                            </button>
-                        </div>
-
-                        {/* Modal Content */}
-                        <div className="flex-1 overflow-y-auto p-5 space-y-4">
-                            <label className="flex flex-col gap-1.5 text-xs font-semibold text-muted">
-                                {t.myInterventions.searchStudent}
-                                <div className="relative">
-                                    <Search
-                                        size={16}
-                                        className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
-                                        aria-hidden="true"
-                                    />
-                                    <input
-                                        id="modal-filter-search"
-                                        type="search"
-                                        value={search}
-                                        onChange={(e) => setSearch(e.target.value)}
-                                        placeholder={t.myInterventions.searchStudentPlaceholder}
-                                        className={`${inputCls} w-full pl-9`}
-                                    />
-                                </div>
-                            </label>
-
-                            <label className="flex flex-col gap-1.5 text-xs font-semibold text-muted">
-                                {t.myInterventions.teacher}
-                                <select
-                                    id="modal-filter-teacher"
-                                    value={teacher}
-                                    onChange={(e) => setTeacher(e.target.value)}
-                                    className={`${inputCls} w-full`}
-                                >
-                                    <option value="">{t.myInterventions.allTeachers}</option>
-                                    {teachers.map((tc) => (
-                                        <option key={tc.id} value={tc.id}>
-                                            {tc.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
-
-                            <div className="grid grid-cols-2 gap-3">
-                                <label className="flex flex-col gap-1.5 text-xs font-semibold text-muted">
-                                    {t.myInterventions.fromDate}
-                                    <input
-                                        id="modal-filter-from"
-                                        type="date"
-                                        value={from}
-                                        max={to || undefined}
-                                        onChange={(e) => setFrom(e.target.value)}
-                                        className={`${inputCls} w-full`}
-                                    />
-                                </label>
-                                <label className="flex flex-col gap-1.5 text-xs font-semibold text-muted">
-                                    {t.myInterventions.toDate}
-                                    <input
-                                        id="modal-filter-to"
-                                        type="date"
-                                        value={to}
-                                        min={from || undefined}
-                                        onChange={(e) => setTo(e.target.value)}
-                                        className={`${inputCls} w-full`}
-                                    />
-                                </label>
-                            </div>
-                        </div>
-
-                        {/* Modal Footer */}
-                        <div className="border-t border-line/60 p-4 bg-surface flex items-center justify-between gap-3">
-                            <button
-                                type="button"
-                                onClick={resetFilters}
-                                disabled={!hasActiveFilters}
-                                className="cursor-pointer rounded-xl border border-line px-4 py-2.5 text-xs font-semibold hover:border-primary disabled:opacity-40 disabled:cursor-not-allowed text-muted hover:text-foreground"
-                            >
-                                {t.myInterventions.reset}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setMobileFilterOpen(false)}
-                                className="cursor-pointer rounded-xl bg-primary px-5 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-primary-hover flex-1 text-center"
-                            >
-                                {locale === "id" ? "Terapkan Filter" : "Apply Filter"}
-                            </button>
-                        </div>
+            {/* Mobile filter sheet */}
+            <Modal open={mobileFilterOpen} onClose={() => setMobileFilterOpen(false)} labelledBy="mobile-filter-title">
+                <ModalHeader onClose={() => setMobileFilterOpen(false)} closeLabel="Tutup filter">
+                    <div className="flex flex-wrap items-center gap-2">
+                        <SlidersHorizontal size={18} className="text-primary" aria-hidden="true" />
+                        <h2 id="mobile-filter-title" className="text-lg font-bold text-foreground">
+                            {locale === "id" ? "Filter Intervensi" : "Filter Interventions"}
+                        </h2>
+                        {activeFilterCount > 0 && (
+                            <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-bold text-primary">
+                                {activeFilterCount} {locale === "id" ? "aktif" : "active"}
+                            </span>
+                        )}
                     </div>
-                </div>
-            )}
+                </ModalHeader>
+
+                <ModalBody className="space-y-4">
+                    <label className="flex flex-col gap-1.5 text-xs font-semibold text-muted">
+                        {t.myInterventions.searchStudent}
+                        <div className="relative">
+                            <Search
+                                size={16}
+                                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+                                aria-hidden="true"
+                            />
+                            <input
+                                id="modal-filter-search"
+                                type="search"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                placeholder={t.myInterventions.searchStudentPlaceholder}
+                                className={`${inputCls} h-12 w-full pl-9`}
+                            />
+                        </div>
+                    </label>
+
+                    <label className="flex flex-col gap-1.5 text-xs font-semibold text-muted">
+                        {t.myInterventions.teacher}
+                        <select
+                            id="modal-filter-teacher"
+                            value={teacher}
+                            onChange={(e) => setTeacher(e.target.value)}
+                            className={`${inputCls} h-12 w-full`}
+                        >
+                            <option value="">{t.myInterventions.allTeachers}</option>
+                            {teachers.map((tc) => (
+                                <option key={tc.id} value={tc.id}>
+                                    {tc.name}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
+
+                    <div className="grid grid-cols-2 gap-3">
+                        <label className="flex min-w-0 flex-col gap-1.5 text-xs font-semibold text-muted">
+                            {t.myInterventions.fromDate}
+                            <input
+                                id="modal-filter-from"
+                                type="date"
+                                value={from}
+                                max={to || undefined}
+                                onChange={(e) => setFrom(e.target.value)}
+                                className={`${inputCls} h-12 w-full min-w-0`}
+                            />
+                        </label>
+                        <label className="flex min-w-0 flex-col gap-1.5 text-xs font-semibold text-muted">
+                            {t.myInterventions.toDate}
+                            <input
+                                id="modal-filter-to"
+                                type="date"
+                                value={to}
+                                min={from || undefined}
+                                onChange={(e) => setTo(e.target.value)}
+                                className={`${inputCls} h-12 w-full min-w-0`}
+                            />
+                        </label>
+                    </div>
+                </ModalBody>
+
+                <ModalFooter className="flex items-center gap-3">
+                    <button
+                        type="button"
+                        onClick={resetFilters}
+                        disabled={!hasActiveFilters}
+                        className="h-12 cursor-pointer rounded-full border border-line px-5 text-sm font-semibold text-muted hover:border-primary hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                        {t.myInterventions.reset}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setMobileFilterOpen(false)}
+                        className="h-12 flex-1 cursor-pointer rounded-full bg-primary px-5 text-center text-sm font-bold text-white shadow-soft hover:bg-primary-strong"
+                    >
+                        {locale === "id" ? "Terapkan Filter" : "Apply Filter"}
+                    </button>
+                </ModalFooter>
+            </Modal>
             {error && (
                 <p role="alert" className="rounded-2xl bg-[#fbe9e7] px-5 py-4 text-danger">
                     {error}
                 </p>
             )}
-            {plans === null && !error && <div className="h-28 animate-pulse rounded-card bg-surface-2" />}
-            {plans?.length === 0 && <Card className="text-center text-muted">{t.myInterventions.empty}</Card>}
-            <div className="grid gap-4 md:grid-cols-2">
+            {plans === null && !error && (
+                <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
+                    {[0, 1, 2, 3].map((n) => (
+                        <div
+                            key={n}
+                            className={`h-36 animate-pulse rounded-card bg-surface-2 ${n > 1 ? "hidden md:block" : ""}`}
+                        />
+                    ))}
+                </div>
+            )}
+            {plans?.length === 0 && (
+                <Card className="p-8 text-center text-muted glass border-white/60">{t.myInterventions.empty}</Card>
+            )}
+            <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
                 {plans?.map((p) => (
                     <PlanCard key={p.id} plan={p} />
                 ))}
             </div>
             {data && data.total > 0 && (
-                <nav className="flex flex-wrap items-center justify-between gap-3" aria-label="Pagination">
-                    <p className="text-sm text-muted">
+                <nav
+                    className="flex flex-col-reverse items-center gap-3 border-t border-line/60 pt-5 sm:flex-row sm:justify-between"
+                    aria-label="Pagination"
+                >
+                    <p className="text-xs text-muted sm:text-sm">
                         {t.myInterventions.showingTotal(
                             (page - 1) * data.pageSize + 1,
-                            page * data.pageSize,
+                            Math.min(page * data.pageSize, data.total),
                             data.total,
                         )}
                     </p>
-                    <div className="flex items-center gap-2">
+                    <div className="flex w-full items-center gap-2 sm:w-auto">
                         <button
                             type="button"
                             id="page-prev"
                             disabled={page <= 1}
-                            onClick={() => setPage((p) => p - 1)}
-                            className="cursor-pointer rounded-xl border border-line px-4 py-2 text-sm font-semibold hover:border-primary disabled:cursor-not-allowed disabled:opacity-50"
+                            onClick={() => {
+                                setPage((p) => p - 1);
+                                window.scrollTo({ top: 0, behavior: "smooth" });
+                            }}
+                            className="inline-flex h-11 flex-1 cursor-pointer items-center justify-center gap-1 rounded-full border border-line bg-surface px-4 text-sm font-semibold hover:border-primary disabled:cursor-not-allowed disabled:opacity-50 sm:h-10 sm:flex-none"
                         >
+                            <ChevronLeft size={16} aria-hidden="true" />
                             {t.myInterventions.previous}
                         </button>
-                        <span className="text-sm font-semibold">
+                        <span className="min-w-14 text-center text-sm font-semibold tabular-nums">
                             {page} / {totalPages}
                         </span>
                         <button
                             type="button"
                             id="page-next"
                             disabled={page >= totalPages}
-                            onClick={() => setPage((p) => p + 1)}
-                            className="cursor-pointer rounded-xl border border-line px-4 py-2 text-sm font-semibold hover:border-primary disabled:cursor-not-allowed disabled:opacity-50"
+                            onClick={() => {
+                                setPage((p) => p + 1);
+                                window.scrollTo({ top: 0, behavior: "smooth" });
+                            }}
+                            className="inline-flex h-11 flex-1 cursor-pointer items-center justify-center gap-1 rounded-full border border-line bg-surface px-4 text-sm font-semibold hover:border-primary disabled:cursor-not-allowed disabled:opacity-50 sm:h-10 sm:flex-none"
                         >
                             {t.myInterventions.next}
+                            <ChevronRight size={16} aria-hidden="true" />
                         </button>
                     </div>
                 </nav>

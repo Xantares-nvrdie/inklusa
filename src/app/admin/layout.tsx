@@ -9,10 +9,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     if ((session.user as { role?: string | null }).role !== "ADMIN") redirect("/dashboard");
 
     return (
-        <div className="bg-canvas relative min-h-screen overflow-x-hidden">
+        // overflow-x-clip (not hidden) so the sticky header and action bars keep working.
+        <div className="bg-canvas relative min-h-dvh overflow-x-clip">
             <div className="bg-grid pointer-events-none absolute inset-0 -z-10" aria-hidden="true" />
             <AdminNav name={session.user.name} image={session.user.image} />
-            <main className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-5 py-6 sm:py-10 pb-28 md:pb-10">
+            <main className="relative mx-auto w-full max-w-6xl px-4 pt-5 pb-bottom-nav sm:px-5 sm:pt-8 md:pt-10 md:pb-12">
                 {children}
             </main>
         </div>

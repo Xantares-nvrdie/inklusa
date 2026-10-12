@@ -52,7 +52,7 @@ function Bars({ rows, label, empty }: { rows: Row[]; label: (k: string) => strin
             {rows.map((r) => (
                 <li key={r.key ?? "none"} className="space-y-1">
                     <div className="flex justify-between gap-3 text-sm">
-                        <span className="font-medium">{label(r.key ?? "—")}</span>
+                        <span className="min-w-0 font-medium">{label(r.key ?? "—")}</span>
                         <span className="font-display font-bold">{r.n}</span>
                     </div>
                     <div className="h-2.5 overflow-hidden rounded-full bg-surface-2">
@@ -174,7 +174,7 @@ export function AdminOverview() {
 
             {/* Strategy Feedback & Rating Summary Widget */}
             {s && (
-                <Card className="glass border-white/60 p-5 sm:p-7 space-y-5">
+                <Card className="space-y-5 border-white/60 p-4 glass sm:p-7">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div className="space-y-1">
                             <div className="flex items-center gap-2">
@@ -190,7 +190,7 @@ export function AdminOverview() {
                         <Link
                             id="view-all-evaluations-btn"
                             href="/admin/evaluations"
-                            className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-hover shrink-0 w-full sm:w-auto"
+                            className="inline-flex h-11 w-full shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-white shadow-xs transition-all hover:bg-primary-hover sm:h-10 sm:w-auto sm:text-xs"
                         >
                             <span>{a.viewAllEvaluations}</span>
                         </Link>
@@ -205,7 +205,7 @@ export function AdminOverview() {
                     )}
 
                     {/* Quick Metric Pills */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+                    <div className="grid grid-cols-2 gap-2.5 pt-1 sm:grid-cols-4 sm:gap-3">
                         <div className="rounded-xl border border-line/60 bg-surface/70 p-3.5 space-y-1">
                             <p className="text-xs text-muted">Total Strategi Berating</p>
                             <p className="font-display text-2xl font-bold">{rawList.length}</p>
@@ -281,20 +281,20 @@ export function AdminOverview() {
 
             {s && (
                 <section className="grid gap-5 lg:grid-cols-2">
-                    <Card className="space-y-5 glass border-white/60">
-                        <h2 className="text-xl font-bold">{a.byBarrier}</h2>
+                    <Card className="space-y-4 border-white/60 p-5 glass sm:space-y-5 sm:p-6">
+                        <h2 className="text-lg font-bold sm:text-xl">{a.byBarrier}</h2>
                         <Bars rows={s.byCategory} label={catName} empty={a.noData} />
                     </Card>
-                    <Card className="space-y-5 glass border-white/60">
-                        <h2 className="text-xl font-bold">{a.results}</h2>
+                    <Card className="space-y-4 border-white/60 p-5 glass sm:space-y-5 sm:p-6">
+                        <h2 className="text-lg font-bold sm:text-xl">{a.results}</h2>
                         <Bars rows={s.results} label={(k) => RESULT_LABELS_DATA[locale][k] ?? k} empty={a.noData} />
                     </Card>
-                    <Card className="space-y-5 glass border-white/60">
-                        <h2 className="text-xl font-bold">{a.topBarriers}</h2>
+                    <Card className="space-y-4 border-white/60 p-5 glass sm:space-y-5 sm:p-6">
+                        <h2 className="text-lg font-bold sm:text-xl">{a.topBarriers}</h2>
                         <Bars rows={s.topBarriers} label={(k) => k} empty={a.noData} />
                     </Card>
-                    <Card className="space-y-5 glass border-white/60">
-                        <h2 className="text-xl font-bold">{a.topStrategies}</h2>
+                    <Card className="space-y-4 border-white/60 p-5 glass sm:space-y-5 sm:p-6">
+                        <h2 className="text-lg font-bold sm:text-xl">{a.topStrategies}</h2>
                         <Bars rows={s.topStrategies} label={ivName} empty={a.noData} />
                     </Card>
                 </section>

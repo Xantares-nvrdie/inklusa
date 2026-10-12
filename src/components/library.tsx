@@ -23,10 +23,10 @@ export function Library() {
     });
 
     return (
-        <div className="space-y-8">
-            <div className="space-y-2">
+        <div className="space-y-5 sm:space-y-8">
+            <div className="space-y-1.5 sm:space-y-2">
                 <h1 className="text-2xl sm:text-4xl font-bold">{t.library.title}</h1>
-                <p className="text-base sm:text-lg text-muted">{t.library.sub}</p>
+                <p className="text-sm text-muted sm:text-lg">{t.library.sub}</p>
             </div>
 
             <div className="relative">
@@ -37,7 +37,9 @@ export function Library() {
                     onChange={(e) => setQ(e.target.value)}
                     placeholder={t.library.searchPlaceholder}
                     aria-label={t.library.searchLabel}
-                    className="h-14 w-full rounded-2xl border border-line bg-surface/80 glass pl-12 pr-12 text-base outline-none focus:border-primary focus:ring-4 focus:ring-primary/15"
+                    type="search"
+                    enterKeyHint="search"
+                    className="h-12 w-full rounded-2xl border border-line bg-surface/80 pl-12 pr-12 text-base outline-none glass focus:border-primary focus:ring-4 focus:ring-primary/15 sm:h-14 [&::-webkit-search-cancel-button]:hidden"
                 />
                 {q && (
                     <button
@@ -53,18 +55,18 @@ export function Library() {
             </div>
 
             <div>
+                {/* Category chips scroll edge-to-edge on phones. */}
                 <section
                     aria-label={t.library.filterLabel}
-                    className="w-full overflow-x-auto no-scrollbar pb-2 pt-1 touch-pan-x"
-                    style={{ WebkitOverflowScrolling: "touch" }}
+                    className="-mx-4 overflow-x-auto px-4 pb-2 pt-1 no-scrollbar sm:mx-0 sm:px-0"
                 >
-                    <div className="flex gap-2 flex-nowrap sm:flex-wrap items-center w-max sm:w-auto min-w-full">
+                    <div className="flex w-max min-w-full flex-nowrap items-center gap-2 sm:w-auto sm:flex-wrap">
                         <button
                             id="filter-all"
                             type="button"
                             onClick={() => setCat(null)}
                             aria-pressed={!cat}
-                            className={`cursor-pointer rounded-full border px-3.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap shrink-0 ${!cat ? "border-primary bg-primary text-white" : "glass border-line bg-surface/80 hover:border-primary"}`}
+                            className={`cursor-pointer h-9 rounded-full border px-4 text-sm font-semibold sm:h-10 transition-colors whitespace-nowrap shrink-0 ${!cat ? "border-primary bg-primary text-white" : "glass border-line bg-surface/80 hover:border-primary"}`}
                         >
                             {t.library.all}
                         </button>
@@ -75,7 +77,7 @@ export function Library() {
                                 type="button"
                                 onClick={() => setCat(c.id)}
                                 aria-pressed={cat === c.id}
-                                className={`inline-flex cursor-pointer items-center gap-2 rounded-full border px-3.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap shrink-0 ${cat === c.id ? "border-primary bg-primary text-white" : "glass border-line bg-surface/80 hover:border-primary"}`}
+                                className={`inline-flex cursor-pointer items-center gap-2 h-9 rounded-full border px-4 text-sm font-semibold sm:h-10 transition-colors whitespace-nowrap shrink-0 ${cat === c.id ? "border-primary bg-primary text-white" : "glass border-line bg-surface/80 hover:border-primary"}`}
                             >
                                 <CategoryIcon icon={c.icon} size={14} /> {c.title}
                             </button>
@@ -84,7 +86,7 @@ export function Library() {
                             <button
                                 type="button"
                                 onClick={() => setCat(null)}
-                                className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-muted hover:bg-surface-2 hover:text-foreground whitespace-nowrap shrink-0"
+                                className="inline-flex items-center gap-1 h-9 rounded-full px-3 text-sm font-semibold text-muted sm:h-10 hover:bg-surface-2 hover:text-foreground whitespace-nowrap shrink-0"
                             >
                                 <X size={15} aria-hidden="true" /> {t.library.clearFilter}
                             </button>
@@ -92,23 +94,39 @@ export function Library() {
                     </div>
                 </section>
 
-                <p className="text-sm font-medium text-muted mt-6 mb-2 ml-1" aria-live="polite">
+                <p className="mb-1 ml-1 mt-3 text-sm font-medium text-muted sm:mb-2 sm:mt-6" aria-live="polite">
                     {t.library.resultCount(list.length)}
                 </p>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
                 {list.map((i) => {
                     const c = categories.find((x) => x.id === i.category);
                     return (
-                        <Link key={i.slug} href={`/interventions/${i.slug}`} id={`lib-${i.slug}`}>
-                            <Card interactive className="h-full space-y-3 glass border-white/60">
-                                <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary-soft text-primary-strong">
-                                    {c && <CategoryIcon icon={c.icon} />}
-                                </span>
-                                <h2 className="text-xl font-bold">{i.title}</h2>
-                                <p className="text-muted">{i.summary}</p>
-                                <p className="text-xs font-semibold uppercase tracking-wider text-primary">
+                        <Link
+                            key={i.slug}
+                            href={`/interventions/${i.slug}`}
+                            id={`lib-${i.slug}`}
+                            className="block rounded-[var(--radius-card)]"
+                        >
+                            <Card
+                                interactive
+                                className="flex h-full flex-col gap-2.5 border-white/60 p-5 glass sm:gap-3 sm:p-6"
+                            >
+                                {/* Icon + category side by side on phones to save vertical space. */}
+                                <div className="flex items-center gap-3 sm:block">
+                                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary-strong sm:h-11 sm:w-11">
+                                        {c && <CategoryIcon icon={c.icon} />}
+                                    </span>
+                                    <p className="text-xs font-semibold uppercase tracking-wider text-primary sm:hidden">
+                                        {c?.title}
+                                    </p>
+                                </div>
+                                <h2 className="text-lg font-bold leading-snug sm:text-xl">{i.title}</h2>
+                                <p className="line-clamp-3 text-sm text-muted sm:line-clamp-none sm:text-base">
+                                    {i.summary}
+                                </p>
+                                <p className="mt-auto hidden text-xs font-semibold uppercase tracking-wider text-primary sm:block">
                                     {c?.title}
                                 </p>
                             </Card>

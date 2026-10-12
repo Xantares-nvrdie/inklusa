@@ -7,6 +7,7 @@ const en = {
         classes: "Classes",
         evaluations: "Evaluations",
         knowledge: "Knowledge",
+        knowledgeShort: "Knowledge",
         badge: "Admin",
     },
     overview: {
@@ -199,6 +200,7 @@ const id: typeof en = {
         classes: "Kelas",
         evaluations: "Evaluasi",
         knowledge: "Pengetahuan",
+        knowledgeShort: "Pustaka",
         badge: "Admin",
     },
     overview: {

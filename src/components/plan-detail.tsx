@@ -1,12 +1,14 @@
 "use client";
 
-import { AlertTriangle, Check, CheckCircle2, Pencil, RotateCcw, Trash2, X } from "lucide-react";
-import Link from "next/link";
+import { AlertTriangle, Check, CheckCircle2, Pencil, RotateCcw, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { StatusBadge } from "@/components/status-badge";
+import { MobileActionBar } from "@/components/ui/action-bar";
+import { BackLink } from "@/components/ui/back-link";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Modal, ModalBody, ModalFooter, ModalHeader } from "@/components/ui/modal";
 import { api } from "@/lib/api";
 import { useLanguage } from "@/lib/i18n/context";
 import {
@@ -188,45 +190,47 @@ export function PlanDetail({ id }: { id: string }) {
         }
     }
 
+    const currentStepLabel = completed ? t.planDetail.reflectionSaved : (track[idx]?.label ?? track[0].label);
+    const helpfulOutcome = plan.reflectionResult === "VERY_HELPFUL" || plan.reflectionResult === "HELPFUL";
+
     return (
-        <div className="mx-auto max-w-3xl space-y-8">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-                <Link
-                    href="/action-plans"
-                    className="text-sm font-medium text-muted hover:text-foreground transition-colors"
-                >
-                    {t.planDetail.back}
-                </Link>
+        <div className="mx-auto max-w-3xl space-y-6 sm:space-y-8">
+            <div className="flex items-center justify-between gap-3">
+                <BackLink href="/action-plans" label={t.planDetail.back} className="min-w-0" />
                 {!cancelled && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
                         <Button
                             type="button"
                             variant="outline"
                             size="sm"
                             onClick={openEditModal}
-                            className="rounded-xl border-line px-3 py-1.5 text-xs font-semibold"
+                            aria-label={t.planDetail.btnEdit}
+                            title={t.planDetail.btnEdit}
+                            className="h-10 w-10 rounded-xl border-line p-0 text-xs font-semibold sm:h-9 sm:w-auto sm:px-3"
                         >
-                            <Pencil size={13} className="mr-1.5" />
-                            {t.planDetail.btnEdit}
+                            <Pencil size={14} aria-hidden="true" />
+                            <span className="hidden sm:inline">{t.planDetail.btnEdit}</span>
                         </Button>
                         <Button
                             type="button"
                             variant="ghost"
                             size="sm"
                             onClick={() => setShowCancelModal(true)}
-                            className="rounded-xl px-3 py-1.5 text-xs font-semibold text-danger hover:bg-danger/10 hover:text-danger"
+                            aria-label={t.planDetail.btnCancelPlan}
+                            title={t.planDetail.btnCancelPlan}
+                            className="h-10 w-10 rounded-xl p-0 text-xs font-semibold text-danger hover:bg-danger/10 hover:text-danger sm:h-9 sm:w-auto sm:px-3"
                         >
-                            <Trash2 size={13} className="mr-1.5" />
-                            {t.planDetail.btnCancelPlan}
+                            <Trash2 size={14} aria-hidden="true" />
+                            <span className="hidden sm:inline">{t.planDetail.btnCancelPlan}</span>
                         </Button>
                     </div>
                 )}
             </div>
 
             {cancelled && (
-                <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-danger/30 bg-danger/10 px-5 py-4 text-danger animate-in fade-in">
-                    <div className="flex items-center gap-3">
-                        <AlertTriangle size={20} className="shrink-0" />
+                <div className="flex flex-col gap-3 rounded-2xl border border-danger/30 bg-danger/10 px-4 py-4 text-danger animate-in fade-in sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-5">
+                    <div className="flex items-start gap-3 sm:items-center">
+                        <AlertTriangle size={20} className="mt-0.5 shrink-0 sm:mt-0" aria-hidden="true" />
                         <p className="text-sm font-semibold">{t.planDetail.cancelledNotice}</p>
                     </div>
                     <Button
@@ -235,32 +239,32 @@ export function PlanDetail({ id }: { id: string }) {
                         size="sm"
                         onClick={handleRestorePlan}
                         disabled={isUpdating}
-                        className="rounded-xl border-danger/40 bg-surface text-danger hover:bg-danger/10 text-xs font-semibold"
+                        className="h-10 w-full shrink-0 rounded-xl border-danger/40 bg-surface text-xs font-semibold text-danger hover:bg-danger/10 sm:h-9 sm:w-auto"
                     >
-                        <RotateCcw size={13} className="mr-1.5" />
+                        <RotateCcw size={13} aria-hidden="true" />
                         {t.planDetail.btnRestorePlan}
                     </Button>
                 </div>
             )}
 
-            <div className="space-y-3">
-                <div className="flex flex-wrap items-center gap-3">
+            <div className="space-y-2 sm:space-y-3">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                     <p className="font-semibold text-primary">{plan.student?.name ?? t.dashboard.generalClassroom}</p>
                     <StatusBadge status={plan.status} />
                 </div>
-                <h1 className="text-2xl sm:text-4xl font-bold">{plan.barrierTitle}</h1>
-                <p className="text-lg sm:text-xl text-muted">{iv?.title}</p>
+                <h1 className="text-[1.65rem] font-bold leading-tight xs:text-3xl sm:text-4xl">{plan.barrierTitle}</h1>
+                <p className="text-base text-muted sm:text-xl">{iv?.title}</p>
             </div>
 
-            <Card className="grid gap-6 sm:grid-cols-2 glass border-white/60 p-5 sm:p-6">
+            <Card className="grid gap-5 border-white/60 p-5 glass sm:grid-cols-2 sm:gap-6 sm:p-6">
                 <div>
-                    <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-muted">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted sm:text-sm">
                         {t.planDetail.goal}
                     </p>
                     <p className="mt-1 text-base sm:text-lg">{plan.goal}</p>
                 </div>
-                <div>
-                    <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-muted">
+                <div className="border-t border-line/60 pt-4 sm:border-0 sm:pt-0">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted sm:text-sm">
                         {t.planDetail.when}
                     </p>
                     <p className="mt-1 text-base sm:text-lg">{plan.timing}</p>
@@ -269,7 +273,7 @@ export function PlanDetail({ id }: { id: string }) {
 
             {/* Tracker - only show when not cancelled */}
             {!cancelled && (
-                <Card className="space-y-6 glass border-white/60 p-5 sm:p-6">
+                <Card className="space-y-4 border-white/60 p-5 glass sm:space-y-6 sm:p-6">
                     <ol className="flex items-center" aria-label="Progress">
                         {track.map((tr, i) => {
                             const reached = completed || i <= idx;
@@ -277,7 +281,7 @@ export function PlanDetail({ id }: { id: string }) {
                                 <li key={tr.id} className="flex flex-1 items-center last:flex-none">
                                     <div className="flex items-center gap-2">
                                         <span
-                                            className={`grid h-8 w-8 sm:h-9 sm:w-9 shrink-0 place-items-center rounded-full text-xs sm:text-sm font-bold ${reached ? "bg-primary text-white" : "bg-surface-2 text-muted"}`}
+                                            className={`grid h-8 w-8 shrink-0 place-items-center rounded-full text-xs font-bold sm:h-9 sm:w-9 sm:text-sm ${reached ? "bg-primary text-white" : "bg-surface-2 text-muted"} ${!completed && i === idx ? "ring-4 ring-primary/15" : ""}`}
                                         >
                                             {reached && (completed || i < idx) ? (
                                                 <Check size={15} aria-hidden="true" />
@@ -286,22 +290,29 @@ export function PlanDetail({ id }: { id: string }) {
                                             )}
                                         </span>
                                         <span
-                                            className={`hidden sm:inline text-sm font-semibold ${reached ? "text-foreground" : "text-muted"}`}
+                                            className={`hidden text-sm font-semibold sm:inline ${reached ? "text-foreground" : "text-muted"}`}
                                         >
                                             {tr.label}
                                         </span>
                                     </div>
                                     {i < track.length - 1 && (
                                         <span
-                                            className={`mx-2 sm:mx-3 h-0.5 flex-1 rounded ${completed || i < idx ? "bg-primary" : "bg-line"}`}
+                                            className={`mx-2 h-0.5 flex-1 rounded sm:mx-3 ${completed || i < idx ? "bg-primary" : "bg-line"}`}
                                         />
                                     )}
                                 </li>
                             );
                         })}
                     </ol>
+                    {/* Step labels are hidden beside the dots on phones — name the current one. */}
+                    <p className="text-sm font-semibold sm:hidden">{currentStepLabel}</p>
                     {nextAction && (
-                        <Button id="btn-advance" onClick={advance} disabled={busy} className="w-full sm:w-auto">
+                        <Button
+                            id="btn-advance"
+                            onClick={advance}
+                            disabled={busy}
+                            className="hidden w-full sm:w-auto md:inline-flex"
+                        >
                             {nextAction.label}
                         </Button>
                     )}
@@ -309,29 +320,38 @@ export function PlanDetail({ id }: { id: string }) {
             )}
 
             {iv && !completed && !cancelled && (
-                <Card className="space-y-4 glass border-white/60 p-5 sm:p-6">
-                    <h2 className="text-xl font-bold">{t.planDetail.howToApply}</h2>
-                    <ol className="space-y-2">
+                <Card className="space-y-4 border-white/60 p-5 glass sm:p-6">
+                    <h2 className="text-lg font-bold sm:text-xl">{t.planDetail.howToApply}</h2>
+                    <ol className="space-y-2.5">
                         {iv.steps.map((s, i) => (
-                            <li key={s} className="flex gap-4 text-sm sm:text-base">
-                                <span className="font-display font-bold text-accent shrink-0">0{i + 1}</span>
+                            <li key={s} className="flex gap-3.5 text-[0.95rem] leading-relaxed sm:gap-4 sm:text-base">
+                                <span className="shrink-0 font-display font-bold text-accent">0{i + 1}</span>
                                 <span>{s}</span>
                             </li>
                         ))}
                     </ol>
-                    <p className="rounded-2xl bg-sky-soft/70 px-4 py-3 text-xs sm:text-sm">
+                    <p className="rounded-2xl bg-sky-soft/70 px-4 py-3 text-sm">
                         <strong>{t.planDetail.whatToObserve}</strong> {iv.observe}
                     </p>
                 </Card>
             )}
 
+            {/* Phones: keep the next step within thumb reach after reading the steps. */}
+            {!cancelled && nextAction && (
+                <MobileActionBar className="md:hidden">
+                    <Button id="btn-advance-mobile" onClick={advance} disabled={busy} size="lg" className="h-12 w-full">
+                        {nextAction.label}
+                    </Button>
+                </MobileActionBar>
+            )}
+
             {/* Reflection */}
             {!cancelled && plan.status === "NEEDS_REFLECTION" && (
-                <Card className="space-y-6 p-5 sm:p-8 shadow-lift glass border-white/60">
-                    <h2 className="text-2xl sm:text-3xl font-bold">{t.planDetail.reflectTitle}</h2>
+                <Card className="space-y-6 border-white/60 p-5 shadow-lift glass sm:p-8">
+                    <h2 className="text-2xl font-bold sm:text-3xl">{t.planDetail.reflectTitle}</h2>
                     <fieldset className="space-y-3">
-                        <legend className="font-semibold">{t.planDetail.didStrategyHelp}</legend>
-                        <div className="grid gap-3 sm:grid-cols-2">
+                        <legend className="mb-3 font-semibold">{t.planDetail.didStrategyHelp}</legend>
+                        <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
                             {(Object.keys(resultLabels) as ReflectionResult[]).map((r) => (
                                 <button
                                     key={r}
@@ -342,9 +362,14 @@ export function PlanDetail({ id }: { id: string }) {
                                         setResult(r);
                                         setReason(null);
                                     }}
-                                    className={`cursor-pointer rounded-2xl border-[1.5px] px-5 py-4 text-left font-semibold transition-all glass ${result === r ? "border-primary bg-primary-soft/80" : "border-white/60 bg-surface/80 hover:border-primary/50"}`}
+                                    className={`relative flex min-h-16 cursor-pointer items-center rounded-2xl border-[1.5px] px-3.5 py-3 text-left text-sm font-semibold leading-snug transition-all glass active:scale-[0.98] sm:px-5 sm:py-4 sm:text-base ${result === r ? "border-primary bg-primary-soft/80 pr-9 sm:pr-11" : "border-white/60 bg-surface/80 hover:border-primary/50"}`}
                                 >
                                     {resultLabels[r]}
+                                    {result === r && (
+                                        <span className="absolute right-2.5 top-2.5 grid h-5 w-5 place-items-center rounded-full bg-primary text-white sm:right-4 sm:top-1/2 sm:h-6 sm:w-6 sm:-translate-y-1/2">
+                                            <Check size={13} aria-hidden="true" />
+                                        </span>
+                                    )}
                                 </button>
                             ))}
                         </div>
@@ -352,12 +377,12 @@ export function PlanDetail({ id }: { id: string }) {
 
                     {needsReason && (
                         <fieldset className="animate-in fade-in slide-in-from-top-2 space-y-3">
-                            <legend className="font-semibold">{t.planDetail.whatHappened}</legend>
+                            <legend className="mb-3 font-semibold">{t.planDetail.whatHappened}</legend>
                             <div className="grid gap-2">
                                 {(Object.keys(reasonLabels) as ReflectionReason[]).map((r) => (
                                     <label
                                         key={r}
-                                        className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/60 p-3 bg-surface/80 glass hover:bg-surface-2"
+                                        className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border p-3 glass hover:bg-surface-2 ${reason === r ? "border-primary bg-primary-soft/50" : "border-white/60 bg-surface/80"}`}
                                     >
                                         <input
                                             type="radio"
@@ -365,7 +390,7 @@ export function PlanDetail({ id }: { id: string }) {
                                             value={r}
                                             checked={reason === r}
                                             onChange={() => setReason(r)}
-                                            className="h-4 w-4 accent-primary"
+                                            className="h-5 w-5 shrink-0 accent-primary"
                                         />
                                         <span className="text-sm font-medium">{reasonLabels[r]}</span>
                                     </label>
@@ -385,7 +410,7 @@ export function PlanDetail({ id }: { id: string }) {
                             rows={4}
                             maxLength={1000}
                             placeholder={t.planDetail.observePlaceholder}
-                            className="w-full rounded-2xl border border-line bg-surface/80 glass p-4 outline-none focus:border-primary focus:ring-4 focus:ring-primary/15"
+                            className="w-full rounded-2xl border border-line bg-surface/80 p-4 outline-none glass focus:border-primary focus:ring-4 focus:ring-primary/15"
                         />
                     </div>
                     <Button
@@ -402,144 +427,141 @@ export function PlanDetail({ id }: { id: string }) {
 
             {completed && (
                 <div className="space-y-4">
-                    <Card className="space-y-4 border-l-4 border-l-primary bg-primary-soft/30 shadow-none glass border-white/60">
+                    <Card className="space-y-4 border-l-4 border-white/60 border-l-primary bg-primary-soft/30 p-5 shadow-none glass sm:p-6">
                         <div className="flex items-center gap-3">
-                            <CheckCircle2 className="text-primary" aria-hidden="true" />
-                            <h2 className="text-2xl font-bold">{t.planDetail.reflectionSaved}</h2>
+                            <CheckCircle2 className="shrink-0 text-primary" aria-hidden="true" />
+                            <h2 className="text-xl font-bold sm:text-2xl">{t.planDetail.reflectionSaved}</h2>
                         </div>
                         <div className="space-y-1">
-                            <p className="text-lg">
+                            <p className="text-base sm:text-lg">
                                 <strong>
                                     {plan.reflectionResult &&
                                         (resultLabels[plan.reflectionResult] ?? plan.reflectionResult)}
                                 </strong>
                             </p>
                             {plan.reflectionReason && (
-                                <p className="text-muted">
+                                <p className="text-sm text-muted sm:text-base">
                                     {reasonLabels[plan.reflectionReason] ?? plan.reflectionReason}
                                 </p>
                             )}
                         </div>
                         {plan.reflectionNote && (
-                            <p className="text-lg text-muted">&ldquo;{plan.reflectionNote}&rdquo;</p>
+                            <p className="text-base text-muted sm:text-lg">&ldquo;{plan.reflectionNote}&rdquo;</p>
                         )}
 
-                        <div className="mt-4 rounded-xl bg-white p-4 text-sm font-medium text-muted-foreground shadow-sm">
-                            {plan.reflectionResult === "VERY_HELPFUL" || plan.reflectionResult === "HELPFUL"
-                                ? t.planDetail.insightHelpful
-                                : t.planDetail.insightNotHelpful}
+                        <div className="mt-4 rounded-xl bg-white p-4 text-sm font-medium text-muted shadow-sm">
+                            {helpfulOutcome ? t.planDetail.insightHelpful : t.planDetail.insightNotHelpful}
                         </div>
                     </Card>
-                    <div className="flex justify-end gap-3">
-                        {plan.reflectionResult === "VERY_HELPFUL" || plan.reflectionResult === "HELPFUL" ? (
-                            <ButtonLink href="/action-plans">{t.planDetail.continueStrategy}</ButtonLink>
-                        ) : (
-                            <ButtonLink href="/quick-check">{t.planDetail.tryAnotherStrategy}</ButtonLink>
-                        )}
+                    <div className="flex sm:justify-end">
+                        <ButtonLink
+                            href={helpfulOutcome ? "/action-plans" : "/quick-check"}
+                            className="w-full justify-center sm:w-auto"
+                        >
+                            {helpfulOutcome ? t.planDetail.continueStrategy : t.planDetail.tryAnotherStrategy}
+                        </ButtonLink>
                     </div>
                 </div>
             )}
 
             {/* Edit Modal */}
-            {isEditing && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm animate-in fade-in">
-                    <Card className="w-full max-w-lg space-y-5 border-white/80 p-6 shadow-2xl glass">
-                        <div className="flex items-center justify-between">
-                            <h2 className="text-xl font-bold">{t.planDetail.editModalTitle}</h2>
-                            <button
-                                type="button"
-                                onClick={() => setIsEditing(false)}
-                                className="rounded-lg p-1.5 text-muted hover:bg-surface-2 hover:text-foreground"
+            <Modal open={isEditing} onClose={() => setIsEditing(false)} labelledBy="edit-plan-title">
+                <form onSubmit={handleUpdatePlan} className="flex min-h-0 flex-1 flex-col">
+                    <ModalHeader onClose={() => setIsEditing(false)} closeLabel={t.planDetail.cancelEdit}>
+                        <h2 id="edit-plan-title" className="text-xl font-bold">
+                            {t.planDetail.editModalTitle}
+                        </h2>
+                    </ModalHeader>
+                    <ModalBody className="space-y-4">
+                        <div className="space-y-1.5">
+                            <label htmlFor="edit-student" className="text-xs font-semibold text-muted">
+                                {t.planDetail.editStudent}
+                            </label>
+                            <select
+                                id="edit-student"
+                                value={editStudentId}
+                                onChange={(e) => setEditStudentId(e.target.value)}
+                                className="h-12 w-full rounded-xl border border-line bg-surface px-3 text-sm outline-none focus:border-primary sm:h-11"
                             >
-                                <X size={18} />
-                            </button>
+                                <option value="">{t.dashboard.generalClassroom}</option>
+                                {students.map((st) => (
+                                    <option key={st.id} value={st.id}>
+                                        {st.name}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
-                        <form onSubmit={handleUpdatePlan} className="space-y-4">
-                            <div className="space-y-1.5">
-                                <label htmlFor="edit-student" className="text-xs font-semibold text-muted">
-                                    {t.planDetail.editStudent}
-                                </label>
-                                <select
-                                    id="edit-student"
-                                    value={editStudentId}
-                                    onChange={(e) => setEditStudentId(e.target.value)}
-                                    className="w-full rounded-xl border border-line bg-surface px-3 py-2 text-sm outline-none focus:border-primary"
-                                >
-                                    <option value="">{t.dashboard.generalClassroom}</option>
-                                    {students.map((st) => (
-                                        <option key={st.id} value={st.id}>
-                                            {st.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="space-y-1.5">
-                                <label htmlFor="edit-goal" className="text-xs font-semibold text-muted">
-                                    {t.planDetail.editGoal}
-                                </label>
-                                <textarea
-                                    id="edit-goal"
-                                    required
-                                    maxLength={300}
-                                    rows={3}
-                                    value={editGoal}
-                                    onChange={(e) => setEditGoal(e.target.value)}
-                                    className="w-full rounded-xl border border-line bg-surface p-3 text-sm outline-none focus:border-primary"
-                                />
-                            </div>
-                            <div className="space-y-1.5">
-                                <label htmlFor="edit-timing" className="text-xs font-semibold text-muted">
-                                    {t.planDetail.editTiming}
-                                </label>
-                                <input
-                                    id="edit-timing"
-                                    required
-                                    maxLength={120}
-                                    value={editTiming}
-                                    onChange={(e) => setEditTiming(e.target.value)}
-                                    className="w-full rounded-xl border border-line bg-surface px-3 py-2 text-sm outline-none focus:border-primary"
-                                />
-                            </div>
-                            <div className="flex justify-end gap-2 pt-2">
-                                <Button type="button" variant="ghost" onClick={() => setIsEditing(false)}>
-                                    {t.planDetail.cancelEdit}
-                                </Button>
-                                <Button type="submit" disabled={isUpdating}>
-                                    {t.planDetail.saveChanges}
-                                </Button>
-                            </div>
-                        </form>
-                    </Card>
-                </div>
-            )}
+                        <div className="space-y-1.5">
+                            <label htmlFor="edit-goal" className="text-xs font-semibold text-muted">
+                                {t.planDetail.editGoal}
+                            </label>
+                            <textarea
+                                id="edit-goal"
+                                required
+                                maxLength={300}
+                                rows={3}
+                                value={editGoal}
+                                onChange={(e) => setEditGoal(e.target.value)}
+                                className="w-full rounded-xl border border-line bg-surface p-3 text-sm outline-none focus:border-primary"
+                            />
+                        </div>
+                        <div className="space-y-1.5">
+                            <label htmlFor="edit-timing" className="text-xs font-semibold text-muted">
+                                {t.planDetail.editTiming}
+                            </label>
+                            <input
+                                id="edit-timing"
+                                required
+                                maxLength={120}
+                                value={editTiming}
+                                onChange={(e) => setEditTiming(e.target.value)}
+                                className="h-12 w-full rounded-xl border border-line bg-surface px-3 text-sm outline-none focus:border-primary sm:h-11"
+                            />
+                        </div>
+                    </ModalBody>
+                    <ModalFooter className="grid grid-cols-2 gap-2 sm:flex sm:justify-end">
+                        <Button type="button" variant="ghost" onClick={() => setIsEditing(false)}>
+                            {t.planDetail.cancelEdit}
+                        </Button>
+                        <Button type="submit" disabled={isUpdating}>
+                            {t.planDetail.saveChanges}
+                        </Button>
+                    </ModalFooter>
+                </form>
+            </Modal>
 
             {/* Cancel (Soft Delete) Confirmation Modal */}
-            {showCancelModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm animate-in fade-in">
-                    <Card className="w-full max-w-md space-y-4 border-white/80 p-6 shadow-2xl glass">
-                        <div className="flex items-center gap-3 text-danger">
-                            <span className="grid h-10 w-10 place-items-center rounded-full bg-danger/10 shrink-0">
-                                <AlertTriangle size={20} />
-                            </span>
-                            <h3 className="text-lg font-bold">{t.planDetail.confirmCancelTitle}</h3>
-                        </div>
-                        <p className="text-sm text-muted">{t.planDetail.confirmCancelDesc}</p>
-                        <div className="flex justify-end gap-2 pt-2">
-                            <Button type="button" variant="ghost" onClick={() => setShowCancelModal(false)}>
-                                {t.planDetail.cancelEdit}
-                            </Button>
-                            <Button
-                                type="button"
-                                onClick={handleCancelPlan}
-                                disabled={isUpdating}
-                                className="bg-danger text-white hover:bg-danger/90"
-                            >
-                                {t.planDetail.confirmCancelBtn}
-                            </Button>
-                        </div>
-                    </Card>
-                </div>
-            )}
+            <Modal
+                open={showCancelModal}
+                onClose={() => setShowCancelModal(false)}
+                labelledBy="cancel-plan-title"
+                size="sm"
+            >
+                <ModalBody className="space-y-4 pt-4 sm:pt-6">
+                    <div className="flex items-center gap-3 text-danger">
+                        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-danger/10">
+                            <AlertTriangle size={20} aria-hidden="true" />
+                        </span>
+                        <h3 id="cancel-plan-title" className="text-lg font-bold">
+                            {t.planDetail.confirmCancelTitle}
+                        </h3>
+                    </div>
+                    <p className="text-sm text-muted">{t.planDetail.confirmCancelDesc}</p>
+                </ModalBody>
+                <ModalFooter className="grid grid-cols-2 gap-2 border-t-0 pt-0 sm:flex sm:justify-end">
+                    <Button type="button" variant="ghost" onClick={() => setShowCancelModal(false)}>
+                        {t.planDetail.cancelEdit}
+                    </Button>
+                    <Button
+                        type="button"
+                        onClick={handleCancelPlan}
+                        disabled={isUpdating}
+                        className="bg-danger text-white hover:bg-danger/90"
+                    >
+                        {t.planDetail.confirmCancelBtn}
+                    </Button>
+                </ModalFooter>
+            </Modal>
         </div>
     );
 }

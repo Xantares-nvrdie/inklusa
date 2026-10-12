@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { StrategyFeedbackHistoryModal } from "@/components/admin/strategy-feedback-history-modal";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Modal } from "@/components/ui/modal";
 import { api } from "@/lib/api";
 import { adminDict } from "@/lib/i18n/admin";
 import { useLanguage } from "@/lib/i18n/context";
@@ -152,129 +153,114 @@ function StrategyEditor({
     const { locale } = useLanguage();
     const k = adminDict[locale].kb;
 
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "Escape") onCancel();
-        };
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [onCancel]);
-
     return (
-        <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="strategy-editor-title"
-            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-sm animate-fade-in"
-        >
-            <div className="flex max-h-[90vh] w-full max-w-3xl flex-col rounded-3xl border border-line/80 bg-surface shadow-2xl glass overflow-hidden">
-                {/* Modal Header */}
-                <div className="flex items-center justify-between border-b border-line/60 p-5 sm:p-6 bg-surface/90">
-                    <div className="flex items-center gap-3">
-                        <span className="grid h-10 w-10 place-items-center rounded-2xl bg-primary-soft text-primary-strong">
-                            <Pencil size={18} />
-                        </span>
-                        <div>
-                            <h2 id="strategy-editor-title" className="text-xl sm:text-2xl font-bold">
-                                {form.isNew ? k.newStrategy : `${k.edit}: ${form.title[locale] || form.slug}`}
-                            </h2>
-                            <p className="text-xs text-muted">{k.sub}</p>
-                        </div>
+        <Modal open onClose={onCancel} labelledBy="strategy-editor-title" size="lg">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between gap-3 border-b border-line/60 px-5 pb-4 pt-3 sm:p-6">
+                <div className="flex min-w-0 items-center gap-3">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-primary-soft text-primary-strong">
+                        <Pencil size={18} />
+                    </span>
+                    <div>
+                        <h2 id="strategy-editor-title" className="line-clamp-2 text-lg font-bold sm:text-2xl">
+                            {form.isNew ? k.newStrategy : `${k.edit}: ${form.title[locale] || form.slug}`}
+                        </h2>
+                        <p className="text-xs text-muted">{k.sub}</p>
                     </div>
-                    <button
-                        type="button"
-                        onClick={onCancel}
-                        className="cursor-pointer rounded-full p-2 text-muted transition-colors hover:bg-surface-2 hover:text-foreground"
-                        aria-label={k.cancel}
-                    >
-                        <X size={20} />
-                    </button>
                 </div>
+                <button
+                    type="button"
+                    onClick={onCancel}
+                    className="cursor-pointer rounded-full p-2 text-muted transition-colors hover:bg-surface-2 hover:text-foreground"
+                    aria-label={k.cancel}
+                >
+                    <X size={20} />
+                </button>
+            </div>
 
-                {/* Modal Scrollable Body */}
-                <div className="flex-1 overflow-y-auto p-5 sm:p-7 space-y-5">
-                    <div className="grid gap-4 md:grid-cols-2">
-                        <div className="space-y-2">
-                            <label htmlFor="kb-slug" className="text-sm font-semibold">
-                                {k.slug}
-                            </label>
-                            <input
-                                id="kb-slug"
-                                value={form.slug}
-                                disabled={!form.isNew}
-                                onChange={(e) => setForm({ ...form, slug: e.target.value })}
-                                placeholder="visual-checklist"
-                                className={`${inputCls} h-12 py-0 disabled:opacity-60`}
-                            />
-                        </div>
-                        <CategorySelect
-                            label={k.category}
-                            value={form.category}
-                            onChange={(category) => setForm({ ...form, category })}
-                        />
-                    </div>
-                    <BiField
-                        idPrefix="kb-title"
-                        label={k.titleF}
-                        value={form.title}
-                        onChange={(title) => setForm({ ...form, title })}
-                    />
-                    <BiField
-                        idPrefix="kb-summary"
-                        label={k.summary}
-                        value={form.summary}
-                        onChange={(summary) => setForm({ ...form, summary })}
-                    />
-                    <BiField
-                        idPrefix="kb-why"
-                        label={k.why}
-                        rows={2}
-                        value={form.why}
-                        onChange={(why) => setForm({ ...form, why })}
-                    />
-                    <BiField
-                        idPrefix="kb-steps"
-                        label={k.steps}
-                        rows={5}
-                        value={form.steps}
-                        onChange={(steps) => setForm({ ...form, steps })}
-                    />
-                    <BiField
-                        idPrefix="kb-observe"
-                        label={k.observe}
-                        rows={2}
-                        value={form.observe}
-                        onChange={(observe) => setForm({ ...form, observe })}
-                    />
-                    {error && (
-                        <p role="alert" className="rounded-xl bg-[#fbe9e7] px-4 py-3 text-sm text-danger">
-                            {error}
-                        </p>
-                    )}
-                </div>
-
-                {/* Modal Sticky Footer */}
-                <div className="flex items-center justify-between border-t border-line/60 p-4 sm:p-5 bg-surface/90">
-                    <label className="flex cursor-pointer items-center gap-2.5 text-sm font-medium">
+            {/* Modal Scrollable Body */}
+            <div className="flex-1 space-y-5 overflow-y-auto overscroll-contain p-5 sm:p-7">
+                <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                        <label htmlFor="kb-slug" className="text-sm font-semibold">
+                            {k.slug}
+                        </label>
                         <input
-                            type="checkbox"
-                            checked={form.isActive}
-                            onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
-                            className="h-5 w-5 accent-[var(--primary)]"
+                            id="kb-slug"
+                            value={form.slug}
+                            disabled={!form.isNew}
+                            onChange={(e) => setForm({ ...form, slug: e.target.value })}
+                            placeholder="visual-checklist"
+                            className={`${inputCls} h-12 py-0 disabled:opacity-60`}
                         />
-                        <span>{k.visible}</span>
-                    </label>
-                    <div className="flex gap-2.5">
-                        <Button variant="ghost" onClick={onCancel}>
-                            {k.cancel}
-                        </Button>
-                        <Button id="btn-kb-save" onClick={onSave} disabled={saving}>
-                            {saving ? k.saving : k.save}
-                        </Button>
                     </div>
+                    <CategorySelect
+                        label={k.category}
+                        value={form.category}
+                        onChange={(category) => setForm({ ...form, category })}
+                    />
+                </div>
+                <BiField
+                    idPrefix="kb-title"
+                    label={k.titleF}
+                    value={form.title}
+                    onChange={(title) => setForm({ ...form, title })}
+                />
+                <BiField
+                    idPrefix="kb-summary"
+                    label={k.summary}
+                    value={form.summary}
+                    onChange={(summary) => setForm({ ...form, summary })}
+                />
+                <BiField
+                    idPrefix="kb-why"
+                    label={k.why}
+                    rows={2}
+                    value={form.why}
+                    onChange={(why) => setForm({ ...form, why })}
+                />
+                <BiField
+                    idPrefix="kb-steps"
+                    label={k.steps}
+                    rows={5}
+                    value={form.steps}
+                    onChange={(steps) => setForm({ ...form, steps })}
+                />
+                <BiField
+                    idPrefix="kb-observe"
+                    label={k.observe}
+                    rows={2}
+                    value={form.observe}
+                    onChange={(observe) => setForm({ ...form, observe })}
+                />
+                {error && (
+                    <p role="alert" className="rounded-xl bg-[#fbe9e7] px-4 py-3 text-sm text-danger">
+                        {error}
+                    </p>
+                )}
+            </div>
+
+            {/* Modal Sticky Footer */}
+            <div className="flex flex-col gap-3 border-t border-line/60 bg-surface p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+                <label className="flex min-h-11 cursor-pointer items-center gap-2.5 text-sm font-medium">
+                    <input
+                        type="checkbox"
+                        checked={form.isActive}
+                        onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
+                        className="h-5 w-5 accent-[var(--primary)]"
+                    />
+                    <span>{k.visible}</span>
+                </label>
+                <div className="grid grid-cols-2 gap-2.5 sm:flex">
+                    <Button variant="ghost" onClick={onCancel}>
+                        {k.cancel}
+                    </Button>
+                    <Button id="btn-kb-save" onClick={onSave} disabled={saving}>
+                        {saving ? k.saving : k.save}
+                    </Button>
                 </div>
             </div>
-        </div>
+        </Modal>
     );
 }
 
@@ -331,170 +317,155 @@ function RuleEditor({
     const { locale } = useLanguage();
     const k = adminDict[locale].kb;
 
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "Escape") onCancel();
-        };
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [onCancel]);
-
     const setSupport = (idx: number, patch: Partial<ClForm["supports"][number]>) =>
         setForm({ ...form, supports: form.supports.map((s, i) => (i === idx ? { ...s, ...patch } : s)) });
 
     return (
-        <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="rule-editor-title"
-            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-sm animate-fade-in"
-        >
-            <div className="flex max-h-[90vh] w-full max-w-3xl flex-col rounded-3xl border border-line/80 bg-surface shadow-2xl glass overflow-hidden">
-                {/* Header */}
-                <div className="flex items-center justify-between border-b border-line/60 p-5 sm:p-6 bg-surface/90">
-                    <div className="flex items-center gap-3">
-                        <span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#f3e6f7] text-[#7a3f8f]">
-                            <Pencil size={18} />
-                        </span>
-                        <div>
-                            <h2 id="rule-editor-title" className="text-xl sm:text-2xl font-bold">
-                                {form.isNew ? k.newRule : `${k.edit}: ${form.barrier[locale] || form.id}`}
-                            </h2>
-                            <p className="text-xs text-muted">{k.sub}</p>
-                        </div>
+        <Modal open onClose={onCancel} labelledBy="rule-editor-title" size="lg">
+            {/* Header */}
+            <div className="flex items-center justify-between gap-3 border-b border-line/60 px-5 pb-4 pt-3 sm:p-6">
+                <div className="flex min-w-0 items-center gap-3">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-[#f3e6f7] text-[#7a3f8f]">
+                        <Pencil size={18} />
+                    </span>
+                    <div>
+                        <h2 id="rule-editor-title" className="line-clamp-2 text-lg font-bold sm:text-2xl">
+                            {form.isNew ? k.newRule : `${k.edit}: ${form.barrier[locale] || form.id}`}
+                        </h2>
+                        <p className="text-xs text-muted">{k.sub}</p>
                     </div>
-                    <button
-                        type="button"
-                        onClick={onCancel}
-                        className="cursor-pointer rounded-full p-2 text-muted transition-colors hover:bg-surface-2 hover:text-foreground"
-                        aria-label={k.cancel}
-                    >
-                        <X size={20} />
-                    </button>
                 </div>
+                <button
+                    type="button"
+                    onClick={onCancel}
+                    className="cursor-pointer rounded-full p-2 text-muted transition-colors hover:bg-surface-2 hover:text-foreground"
+                    aria-label={k.cancel}
+                >
+                    <X size={20} />
+                </button>
+            </div>
 
-                {/* Body */}
-                <div className="flex-1 overflow-y-auto p-5 sm:p-7 space-y-5">
-                    <div className="grid gap-4 md:grid-cols-2">
-                        <div className="space-y-2">
-                            <label htmlFor="kb-id" className="text-sm font-semibold">
-                                {k.slug}
-                            </label>
-                            <input
-                                id="kb-id"
-                                value={form.id}
-                                disabled={!form.isNew}
-                                onChange={(e) => setForm({ ...form, id: e.target.value })}
-                                placeholder="multi-step"
-                                className={`${inputCls} h-12 py-0 disabled:opacity-60`}
-                            />
-                        </div>
-                        <CategorySelect
-                            label={k.category}
-                            value={form.category}
-                            onChange={(category) => setForm({ ...form, category })}
+            {/* Body */}
+            <div className="flex-1 space-y-5 overflow-y-auto overscroll-contain p-5 sm:p-7">
+                <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                        <label htmlFor="kb-id" className="text-sm font-semibold">
+                            {k.slug}
+                        </label>
+                        <input
+                            id="kb-id"
+                            value={form.id}
+                            disabled={!form.isNew}
+                            onChange={(e) => setForm({ ...form, id: e.target.value })}
+                            placeholder="multi-step"
+                            className={`${inputCls} h-12 py-0 disabled:opacity-60`}
                         />
                     </div>
-                    <BiField
-                        idPrefix="kb-label"
-                        label={k.label}
-                        value={form.label}
-                        onChange={(label) => setForm({ ...form, label })}
+                    <CategorySelect
+                        label={k.category}
+                        value={form.category}
+                        onChange={(category) => setForm({ ...form, category })}
                     />
-                    <BiField
-                        idPrefix="kb-barrier"
-                        label={k.barrier}
-                        value={form.barrier}
-                        onChange={(barrier) => setForm({ ...form, barrier })}
-                    />
-                    <BiField
-                        idPrefix="kb-insight"
-                        label={k.insight}
-                        rows={2}
-                        value={form.insight}
-                        onChange={(insight) => setForm({ ...form, insight })}
-                    />
+                </div>
+                <BiField
+                    idPrefix="kb-label"
+                    label={k.label}
+                    value={form.label}
+                    onChange={(label) => setForm({ ...form, label })}
+                />
+                <BiField
+                    idPrefix="kb-barrier"
+                    label={k.barrier}
+                    value={form.barrier}
+                    onChange={(barrier) => setForm({ ...form, barrier })}
+                />
+                <BiField
+                    idPrefix="kb-insight"
+                    label={k.insight}
+                    rows={2}
+                    value={form.insight}
+                    onChange={(insight) => setForm({ ...form, insight })}
+                />
 
-                    <div className="space-y-3">
-                        <p className="text-sm font-semibold">{k.supports}</p>
-                        {form.supports.map((s, idx) => (
-                            <div key={`${idx}-${s.slug}`} className="space-y-3 rounded-2xl bg-surface-2/70 p-4">
-                                <div className="flex items-center gap-3">
-                                    <select
-                                        aria-label={k.strategy}
-                                        value={s.slug}
-                                        onChange={(e) => setSupport(idx, { slug: e.target.value })}
-                                        className={`${inputCls} h-12 py-0`}
-                                    >
-                                        <option value="">— {k.strategy} —</option>
-                                        {strategies.map((i) => (
-                                            <option key={i.slug} value={i.slug}>
-                                                {i.title[locale]}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <button
-                                        type="button"
-                                        aria-label={k.del}
-                                        onClick={() =>
-                                            setForm({ ...form, supports: form.supports.filter((_, i) => i !== idx) })
-                                        }
-                                        className="cursor-pointer rounded-full p-2 text-muted hover:bg-surface"
-                                    >
-                                        <Trash2 size={16} />
-                                    </button>
-                                </div>
-                                <BiField
-                                    idPrefix={`kb-reason-${idx}`}
-                                    label={k.reason}
-                                    value={s.reason}
-                                    onChange={(reason) => setSupport(idx, { reason })}
-                                />
+                <div className="space-y-3">
+                    <p className="text-sm font-semibold">{k.supports}</p>
+                    {form.supports.map((s, idx) => (
+                        <div key={`${idx}-${s.slug}`} className="space-y-3 rounded-2xl bg-surface-2/70 p-4">
+                            <div className="flex items-center gap-3">
+                                <select
+                                    aria-label={k.strategy}
+                                    value={s.slug}
+                                    onChange={(e) => setSupport(idx, { slug: e.target.value })}
+                                    className={`${inputCls} h-12 py-0`}
+                                >
+                                    <option value="">— {k.strategy} —</option>
+                                    {strategies.map((i) => (
+                                        <option key={i.slug} value={i.slug}>
+                                            {i.title[locale]}
+                                        </option>
+                                    ))}
+                                </select>
+                                <button
+                                    type="button"
+                                    aria-label={k.del}
+                                    onClick={() =>
+                                        setForm({ ...form, supports: form.supports.filter((_, i) => i !== idx) })
+                                    }
+                                    className="cursor-pointer rounded-full p-2 text-muted hover:bg-surface"
+                                >
+                                    <Trash2 size={16} />
+                                </button>
                             </div>
-                        ))}
-                        {form.supports.length < 5 && (
-                            <Button
-                                type="button"
-                                size="sm"
-                                variant="soft"
-                                onClick={() =>
-                                    setForm({ ...form, supports: [...form.supports, { slug: "", reason: emptyBi() }] })
-                                }
-                            >
-                                <Plus size={14} aria-hidden="true" /> {k.addSupport}
-                            </Button>
-                        )}
-                    </div>
-
-                    {error && (
-                        <p role="alert" className="rounded-xl bg-[#fbe9e7] px-4 py-3 text-sm text-danger">
-                            {error}
-                        </p>
+                            <BiField
+                                idPrefix={`kb-reason-${idx}`}
+                                label={k.reason}
+                                value={s.reason}
+                                onChange={(reason) => setSupport(idx, { reason })}
+                            />
+                        </div>
+                    ))}
+                    {form.supports.length < 5 && (
+                        <Button
+                            type="button"
+                            size="sm"
+                            variant="soft"
+                            onClick={() =>
+                                setForm({ ...form, supports: [...form.supports, { slug: "", reason: emptyBi() }] })
+                            }
+                        >
+                            <Plus size={14} aria-hidden="true" /> {k.addSupport}
+                        </Button>
                     )}
                 </div>
 
-                {/* Footer */}
-                <div className="flex items-center justify-between border-t border-line/60 p-4 sm:p-5 bg-surface/90">
-                    <label className="flex cursor-pointer items-center gap-2.5 text-sm font-medium">
-                        <input
-                            type="checkbox"
-                            checked={form.isActive}
-                            onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
-                            className="h-5 w-5 accent-[var(--primary)]"
-                        />
-                        <span>{k.visible}</span>
-                    </label>
-                    <div className="flex gap-2.5">
-                        <Button variant="ghost" onClick={onCancel}>
-                            {k.cancel}
-                        </Button>
-                        <Button id="btn-kb-save" onClick={onSave} disabled={saving}>
-                            {saving ? k.saving : k.save}
-                        </Button>
-                    </div>
+                {error && (
+                    <p role="alert" className="rounded-xl bg-[#fbe9e7] px-4 py-3 text-sm text-danger">
+                        {error}
+                    </p>
+                )}
+            </div>
+
+            {/* Footer */}
+            <div className="flex flex-col gap-3 border-t border-line/60 bg-surface p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+                <label className="flex min-h-11 cursor-pointer items-center gap-2.5 text-sm font-medium">
+                    <input
+                        type="checkbox"
+                        checked={form.isActive}
+                        onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
+                        className="h-5 w-5 accent-[var(--primary)]"
+                    />
+                    <span>{k.visible}</span>
+                </label>
+                <div className="grid grid-cols-2 gap-2.5 sm:flex">
+                    <Button variant="ghost" onClick={onCancel}>
+                        {k.cancel}
+                    </Button>
+                    <Button id="btn-kb-save" onClick={onSave} disabled={saving}>
+                        {saving ? k.saving : k.save}
+                    </Button>
                 </div>
             </div>
-        </div>
+        </Modal>
     );
 }
 
@@ -642,7 +613,7 @@ export function KnowledgeManager() {
     const paginatedCls = filteredCls.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-5 sm:space-y-8">
             <div className="flex flex-wrap items-end justify-between gap-4">
                 <div className="space-y-2">
                     <h1 className="text-2xl sm:text-4xl font-bold">{k.title}</h1>
@@ -671,6 +642,7 @@ export function KnowledgeManager() {
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex gap-2 overflow-x-auto no-scrollbar flex-nowrap pb-1 sm:flex-wrap" role="tablist">
                     <button
+                        type="button"
                         id="tab-strategies"
                         role="tab"
                         aria-selected={tab === "strategies"}
@@ -683,6 +655,7 @@ export function KnowledgeManager() {
                         {k.tabStrategies} ({ivs?.length ?? 0})
                     </button>
                     <button
+                        type="button"
                         id="tab-rules"
                         role="tab"
                         aria-selected={tab === "rules"}
@@ -775,7 +748,7 @@ export function KnowledgeManager() {
                         return (
                             <Card
                                 key={i.slug}
-                                className="flex flex-col gap-4 md:flex-row md:items-center glass border-white/60"
+                                className="flex flex-col gap-3 border-white/60 p-4 glass sm:p-6 md:flex-row md:items-center md:gap-4"
                             >
                                 <div className="min-w-0 flex-1 space-y-1">
                                     <div className="flex flex-wrap items-center gap-2">
@@ -789,12 +762,12 @@ export function KnowledgeManager() {
                                             </span>
                                         )}
                                     </div>
-                                    <p className="truncate text-sm text-muted">{i.summary[locale]}</p>
+                                    <p className="line-clamp-2 text-sm text-muted md:truncate">{i.summary[locale]}</p>
                                     <p className="text-xs text-muted">
                                         {i.slug} · {i.steps[locale].length} {k.stepsCount} · {k.usedBy}: {used}
                                     </p>
                                 </div>
-                                <div className="flex flex-wrap gap-1 items-center self-end sm:self-auto">
+                                <div className="-mx-1 flex flex-wrap items-center justify-end gap-1 border-t border-line/50 pt-3 md:mx-0 md:border-0 md:pt-0">
                                     <Button
                                         size="sm"
                                         variant="ghost"
@@ -845,7 +818,7 @@ export function KnowledgeManager() {
                     {paginatedCls.map((c) => (
                         <Card
                             key={c.id}
-                            className="flex flex-col gap-4 md:flex-row md:items-center glass border-white/60"
+                            className="flex flex-col gap-3 border-white/60 p-4 glass sm:p-6 md:flex-row md:items-center md:gap-4"
                         >
                             <div className="min-w-0 flex-1 space-y-1">
                                 <div className="flex flex-wrap items-center gap-2">
@@ -867,7 +840,7 @@ export function KnowledgeManager() {
                                         .join(" · ")}
                                 </p>
                             </div>
-                            <div className="flex flex-wrap gap-1 items-center self-end sm:self-auto">
+                            <div className="-mx-1 flex flex-wrap items-center justify-end gap-1 border-t border-line/50 pt-3 md:mx-0 md:border-0 md:pt-0">
                                 <Button
                                     size="sm"
                                     variant="ghost"

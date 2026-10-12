@@ -5,6 +5,9 @@
     --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
     --font-display: var(--font-outfit), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
+    /* Extra-small breakpoint for large phones (≥420px). Used across the app as `xs:`. */
+    --breakpoint-xs: 26.25rem;
+
     --color-background: var(--background);
     --color-foreground: var(--foreground);
     --color-surface: var(--surface);
@@ -14,6 +17,8 @@
     --color-primary: var(--primary);
     --color-primary-strong: var(--primary-strong);
     --color-primary-soft: var(--primary-soft);
+    --color-primary-hover: var(--primary-strong);
+    --color-muted-foreground: var(--muted);
     --color-accent: var(--accent);
     --color-accent-soft: var(--accent-soft);
     --color-sky: var(--sky);
@@ -24,6 +29,37 @@
     --radius-card: 1.75rem;
     --shadow-soft: 0 1px 2px rgba(25, 60, 55, 0.04), 0 8px 30px -12px rgba(25, 60, 55, 0.14);
     --shadow-lift: 0 2px 4px rgba(25, 60, 55, 0.05), 0 20px 44px -16px rgba(25, 60, 55, 0.22);
+
+    --animate-fade-in: fade-in 0.2s ease-out both;
+    --animate-sheet-up: sheet-up 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+    --animate-pop-in: pop-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    @keyframes sheet-up {
+        from {
+            transform: translateY(100%);
+        }
+        to {
+            transform: translateY(0);
+        }
+    }
+    @keyframes pop-in {
+        from {
+            opacity: 0;
+            transform: translateY(8px) scale(0.98);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
 }
 
 :root {
@@ -48,6 +84,10 @@
 @layer base {
     html {
         scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+        /* Keep anchored sections clear of the sticky 4rem header. */
+        scroll-padding-top: 5rem;
     }
     body {
         background: var(--background);
@@ -55,6 +95,17 @@
         font-family: var(--font-sans);
         -webkit-font-smoothing: antialiased;
         line-height: 1.6;
+        -webkit-tap-highlight-color: transparent;
+        /* Respect notches / rounded corners in landscape (viewport-fit=cover). */
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+    button,
+    a,
+    label,
+    summary,
+    [role="button"] {
+        touch-action: manipulation;
     }
     h1,
     h2,
@@ -99,6 +150,48 @@
     }
     .no-scrollbar::-webkit-scrollbar {
         display: none;
+    }
+}
+
+/* ---------- Mobile shell (bottom tab bar + sticky action bars) ---------- */
+/* Tab bar: 0.75rem gap (or the home-indicator inset) from the bottom edge. */
+@utility bottom-nav-offset {
+    bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+/* Sticky elements that must sit just above the tab bar (≈4.125rem tall + gap). */
+@utility above-bottom-nav {
+    bottom: calc(max(0.75rem, env(safe-area-inset-bottom)) + 4.75rem);
+}
+/* Page bottom padding so content never hides behind the tab bar. */
+@utility pb-bottom-nav {
+    padding-bottom: calc(max(0.75rem, env(safe-area-inset-bottom)) + 6.5rem);
+}
+@utility pt-safe {
+    padding-top: env(safe-area-inset-top);
+}
+@utility pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* When the on-screen keyboard is up, get the tab bar out of the way. */
+html[data-soft-keyboard="open"] .mobile-tab-bar {
+    transform: translateY(calc(100% + 2rem));
+    opacity: 0;
+    pointer-events: none;
+}
+html[data-soft-keyboard="open"] .above-bottom-nav {
+    bottom: max(0.75rem, env(safe-area-inset-bottom));
+}
+
+/*
+ * iOS Safari zooms the page when a focused field is smaller than 16px.
+ * Unlayered on purpose so it wins over `text-sm` utilities on phones only.
+ */
+@media (max-width: 639px) {
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+    select,
+    textarea {
+        font-size: max(16px, 1em);
     }
 }
 
