@@ -37,6 +37,23 @@ export function PlanCard({ plan }: { plan: PlanRow }) {
             <p className="line-clamp-2 text-xs sm:text-base text-muted break-words">
                 {iv?.title ?? plan.interventionSlug}
             </p>
+            {done && (
+                <p className="text-xs text-muted sm:hidden">
+                    <time dateTime={plan.reflectedAt ?? plan.createdAt}>
+                        {plan.reflectedAt
+                            ? locale === "id"
+                                ? "Direfleksikan"
+                                : "Reflected"
+                            : locale === "id"
+                              ? "Dibuat"
+                              : "Created"}{" "}
+                        {new Date(plan.reflectedAt ?? plan.createdAt).toLocaleDateString(
+                            locale === "id" ? "id-ID" : "en-US",
+                            { day: "numeric", month: "short", year: "numeric" },
+                        )}
+                    </time>
+                </p>
+            )}
             {!locked && (
                 <p className="mt-auto inline-flex items-center gap-1.5 pt-1 text-xs sm:text-sm font-semibold text-primary">
                     {done

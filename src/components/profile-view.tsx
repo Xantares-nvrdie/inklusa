@@ -338,7 +338,7 @@ export function ProfileView({ isAdmin = false }: { isAdmin?: boolean }) {
                                 <span
                                     className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${
                                         isAdmin || profile?.role === "ADMIN"
-                                            ? "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 border border-purple-300/40"
+                                            ? "border border-purple-300/40 bg-purple-100 text-purple-800"
                                             : "bg-primary-soft text-primary-strong border border-primary/20"
                                     }`}
                                 >
