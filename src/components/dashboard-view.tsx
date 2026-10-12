@@ -80,26 +80,26 @@ export function DashboardView() {
                 <p className="text-muted">
                     {greeting()}, {t.dashboard.teacher}.
                 </p>
-                <h1 className="text-4xl font-bold sm:text-5xl">{t.dashboard.heading}</h1>
+                <h1 className="text-3xl font-bold xs:text-4xl sm:text-5xl">{t.dashboard.heading}</h1>
             </section>
 
             {/* Hero CTA */}
             <Link
                 id="cta-start-quick-check"
                 href="/quick-check"
-                className="group relative block overflow-hidden rounded-[2rem] bg-primary-strong p-8 text-white shadow-lift transition-transform duration-300 hover:-translate-y-1 sm:p-10"
+                className="group relative block overflow-hidden rounded-3xl bg-primary-strong p-6 text-white shadow-lift transition-transform duration-300 hover:-translate-y-1 sm:p-10 sm:rounded-[2rem]"
             >
                 <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-accent/30 blur-3xl transition-all duration-500 group-hover:scale-125" />
-                <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+                <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
                     <div className="space-y-2">
-                        <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-sm font-semibold">
+                        <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs sm:text-sm font-semibold">
                             <Plus size={14} aria-hidden="true" /> {t.dashboard.quickCheckBadge}
                         </span>
-                        <h2 className="text-3xl font-bold sm:text-4xl">{t.dashboard.startQuickCheck}</h2>
-                        <p className="max-w-md text-white/80">{t.dashboard.quickCheckDesc}</p>
+                        <h2 className="text-2xl font-bold xs:text-3xl sm:text-4xl">{t.dashboard.startQuickCheck}</h2>
+                        <p className="max-w-md text-sm sm:text-base text-white/80">{t.dashboard.quickCheckDesc}</p>
                     </div>
-                    <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-accent text-[#3b2208] transition-transform duration-300 group-hover:translate-x-1">
-                        <ArrowRight size={24} aria-hidden="true" />
+                    <span className="grid h-12 w-12 sm:h-14 sm:w-14 shrink-0 place-items-center rounded-full bg-accent text-[#3b2208] transition-transform duration-300 group-hover:translate-x-1 self-start sm:self-auto">
+                        <ArrowRight size={22} aria-hidden="true" />
                     </span>
                 </div>
             </Link>

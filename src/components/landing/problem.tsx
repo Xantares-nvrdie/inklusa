@@ -31,12 +31,12 @@ export function LandingProblem() {
     ];
 
     return (
-        <section id="problem" ref={ref} className="relative mx-auto max-w-6xl px-5 py-28 lg:py-40">
-            <div className="grid gap-14 lg:grid-cols-[0.85fr_1.15fr]">
+        <section id="problem" ref={ref} className="relative mx-auto max-w-6xl px-4 sm:px-5 py-16 sm:py-28 lg:py-40">
+            <div className="grid gap-10 sm:gap-14 lg:grid-cols-[0.85fr_1.15fr]">
                 <div className="lg:sticky lg:top-32 lg:self-start">
                     <Eyebrow>{t.landing.eyebrowProblem}</Eyebrow>
-                    <h2 className="mt-5 text-4xl font-bold leading-[1.08] sm:text-5xl">{t.landing.problemTitle}</h2>
-                    <blockquote className="mt-8 border-l-4 border-accent pl-5 font-display text-xl italic text-muted">
+                    <h2 className="mt-4 sm:mt-5 text-2xl xs:text-3xl sm:text-5xl font-bold leading-[1.1]">{t.landing.problemTitle}</h2>
+                    <blockquote className="mt-6 sm:mt-8 border-l-4 border-accent pl-4 sm:pl-5 font-display text-base sm:text-xl italic text-muted">
                         {t.landing.problemSub}
                     </blockquote>
                 </div>
@@ -53,7 +53,7 @@ export function LandingProblem() {
                                 return (
                                     <article
                                         key={idx}
-                                        className="group relative overflow-hidden rounded-[1.75rem] border border-line bg-surface p-7 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-lift"
+                                        className="group relative overflow-hidden rounded-[1.75rem] border border-line bg-surface p-5 sm:p-7 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-lift"
                                     >
                                         <span className="pointer-events-none absolute -right-4 -top-6 font-display text-[7rem] font-bold leading-none text-surface-2 transition-colors group-hover:text-primary-soft">
                                             0{idx + 1}

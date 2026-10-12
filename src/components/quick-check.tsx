@@ -24,7 +24,7 @@ interface ClassData {
 }
 
 function choiceCls(selected: boolean) {
-    return `flex w-full cursor-pointer items-center gap-4 rounded-2xl border-[1.5px] p-5 text-left transition-all duration-200 glass ${
+    return `flex w-full cursor-pointer items-center gap-3.5 sm:gap-4 rounded-2xl border-[1.5px] p-4 sm:p-5 text-left transition-all duration-200 glass ${
         selected
             ? "border-primary bg-primary-soft/80 shadow-soft"
             : "border-white/60 bg-surface/80 hover:border-primary/50 hover:-translate-y-0.5"
@@ -156,8 +156,8 @@ export function QuickCheck() {
                                         className="space-y-6"
                                     >
                                         <div>
-                                            <h1 className="text-4xl font-bold">{t.quickCheck.step1Title}</h1>
-                                            <p className="mt-1 text-muted">{t.quickCheck.step1Sub}</p>
+                                            <h1 className="text-2xl sm:text-4xl font-bold">{t.quickCheck.step1Title}</h1>
+                                            <p className="mt-1 text-sm sm:text-base text-muted">{t.quickCheck.step1Sub}</p>
                                         </div>
 
                                         <p className="rounded-2xl border border-sky/15 bg-sky-soft/70 px-4 py-3 text-sm text-foreground/80">
@@ -459,7 +459,7 @@ export function QuickCheck() {
 
                     {step === 1 && (
                         <>
-                            <h1 className="text-4xl font-bold">{t.quickCheck.step2Title}</h1>
+                            <h1 className="text-2xl sm:text-4xl font-bold">{t.quickCheck.step2Title}</h1>
                             <div className="grid gap-3 sm:grid-cols-2">
                                 {categories.map((c) => (
                                     <button
@@ -488,7 +488,7 @@ export function QuickCheck() {
 
                     {step === 2 && cat && (
                         <>
-                            <h1 className="text-4xl font-bold">{t.quickCheck.step3Title}</h1>
+                            <h1 className="text-2xl sm:text-4xl font-bold">{t.quickCheck.step3Title}</h1>
                             <fieldset className="m-0 space-y-3 border-0 p-0">
                                 <legend className="sr-only">{t.quickCheck.step3Title}</legend>
                                 {cat.clarifications.map((c) => (
@@ -517,23 +517,24 @@ export function QuickCheck() {
                             <p className="text-sm font-semibold uppercase tracking-wider text-primary">
                                 {t.quickCheck.resultBadge}
                             </p>
-                            <h1 className="text-5xl font-bold">{clar.barrier}</h1>
-                            <Card className="space-y-5 p-8 glass border-white/60">
-                                <p className="text-xl leading-relaxed">{clar.insight}</p>
+                            <h1 className="text-3xl sm:text-5xl font-bold">{clar.barrier}</h1>
+                            <Card className="space-y-5 p-5 sm:p-8 glass border-white/60">
+                                <p className="text-lg sm:text-xl leading-relaxed">{clar.insight}</p>
                                 <div className="border-t border-line pt-5">
-                                    <p className="text-sm font-semibold uppercase tracking-wider text-muted">
+                                    <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-muted">
                                         {t.quickCheck.whatThisMeans}
                                     </p>
-                                    <p className="mt-2 text-lg text-muted">{cat.meaning}</p>
+                                    <p className="mt-2 text-base sm:text-lg text-muted">{cat.meaning}</p>
                                 </div>
                             </Card>
-                            <p className="rounded-2xl bg-accent-soft px-5 py-4 text-sm text-[#7a4510]">
+                            <p className="rounded-2xl bg-accent-soft px-4 sm:px-5 py-3.5 sm:py-4 text-sm text-[#7a4510]">
                                 {t.quickCheck.notADiagnosis}
                             </p>
                             <ButtonLink
                                 id="btn-see-supports"
                                 href={`/quick-check/supports?${flowQs({ student, cat: cat.id, clar: clar.id })}`}
                                 size="lg"
+                                className="w-full sm:w-auto text-center justify-center"
                             >
                                 {t.quickCheck.seeSupports} <ArrowRight size={18} aria-hidden="true" />
                             </ButtonLink>

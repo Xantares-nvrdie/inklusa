@@ -29,31 +29,31 @@ export function LandingPrinciples() {
     ];
 
     return (
-        <section id="principles" ref={ref} className="relative overflow-hidden bg-surface-2/70 py-32 lg:py-44">
+        <section id="principles" ref={ref} className="relative overflow-hidden bg-surface-2/70 py-16 sm:py-32 lg:py-44">
             <div
                 className="pointer-events-none absolute left-1/2 top-0 h-[30rem] w-[60rem] -translate-x-1/2 rounded-full bg-primary/10 blur-[120px]"
                 aria-hidden="true"
             />
-            <div className="relative mx-auto max-w-6xl px-5">
+            <div className="relative mx-auto max-w-6xl px-4 sm:px-5">
                 <motion.div style={{ y: yTitle }} className="mx-auto max-w-2xl text-center">
                     <Eyebrow>{t.landing.eyebrowPrinciples}</Eyebrow>
-                    <h2 className="mt-5 text-4xl font-bold sm:text-5xl">{t.landing.promisesTitle}</h2>
+                    <h2 className="mt-4 sm:mt-5 text-2xl xs:text-3xl sm:text-5xl font-bold">{t.landing.promisesTitle}</h2>
                 </motion.div>
-                <div className="mt-16 grid gap-6 md:grid-cols-3">
+                <div className="mt-10 sm:mt-16 grid gap-5 sm:gap-6 md:grid-cols-3">
                     {items.map(({ title, desc, Icon }, i) => (
                         <motion.article
                             key={title}
                             style={{ y: ys[i] }}
-                            className="group relative overflow-hidden rounded-[2rem] border border-line bg-surface p-8 shadow-soft transition-shadow duration-300 hover:shadow-lift"
+                            className="group relative overflow-hidden rounded-[2rem] border border-line bg-surface p-5 xs:p-6 sm:p-8 shadow-soft transition-shadow duration-300 hover:shadow-lift"
                         >
                             <span className="pointer-events-none absolute -bottom-8 -right-2 font-display text-[9rem] font-bold leading-none text-surface-2 transition-colors duration-500 group-hover:text-primary-soft">
                                 {i + 1}
                             </span>
-                            <span className="relative grid h-14 w-14 place-items-center rounded-2xl bg-primary-soft text-primary-strong transition-all duration-300 group-hover:rotate-[-6deg] group-hover:bg-primary group-hover:text-white">
+                            <span className="relative grid h-12 w-12 sm:h-14 sm:w-14 place-items-center rounded-2xl bg-primary-soft text-primary-strong transition-all duration-300 group-hover:rotate-[-6deg] group-hover:bg-primary group-hover:text-white">
                                 <Icon size={24} aria-hidden="true" />
                             </span>
-                            <h3 className="relative mt-8 text-2xl font-bold">{title}</h3>
-                            <p className="relative mt-3 text-muted">{desc}</p>
+                            <h3 className="relative mt-6 sm:mt-8 text-xl sm:text-2xl font-bold">{title}</h3>
+                            <p className="relative mt-2.5 sm:mt-3 text-sm sm:text-base text-muted">{desc}</p>
                         </motion.article>
                     ))}
                 </div>
@@ -77,10 +77,10 @@ export function LandingCta() {
     const yText = useTransform(p, [0, 1], [80 * k, 0]);
 
     return (
-        <section ref={ref} className="mx-auto max-w-6xl px-5 py-28">
+        <section ref={ref} className="mx-auto max-w-6xl px-4 sm:px-5 py-16 sm:py-28">
             <motion.div
                 style={{ scale, borderRadius: radius }}
-                className="bg-ink relative overflow-hidden px-8 py-20 text-center text-white shadow-lift sm:py-28"
+                className="bg-ink relative overflow-hidden px-5 sm:px-8 py-14 sm:py-24 text-center text-white shadow-lift"
             >
                 <div className="bg-grid-dark pointer-events-none absolute inset-0" aria-hidden="true" />
                 <motion.div
@@ -94,12 +94,12 @@ export function LandingCta() {
                     aria-hidden="true"
                 />
                 <motion.div style={{ y: yText }} className="relative">
-                    <h2 className="mx-auto max-w-3xl text-4xl font-bold leading-[1.08] sm:text-6xl">
+                    <h2 className="mx-auto max-w-3xl text-2xl xs:text-3xl sm:text-5xl lg:text-6xl font-bold leading-[1.1]">
                         {t.landing.ctaBottomTitle}
                     </h2>
-                    <p className="mx-auto mt-5 max-w-xl text-lg text-white/70">{t.landing.ctaBottomSub}</p>
-                    <div className="mt-10 flex flex-wrap justify-center gap-3">
-                        <ButtonLink id="cta-bottom-start" href="/register" variant="accent" size="lg" className="group">
+                    <p className="mx-auto mt-4 sm:mt-5 max-w-xl text-base sm:text-lg text-white/70">{t.landing.ctaBottomSub}</p>
+                    <div className="mt-8 sm:mt-10 flex flex-col xs:flex-row flex-wrap justify-center items-stretch xs:items-center gap-3">
+                        <ButtonLink id="cta-bottom-start" href="/register" variant="accent" size="lg" className="group w-full xs:w-auto justify-center">
                             {t.landing.ctaQuickCheck}
                             <ArrowRight
                                 size={18}
@@ -111,7 +111,7 @@ export function LandingCta() {
                             id="cta-bottom-login"
                             href="/login"
                             size="lg"
-                            className="border border-white/20 bg-white/5 text-white hover:bg-white/10"
+                            className="w-full xs:w-auto justify-center border border-white/20 bg-white/5 text-white hover:bg-white/10"
                         >
                             {t.nav.signIn}
                         </ButtonLink>

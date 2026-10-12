@@ -41,8 +41,8 @@ export function Supports() {
         <div className="mx-auto max-w-3xl space-y-8">
             <div className="space-y-3">
                 <p className="text-sm font-semibold uppercase tracking-wider text-primary">{t.supports.badge}</p>
-                <h1 className="text-4xl font-bold">{t.supports.title}</h1>
-                <p className="text-lg text-muted">
+                <h1 className="text-2xl sm:text-4xl font-bold">{t.supports.title}</h1>
+                <p className="text-base sm:text-lg text-muted">
                     {t.supports.basedOn}
                     <strong className="text-foreground">{clar.barrier}</strong>.
                 </p>
@@ -57,12 +57,12 @@ export function Supports() {
                     const showLimited = stats && stats.helpful === 0 && stats.limited > 0;
 
                     return (
-                        <Card key={s.slug} interactive className="flex flex-col gap-4 sm:flex-row sm:items-start">
-                            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-primary font-display text-lg font-bold text-white mt-1">
+                        <Card key={s.slug} interactive className="flex flex-col gap-4 sm:flex-row sm:items-start p-5 sm:p-6">
+                            <span className="grid h-10 w-10 sm:h-12 sm:w-12 shrink-0 place-items-center rounded-full bg-primary font-display text-base sm:text-lg font-bold text-white mt-0.5 sm:mt-1">
                                 {i + 1}
                             </span>
                             <div className="flex-1 space-y-2">
-                                <h2 className="text-2xl font-bold">{iv.title}</h2>
+                                <h2 className="text-xl sm:text-2xl font-bold">{iv.title}</h2>
                                 {showHelpful && (
                                     <span className="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-3 py-1 text-xs font-semibold text-success">
                                         <History size={14} />{" "}
@@ -75,8 +75,8 @@ export function Supports() {
                                         {t.supports.historyLimited.replace("{count}", stats.limited.toString())}
                                     </span>
                                 )}
-                                <p className="text-muted">{iv.summary}</p>
-                                <p className="text-sm">
+                                <p className="text-sm sm:text-base text-muted">{iv.summary}</p>
+                                <p className="text-xs sm:text-sm">
                                     <strong>{t.supports.whyFits}</strong> {s.reason}
                                 </p>
                             </div>
@@ -84,7 +84,7 @@ export function Supports() {
                                 id={`btn-view-${iv.slug}`}
                                 href={`/interventions/${iv.slug}?${flowQs(ctx)}`}
                                 variant="soft"
-                                className="sm:self-center"
+                                className="w-full sm:w-auto sm:self-center justify-center text-center"
                             >
                                 {t.supports.viewStrategy} <ArrowRight size={16} aria-hidden="true" />
                             </ButtonLink>

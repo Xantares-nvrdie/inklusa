@@ -67,7 +67,7 @@ export function AppNav({ name }: { name: string }) {
                 </div>
             </div>
             <nav
-                className="fixed inset-x-3 bottom-3 z-50 grid grid-cols-4 rounded-2xl border border-line/70 bg-surface/95 p-1.5 shadow-lift backdrop-blur md:hidden"
+                className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-50 grid grid-cols-4 rounded-2xl border border-line/70 bg-surface/95 p-1.5 shadow-lift backdrop-blur md:hidden"
                 aria-label="App"
             >
                 {links.map(({ href, label, Icon }) => {
@@ -78,13 +78,13 @@ export function AppNav({ name }: { name: string }) {
                             href={href}
                             aria-current={active ? "page" : undefined}
                             className={cn(
-                                "flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl px-1 text-[11px] font-semibold leading-tight transition-colors",
+                                "flex min-h-13 sm:min-h-14 flex-col items-center justify-center gap-1 rounded-xl px-1 text-[10px] sm:text-[11px] font-semibold leading-tight transition-colors",
                                 active
                                     ? "bg-primary-soft text-primary-strong"
                                     : "text-muted hover:bg-surface-2 hover:text-foreground",
                             )}
                         >
-                            <Icon size={18} aria-hidden="true" />
+                            <Icon size={17} aria-hidden="true" />
                             <span className="max-w-full truncate whitespace-nowrap">{label}</span>
                         </Link>
                     );

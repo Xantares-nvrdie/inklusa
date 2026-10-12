@@ -116,13 +116,13 @@ export function MyInterventions() {
     return (
         <div className="space-y-8">
             <div className="flex flex-wrap items-end justify-between gap-4">
-                <h1 className="text-4xl font-bold">{t.myInterventions.title}</h1>
-                <div className="flex items-center gap-3">
+                <h1 className="text-2xl sm:text-4xl font-bold">{t.myInterventions.title}</h1>
+                <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
                     <button
                         type="button"
                         onClick={exportCSV}
                         disabled={!plans || plans.length === 0}
-                        className="px-4 py-2 font-semibold text-sm border border-line rounded-xl hover:border-primary transition-colors disabled:opacity-50"
+                        className="px-3.5 sm:px-4 py-2 font-semibold text-xs sm:text-sm border border-line rounded-xl hover:border-primary transition-colors disabled:opacity-50"
                     >
                         {t.myInterventions.exportCSV}
                     </button>
@@ -131,21 +131,21 @@ export function MyInterventions() {
                     </ButtonLink>
                 </div>
             </div>
-            <div className="flex gap-2" role="group" aria-label="Filter">
+            <div className="flex gap-2 overflow-x-auto no-scrollbar flex-nowrap pb-1 sm:flex-wrap" role="group" aria-label="Filter">
                 {filters.map((f) => (
                     <button
                         key={f.id}
                         id={`filter-${f.id}`}
                         type="button"
                         onClick={() => setFilter(f.id)}
-                        className={`cursor-pointer rounded-full border px-5 py-2 text-sm font-semibold transition-colors ${filter === f.id ? "border-primary bg-primary text-white" : "border-line bg-surface hover:border-primary"}`}
+                        className={`cursor-pointer rounded-full border px-3.5 sm:px-5 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap shrink-0 ${filter === f.id ? "border-primary bg-primary text-white" : "border-line bg-surface hover:border-primary"}`}
                     >
                         {f.label}
                     </button>
                 ))}
             </div>
-            <div className="flex flex-wrap items-end gap-3">
-                <label className="flex min-w-52 flex-1 flex-col gap-1 text-xs font-semibold text-muted">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap items-end gap-3">
+                <label className="flex w-full sm:min-w-52 lg:flex-1 flex-col gap-1 text-xs font-semibold text-muted">
                     {t.myInterventions.searchStudent}
                     <input
                         id="filter-search"
@@ -156,7 +156,7 @@ export function MyInterventions() {
                         className={inputCls}
                     />
                 </label>
-                <label className="flex flex-col gap-1 text-xs font-semibold text-muted">
+                <label className="flex w-full sm:w-auto flex-col gap-1 text-xs font-semibold text-muted">
                     {t.myInterventions.teacher}
                     <select
                         id="filter-teacher"
@@ -172,7 +172,7 @@ export function MyInterventions() {
                         ))}
                     </select>
                 </label>
-                <label className="flex flex-col gap-1 text-xs font-semibold text-muted">
+                <label className="flex w-full sm:w-auto flex-col gap-1 text-xs font-semibold text-muted">
                     {t.myInterventions.fromDate}
                     <input
                         id="filter-from"
@@ -183,7 +183,7 @@ export function MyInterventions() {
                         className={inputCls}
                     />
                 </label>
-                <label className="flex flex-col gap-1 text-xs font-semibold text-muted">
+                <label className="flex w-full sm:w-auto flex-col gap-1 text-xs font-semibold text-muted">
                     {t.myInterventions.toDate}
                     <input
                         id="filter-to"
@@ -198,7 +198,7 @@ export function MyInterventions() {
                     <button
                         type="button"
                         onClick={resetFilters}
-                        className="cursor-pointer rounded-xl border border-line px-4 py-2 text-sm font-semibold hover:border-primary"
+                        className="cursor-pointer rounded-xl border border-line px-4 py-2 text-sm font-semibold hover:border-primary w-full sm:w-auto"
                     >
                         {t.myInterventions.reset}
                     </button>

@@ -50,11 +50,11 @@ export function LandingManifesto() {
                     OBSERVE · UNDERSTAND · ACT · REFLECT
                 </motion.p>
 
-                <div className="relative mx-auto max-w-5xl px-5">
+                <div className="relative mx-auto max-w-5xl px-4 sm:px-5">
                     <p className="sr-only">{t.landing.manifesto}</p>
                     <p
                         aria-hidden="true"
-                        className="font-display text-3xl font-semibold leading-[1.25] tracking-[-0.02em] sm:text-5xl lg:text-[3.6rem]"
+                        className="font-display text-2xl xs:text-3xl font-semibold leading-[1.3] sm:leading-[1.25] tracking-[-0.02em] sm:text-5xl lg:text-[3.6rem]"
                     >
                         {words.map((w, i) => {
                             const start = (i / words.length) * 0.8 + 0.05;

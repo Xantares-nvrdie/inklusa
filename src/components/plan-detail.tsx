@@ -248,24 +248,24 @@ export function PlanDetail({ id }: { id: string }) {
                     <p className="font-semibold text-primary">{plan.student?.name ?? t.dashboard.generalClassroom}</p>
                     <StatusBadge status={plan.status} />
                 </div>
-                <h1 className="text-4xl font-bold">{plan.barrierTitle}</h1>
-                <p className="text-xl text-muted">{iv?.title}</p>
+                <h1 className="text-2xl sm:text-4xl font-bold">{plan.barrierTitle}</h1>
+                <p className="text-lg sm:text-xl text-muted">{iv?.title}</p>
             </div>
 
-            <Card className="grid gap-6 sm:grid-cols-2 glass border-white/60">
+            <Card className="grid gap-6 sm:grid-cols-2 glass border-white/60 p-5 sm:p-6">
                 <div>
-                    <p className="text-sm font-semibold uppercase tracking-wider text-muted">{t.planDetail.goal}</p>
-                    <p className="mt-1 text-lg">{plan.goal}</p>
+                    <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-muted">{t.planDetail.goal}</p>
+                    <p className="mt-1 text-base sm:text-lg">{plan.goal}</p>
                 </div>
                 <div>
-                    <p className="text-sm font-semibold uppercase tracking-wider text-muted">{t.planDetail.when}</p>
-                    <p className="mt-1 text-lg">{plan.timing}</p>
+                    <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-muted">{t.planDetail.when}</p>
+                    <p className="mt-1 text-base sm:text-lg">{plan.timing}</p>
                 </div>
             </Card>
 
             {/* Tracker - only show when not cancelled */}
             {!cancelled && (
-                <Card className="space-y-6 glass border-white/60">
+                <Card className="space-y-6 glass border-white/60 p-5 sm:p-6">
                     <ol className="flex items-center" aria-label="Progress">
                         {track.map((tr, i) => {
                             const reached = completed || i <= idx;
@@ -273,23 +273,23 @@ export function PlanDetail({ id }: { id: string }) {
                                 <li key={tr.id} className="flex flex-1 items-center last:flex-none">
                                     <div className="flex items-center gap-2">
                                         <span
-                                            className={`grid h-9 w-9 place-items-center rounded-full text-sm font-bold ${reached ? "bg-primary text-white" : "bg-surface-2 text-muted"}`}
+                                            className={`grid h-8 w-8 sm:h-9 sm:w-9 shrink-0 place-items-center rounded-full text-xs sm:text-sm font-bold ${reached ? "bg-primary text-white" : "bg-surface-2 text-muted"}`}
                                         >
                                             {reached && (completed || i < idx) ? (
-                                                <Check size={16} aria-hidden="true" />
+                                                <Check size={15} aria-hidden="true" />
                                             ) : (
                                                 i + 1
                                             )}
                                         </span>
                                         <span
-                                            className={`text-sm font-semibold ${reached ? "text-foreground" : "text-muted"}`}
+                                            className={`hidden sm:inline text-sm font-semibold ${reached ? "text-foreground" : "text-muted"}`}
                                         >
                                             {tr.label}
                                         </span>
                                     </div>
                                     {i < track.length - 1 && (
                                         <span
-                                            className={`mx-3 h-0.5 flex-1 rounded ${completed || i < idx ? "bg-primary" : "bg-line"}`}
+                                            className={`mx-2 sm:mx-3 h-0.5 flex-1 rounded ${completed || i < idx ? "bg-primary" : "bg-line"}`}
                                         />
                                     )}
                                 </li>
@@ -297,7 +297,7 @@ export function PlanDetail({ id }: { id: string }) {
                         })}
                     </ol>
                     {nextAction && (
-                        <Button id="btn-advance" onClick={advance} disabled={busy}>
+                        <Button id="btn-advance" onClick={advance} disabled={busy} className="w-full sm:w-auto">
                             {nextAction.label}
                         </Button>
                     )}
@@ -305,17 +305,17 @@ export function PlanDetail({ id }: { id: string }) {
             )}
 
             {iv && !completed && !cancelled && (
-                <Card className="space-y-4 glass border-white/60">
+                <Card className="space-y-4 glass border-white/60 p-5 sm:p-6">
                     <h2 className="text-xl font-bold">{t.planDetail.howToApply}</h2>
                     <ol className="space-y-2">
                         {iv.steps.map((s, i) => (
-                            <li key={s} className="flex gap-4">
-                                <span className="font-display font-bold text-accent">0{i + 1}</span>
-                                {s}
+                            <li key={s} className="flex gap-4 text-sm sm:text-base">
+                                <span className="font-display font-bold text-accent shrink-0">0{i + 1}</span>
+                                <span>{s}</span>
                             </li>
                         ))}
                     </ol>
-                    <p className="rounded-2xl bg-sky-soft/70 px-4 py-3 text-sm">
+                    <p className="rounded-2xl bg-sky-soft/70 px-4 py-3 text-xs sm:text-sm">
                         <strong>{t.planDetail.whatToObserve}</strong> {iv.observe}
                     </p>
                 </Card>
@@ -323,8 +323,8 @@ export function PlanDetail({ id }: { id: string }) {
 
             {/* Reflection */}
             {!cancelled && plan.status === "NEEDS_REFLECTION" && (
-                <Card className="space-y-6 p-8 shadow-lift glass border-white/60">
-                    <h2 className="text-3xl font-bold">{t.planDetail.reflectTitle}</h2>
+                <Card className="space-y-6 p-5 sm:p-8 shadow-lift glass border-white/60">
+                    <h2 className="text-2xl sm:text-3xl font-bold">{t.planDetail.reflectTitle}</h2>
                     <fieldset className="space-y-3">
                         <legend className="font-semibold">{t.planDetail.didStrategyHelp}</legend>
                         <div className="grid gap-3 sm:grid-cols-2">

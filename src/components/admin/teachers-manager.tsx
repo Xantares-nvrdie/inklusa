@@ -84,10 +84,10 @@ export function TeachersManager() {
         <div className="space-y-8">
             <div className="flex flex-wrap items-end justify-between gap-4">
                 <div className="space-y-2">
-                    <h1 className="text-4xl font-bold">{a.title}</h1>
-                    <p className="text-lg text-muted">{a.sub}</p>
+                    <h1 className="text-2xl sm:text-4xl font-bold">{a.title}</h1>
+                    <p className="text-base sm:text-lg text-muted">{a.sub}</p>
                 </div>
-                <Button id="btn-add-teacher" onClick={() => setAdding((v) => !v)}>
+                <Button id="btn-add-teacher" onClick={() => setAdding((v) => !v)} className="w-full sm:w-auto">
                     <Plus size={16} aria-hidden="true" /> {a.add}
                 </Button>
             </div>
@@ -188,26 +188,27 @@ export function TeachersManager() {
                                 <p className="text-sm text-danger">{t.banReason}</p>
                             )}
                         </div>
-                        <div className="flex gap-6 text-center text-sm">
+                        <div className="flex justify-between sm:justify-start gap-4 sm:gap-6 text-center text-sm border-y border-line/40 py-2 sm:border-0 sm:py-0">
                             <div>
                                 <p className="font-display text-xl font-bold">{t.students}</p>
-                                <p className="text-muted">{a.students}</p>
+                                <p className="text-muted text-xs sm:text-sm">{a.students}</p>
                             </div>
                             <div>
                                 <p className="font-display text-xl font-bold">{t.plans}</p>
-                                <p className="text-muted">{a.plans}</p>
+                                <p className="text-muted text-xs sm:text-sm">{a.plans}</p>
                             </div>
                             <div>
                                 <p className="font-display text-xl font-bold">{t.activePlans}</p>
-                                <p className="text-muted">{a.active}</p>
+                                <p className="text-muted text-xs sm:text-sm">{a.active}</p>
                             </div>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 w-full sm:w-auto justify-end sm:justify-start">
                             <Button
                                 id={`btn-ban-${t.id}`}
                                 size="sm"
                                 variant={t.banned ? "soft" : "outline"}
                                 onClick={() => toggleBan(t)}
+                                className="flex-1 sm:flex-none justify-center"
                             >
                                 {t.banned ? (
                                     <UserCheck size={14} aria-hidden="true" />

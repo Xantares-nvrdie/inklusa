@@ -8,7 +8,7 @@ export function SiteFooter() {
 
     return (
         <footer className="border-t border-line bg-surface">
-            <div className="mx-auto flex max-w-6xl flex-col gap-6 px-5 py-10 md:flex-row md:items-center md:justify-between">
+            <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 sm:px-5 py-8 sm:py-10 md:flex-row md:items-center md:justify-between">
                 <div className="space-y-2">
                     <Logo />
                     <p className="max-w-sm text-sm text-muted">{t.footer.disclaimer}</p>

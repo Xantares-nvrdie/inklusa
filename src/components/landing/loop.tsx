@@ -130,14 +130,14 @@ function StepVisual({ index }: { index: number }) {
         <div>
             {header(t.landing.loopMock.step4)}
             <p className="font-display text-2xl font-semibold">{t.landing.loopMock.step4Title}</p>
-            <div className="mt-6 grid grid-cols-3 gap-2.5">
+            <div className="mt-5 sm:mt-6 grid grid-cols-3 gap-1.5 sm:gap-2.5">
                 {options.map((o, i) => (
                     <motion.div
                         key={o}
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: i * 0.07, duration: 0.4, ease: EASE }}
-                        className={`rounded-2xl border px-3 py-4 text-center text-sm font-semibold ${
+                        className={`rounded-2xl border px-1.5 sm:px-3 py-3 sm:py-4 text-center text-xs sm:text-sm font-semibold ${
                             i === 0 ? "border-[#d5a6e6] bg-[#d5a6e6]/20" : "border-white/10 bg-white/5 text-white/70"
                         }`}
                     >
@@ -287,11 +287,11 @@ export function LandingLoop() {
             </div>
 
             {/* Mobile / tablet — stacked */}
-            <div className="relative mx-auto max-w-2xl px-5 py-24 lg:hidden">
+            <div className="relative mx-auto max-w-2xl px-4 sm:px-5 py-16 sm:py-24 lg:hidden">
                 <Eyebrow dark>{t.landing.eyebrowLoop}</Eyebrow>
-                <h2 className="mt-5 text-4xl font-bold">{t.landing.loopTitle}</h2>
-                <p className="mt-4 text-lg text-white/65">{t.landing.loopSub}</p>
-                <div className="mt-10 space-y-6">
+                <h2 className="mt-4 sm:mt-5 text-2xl xs:text-3xl sm:text-4xl font-bold">{t.landing.loopTitle}</h2>
+                <p className="mt-3 sm:mt-4 text-base sm:text-lg text-white/65">{t.landing.loopSub}</p>
+                <div className="mt-8 sm:mt-10 space-y-5 sm:space-y-6">
                     {steps.map((s, i) => (
                         <motion.div
                             key={s.key}
@@ -299,7 +299,7 @@ export function LandingLoop() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: "-60px" }}
                             transition={{ duration: 0.6, ease: EASE }}
-                            className="rounded-[1.75rem] border border-white/10 bg-white/[0.06] p-6"
+                            className="rounded-[1.75rem] border border-white/10 bg-white/[0.06] p-4 sm:p-6"
                         >
                             <div className="mb-5 flex items-center gap-3">
                                 <span

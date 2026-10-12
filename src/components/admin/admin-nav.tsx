@@ -74,7 +74,7 @@ export function AdminNav({ name }: { name: string }) {
                 </div>
             </div>
             <nav
-                className="fixed inset-x-3 bottom-3 z-50 grid grid-cols-5 rounded-2xl border border-line/70 bg-surface/95 p-1.5 shadow-lift backdrop-blur md:hidden"
+                className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-50 grid grid-cols-5 rounded-2xl border border-line/70 bg-surface/95 p-1 sm:p-1.5 shadow-lift backdrop-blur md:hidden"
                 aria-label="Admin"
             >
                 {links.map(({ href, label, Icon }) => {
@@ -85,13 +85,13 @@ export function AdminNav({ name }: { name: string }) {
                             href={href}
                             aria-current={active ? "page" : undefined}
                             className={cn(
-                                "flex min-h-14 flex-col items-center justify-center gap-1 rounded-xl px-1 text-[11px] font-semibold leading-tight transition-colors",
+                                "flex min-h-13 sm:min-h-14 flex-col items-center justify-center gap-1 rounded-xl px-0.5 sm:px-1 text-[9.5px] xs:text-[10px] sm:text-[11px] font-semibold leading-tight transition-colors",
                                 active
                                     ? "bg-primary-soft text-primary-strong"
                                     : "text-muted hover:bg-surface-2 hover:text-foreground",
                             )}
                         >
-                            <Icon size={18} aria-hidden="true" />
+                            <Icon size={16} aria-hidden="true" />
                             <span className="max-w-full truncate whitespace-nowrap">{label}</span>
                         </Link>
                     );

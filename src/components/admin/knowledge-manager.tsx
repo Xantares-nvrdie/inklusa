@@ -645,10 +645,10 @@ export function KnowledgeManager() {
         <div className="space-y-8">
             <div className="flex flex-wrap items-end justify-between gap-4">
                 <div className="space-y-2">
-                    <h1 className="text-4xl font-bold">{k.title}</h1>
-                    <p className="max-w-2xl text-lg text-muted">{k.sub}</p>
+                    <h1 className="text-2xl sm:text-4xl font-bold">{k.title}</h1>
+                    <p className="max-w-2xl text-base sm:text-lg text-muted">{k.sub}</p>
                 </div>
-                <Button id="btn-import-defaults" variant="outline" onClick={importDefaults}>
+                <Button id="btn-import-defaults" variant="outline" onClick={importDefaults} className="w-full sm:w-auto">
                     <Download size={16} aria-hidden="true" /> {k.importDefaults}
                 </Button>
             </div>
@@ -664,13 +664,13 @@ export function KnowledgeManager() {
             )}
 
             <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex gap-2" role="tablist">
+                <div className="flex gap-2 overflow-x-auto no-scrollbar flex-nowrap pb-1 sm:flex-wrap" role="tablist">
                     <button
                         id="tab-strategies"
                         role="tab"
                         aria-selected={tab === "strategies"}
                         onClick={() => setTab("strategies")}
-                        className={tabCls(tab === "strategies")}
+                        className={tabCls(tab === "strategies") + " whitespace-nowrap shrink-0 text-xs sm:text-sm px-4 sm:px-5 py-1.5 sm:py-2"}
                     >
                         {k.tabStrategies} ({ivs?.length ?? 0})
                     </button>
@@ -679,7 +679,7 @@ export function KnowledgeManager() {
                         role="tab"
                         aria-selected={tab === "rules"}
                         onClick={() => setTab("rules")}
-                        className={tabCls(tab === "rules")}
+                        className={tabCls(tab === "rules") + " whitespace-nowrap shrink-0 text-xs sm:text-sm px-4 sm:px-5 py-1.5 sm:py-2"}
                     >
                         {k.tabRules} ({cls?.length ?? 0})
                     </button>
@@ -687,6 +687,7 @@ export function KnowledgeManager() {
                 {tab === "strategies" ? (
                     <Button
                         id="btn-new-strategy"
+                        className="w-full sm:w-auto"
                         onClick={() => {
                             setError(null);
                             setIvForm(emptyIv());
@@ -697,6 +698,7 @@ export function KnowledgeManager() {
                 ) : (
                     <Button
                         id="btn-new-rule"
+                        className="w-full sm:w-auto"
                         onClick={() => {
                             setError(null);
                             setClForm(emptyCl());
@@ -781,7 +783,7 @@ export function KnowledgeManager() {
                                         {i.slug} · {i.steps[locale].length} {k.stepsCount} · {k.usedBy}: {used}
                                     </p>
                                 </div>
-                                <div className="flex gap-1 items-center">
+                                <div className="flex flex-wrap gap-1 items-center self-end sm:self-auto">
                                     <Button
                                         size="sm"
                                         variant="ghost"
@@ -854,7 +856,7 @@ export function KnowledgeManager() {
                                         .join(" · ")}
                                 </p>
                             </div>
-                            <div className="flex gap-1">
+                            <div className="flex flex-wrap gap-1 items-center self-end sm:self-auto">
                                 <Button
                                     size="sm"
                                     variant="ghost"

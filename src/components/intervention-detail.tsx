@@ -35,45 +35,45 @@ export function InterventionDetail({ slug }: { slug: string }) {
             </Link>
             <div className="space-y-3">
                 <p className="text-sm font-semibold uppercase tracking-wider text-primary">{category?.title}</p>
-                <h1 className="text-5xl font-bold">{iv.title}</h1>
+                <h1 className="text-3xl sm:text-5xl font-bold">{iv.title}</h1>
             </div>
 
-            <Card className="space-y-2 bg-primary-soft/60 glass border-white/60">
-                <h2 className="text-lg font-bold">{t.interventionDetail.whyTryThis}</h2>
-                <p className="text-lg">{iv.why}</p>
+            <Card className="space-y-2 bg-primary-soft/60 glass border-white/60 p-5 sm:p-6">
+                <h2 className="text-base sm:text-lg font-bold">{t.interventionDetail.whyTryThis}</h2>
+                <p className="text-base sm:text-lg">{iv.why}</p>
             </Card>
 
             <section className="space-y-4">
-                <h2 className="text-2xl font-bold">{t.interventionDetail.howToApply}</h2>
+                <h2 className="text-xl sm:text-2xl font-bold">{t.interventionDetail.howToApply}</h2>
                 <ol className="space-y-3">
                     {iv.steps.map((s, i) => (
                         <li
                             key={s}
-                            className="flex items-center gap-5 rounded-2xl border border-white/60 bg-surface/80 glass px-6 py-4 shadow-soft"
+                            className="flex items-center gap-4 sm:gap-5 rounded-2xl border border-white/60 bg-surface/80 glass px-4 sm:px-6 py-3.5 sm:py-4 shadow-soft"
                         >
-                            <span className="font-display text-2xl font-bold text-accent">0{i + 1}</span>
-                            <span className="text-lg">{s}</span>
+                            <span className="font-display text-xl sm:text-2xl font-bold text-accent shrink-0">0{i + 1}</span>
+                            <span className="text-base sm:text-lg">{s}</span>
                         </li>
                     ))}
                 </ol>
             </section>
 
-            <Card className="flex items-start gap-4 bg-sky-soft/70 glass border-white/60">
+            <Card className="flex items-start gap-4 bg-sky-soft/70 glass border-white/60 p-5 sm:p-6">
                 <span className="mt-0.5 grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white text-sky">
                     <Eye size={18} aria-hidden="true" />
                 </span>
                 <div>
-                    <h2 className="text-lg font-bold">{t.interventionDetail.whatToObserve}</h2>
-                    <p>{iv.observe}</p>
+                    <h2 className="text-base sm:text-lg font-bold">{t.interventionDetail.whatToObserve}</h2>
+                    <p className="text-sm sm:text-base mt-1">{iv.observe}</p>
                 </div>
             </Card>
 
             {hasCtx ? (
-                <ButtonLink id="btn-use-strategy" href={`/action-plans/new?${flowQs(ctx)}&slug=${iv.slug}`} size="lg">
+                <ButtonLink id="btn-use-strategy" href={`/action-plans/new?${flowQs(ctx)}&slug=${iv.slug}`} size="lg" className="w-full sm:w-auto text-center justify-center">
                     {t.interventionDetail.useStrategy} <ArrowRight size={18} aria-hidden="true" />
                 </ButtonLink>
             ) : (
-                <ButtonLink id="btn-start-quick-check" href="/quick-check" size="lg" variant="soft">
+                <ButtonLink id="btn-start-quick-check" href="/quick-check" size="lg" variant="soft" className="w-full sm:w-auto text-center justify-center">
                     {t.interventionDetail.startQuickCheckToUse} <ArrowRight size={18} aria-hidden="true" />
                 </ButtonLink>
             )}

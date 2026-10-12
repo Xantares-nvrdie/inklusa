@@ -168,8 +168,8 @@ export function ClassesManager() {
                     >
                         {/* Header */}
                         <div>
-                            <h1 className="text-3xl font-bold tracking-tight">{a.title}</h1>
-                            <p className="mt-1 text-muted">{a.sub}</p>
+                            <h1 className="text-2xl sm:text-4xl font-bold tracking-tight">{a.title}</h1>
+                            <p className="mt-1 text-sm sm:text-base text-muted">{a.sub}</p>
                         </div>
 
                         {/* Search and Add Class Card */}

@@ -71,16 +71,17 @@ export function StudentDetail({ id }: { id: string }) {
                     {t.students.allStudents}
                 </Link>
 
-                <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex items-center gap-4">
+                <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-center gap-3.5 sm:gap-4">
                         <span
-                            className={`grid h-16 w-16 shrink-0 place-items-center rounded-2xl ${isGeneral ? "bg-accent-soft text-[#9a5612]" : "bg-surface-2 text-primary-strong"}`}
+                            className={`grid h-12 w-12 sm:h-16 sm:w-16 shrink-0 place-items-center rounded-2xl ${isGeneral ? "bg-accent-soft text-[#9a5612]" : "bg-surface-2 text-primary-strong"}`}
                         >
-                            {isGeneral ? <Users size={32} /> : <UserRound size={32} />}
+                            {isGeneral ? <Users size={24} className="sm:hidden" /> : <UserRound size={24} className="sm:hidden" />}
+                            {isGeneral ? <Users size={32} className="hidden sm:block" /> : <UserRound size={32} className="hidden sm:block" />}
                         </span>
                         <div>
-                            <h1 className="text-4xl font-bold">{studentName}</h1>
-                            <p className="text-muted">
+                            <h1 className="text-2xl sm:text-4xl font-bold">{studentName}</h1>
+                            <p className="text-xs sm:text-sm text-muted">
                                 {isGeneral
                                     ? t.quickCheck.generalClassroomDesc
                                     : className
@@ -89,7 +90,7 @@ export function StudentDetail({ id }: { id: string }) {
                             </p>
                         </div>
                     </div>
-                    <ButtonLink href={`/quick-check${!isGeneral ? `?student=${id}` : ""}`}>
+                    <ButtonLink href={`/quick-check${!isGeneral ? `?student=${id}` : ""}`} className="w-full sm:w-auto text-center justify-center">
                         {t.students.newQuickCheck}
                     </ButtonLink>
                 </div>

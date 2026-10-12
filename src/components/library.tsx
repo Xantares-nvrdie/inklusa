@@ -25,8 +25,8 @@ export function Library() {
     return (
         <div className="space-y-8">
             <div className="space-y-2">
-                <h1 className="text-4xl font-bold">{t.library.title}</h1>
-                <p className="text-lg text-muted">{t.library.sub}</p>
+                <h1 className="text-2xl sm:text-4xl font-bold">{t.library.title}</h1>
+                <p className="text-base sm:text-lg text-muted">{t.library.sub}</p>
             </div>
 
             <div className="relative">
@@ -53,14 +53,14 @@ export function Library() {
             </div>
 
             <div>
-                <fieldset className="m-0 flex flex-wrap items-center gap-2 border-0 p-0">
+                <fieldset className="m-0 flex gap-2 overflow-x-auto no-scrollbar flex-nowrap pb-1 sm:flex-wrap items-center border-0 p-0">
                     <legend className="sr-only">{t.library.filterLabel}</legend>
                     <button
                         id="filter-all"
                         type="button"
                         onClick={() => setCat(null)}
                         aria-pressed={!cat}
-                        className={`cursor-pointer rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${!cat ? "border-primary bg-primary text-white" : "glass border-line bg-surface/80 hover:border-primary"}`}
+                        className={`cursor-pointer rounded-full border px-3.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap shrink-0 ${!cat ? "border-primary bg-primary text-white" : "glass border-line bg-surface/80 hover:border-primary"}`}
                     >
                         {t.library.all}
                     </button>
@@ -71,7 +71,7 @@ export function Library() {
                             type="button"
                             onClick={() => setCat(c.id)}
                             aria-pressed={cat === c.id}
-                            className={`inline-flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${cat === c.id ? "border-primary bg-primary text-white" : "glass border-line bg-surface/80 hover:border-primary"}`}
+                            className={`inline-flex cursor-pointer items-center gap-2 rounded-full border px-3.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap shrink-0 ${cat === c.id ? "border-primary bg-primary text-white" : "glass border-line bg-surface/80 hover:border-primary"}`}
                         >
                             <CategoryIcon icon={c.icon} size={14} /> {c.title}
                         </button>
@@ -80,7 +80,7 @@ export function Library() {
                         <button
                             type="button"
                             onClick={() => setCat(null)}
-                            className="inline-flex items-center gap-1 rounded-full px-3 py-2 text-sm font-semibold text-muted hover:bg-surface-2 hover:text-foreground"
+                            className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-muted hover:bg-surface-2 hover:text-foreground whitespace-nowrap shrink-0"
                         >
                             <X size={15} aria-hidden="true" /> {t.library.clearFilter}
                         </button>

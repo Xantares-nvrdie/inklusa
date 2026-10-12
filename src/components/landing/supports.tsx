@@ -60,13 +60,13 @@ export function LandingSupports() {
                     className="flex w-max items-stretch gap-6 px-5 lg:px-[max(1.25rem,calc((100vw-72rem)/2+1.25rem))]"
                 >
                     {/* Intro panel */}
-                    <div className="flex w-[min(30rem,82vw)] shrink-0 flex-col justify-center pr-6">
+                    <div className="flex w-[min(30rem,82vw)] shrink-0 flex-col justify-center pr-4 sm:pr-6">
                         <Eyebrow>{t.landing.eyebrowSupports}</Eyebrow>
-                        <h2 className="mt-5 text-4xl font-bold leading-[1.08] sm:text-5xl">
+                        <h2 className="mt-4 sm:mt-5 text-2xl xs:text-3xl sm:text-5xl font-bold leading-[1.1]">
                             {t.landing.supportsTitle}
                         </h2>
-                        <p className="mt-5 text-lg text-muted">{t.landing.supportsDesc}</p>
-                        <p className="mt-8 inline-flex items-center gap-2 text-sm font-medium text-primary">
+                        <p className="mt-3 sm:mt-5 text-base sm:text-lg text-muted">{t.landing.supportsDesc}</p>
+                        <p className="mt-6 sm:mt-8 inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-primary">
                             <MoveRight size={16} aria-hidden="true" /> {t.landing.dragHint}
                         </p>
                     </div>
@@ -77,7 +77,7 @@ export function LandingSupports() {
                         return (
                             <article
                                 key={c.id}
-                                className={`group relative flex h-[min(30rem,70vh)] w-[min(21rem,78vw)] shrink-0 flex-col overflow-hidden rounded-[2rem] bg-gradient-to-br ${tone.bg} p-7 ring-1 ring-line transition-all duration-500 hover:-translate-y-2 hover:shadow-lift ${tone.ring} hover:ring-4`}
+                                className={`group relative flex h-[min(30rem,70vh)] w-[min(21rem,78vw)] shrink-0 flex-col overflow-hidden rounded-[2rem] bg-gradient-to-br ${tone.bg} p-5 xs:p-6 sm:p-7 ring-1 ring-line transition-all duration-500 hover:-translate-y-2 hover:shadow-lift ${tone.ring} hover:ring-4`}
                             >
                                 <motion.div
                                     style={{ x: iconX }}
@@ -88,17 +88,17 @@ export function LandingSupports() {
                                 </motion.div>
                                 <span className="font-display text-sm font-semibold text-muted">0{i + 1}</span>
                                 <span
-                                    className={`mt-6 grid h-14 w-14 place-items-center rounded-2xl shadow-soft ${tone.icon}`}
+                                    className={`mt-4 sm:mt-6 grid h-12 w-12 sm:h-14 sm:w-14 place-items-center rounded-2xl shadow-soft ${tone.icon}`}
                                 >
-                                    <CategoryIcon icon={c.icon} size={26} />
+                                    <CategoryIcon icon={c.icon} size={24} />
                                 </span>
-                                <h3 className="mt-6 text-2xl font-bold">{c.title}</h3>
-                                <p className="mt-3 line-clamp-4 text-muted">{c.description}</p>
-                                <div className="mt-auto flex items-center justify-between border-t border-foreground/10 pt-5">
-                                    <span className="text-sm font-semibold">
+                                <h3 className="mt-4 sm:mt-6 text-xl sm:text-2xl font-bold">{c.title}</h3>
+                                <p className="mt-2.5 sm:mt-3 line-clamp-4 text-sm sm:text-base text-muted">{c.description}</p>
+                                <div className="mt-auto flex items-center justify-between border-t border-foreground/10 pt-4 sm:pt-5">
+                                    <span className="text-xs sm:text-sm font-semibold">
                                         {t.landing.strategyCount(count)}
                                     </span>
-                                    <span className="grid h-9 w-9 place-items-center rounded-full bg-surface text-foreground shadow-soft transition-transform duration-300 group-hover:translate-x-1">
+                                    <span className="grid h-8 w-8 sm:h-9 sm:w-9 place-items-center rounded-full bg-surface text-foreground shadow-soft transition-transform duration-300 group-hover:translate-x-1">
                                         <ArrowRight size={16} aria-hidden="true" />
                                     </span>
                                 </div>
@@ -107,7 +107,7 @@ export function LandingSupports() {
                     })}
 
                     {sample && (
-                        <article className="relative flex h-[min(30rem,70vh)] w-[min(26rem,85vw)] shrink-0 flex-col overflow-hidden rounded-[2rem] bg-primary-strong p-8 text-white shadow-lift">
+                        <article className="relative flex h-[min(30rem,70vh)] w-[min(26rem,85vw)] shrink-0 flex-col overflow-hidden rounded-[2rem] bg-primary-strong p-5 xs:p-6 sm:p-8 text-white shadow-lift">
                             <div
                                 className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-accent/40 blur-3xl"
                                 aria-hidden="true"
@@ -115,8 +115,8 @@ export function LandingSupports() {
                             <p className="relative text-xs font-semibold uppercase tracking-widest text-white/60">
                                 {t.landing.exampleStrategy}
                             </p>
-                            <h3 className="relative mt-3 text-3xl font-bold">{sample.title}</h3>
-                            <p className="relative mt-3 line-clamp-3 text-sm text-white/75">
+                            <h3 className="relative mt-2.5 sm:mt-3 text-xl xs:text-2xl sm:text-3xl font-bold">{sample.title}</h3>
+                            <p className="relative mt-2 sm:mt-3 line-clamp-3 text-xs sm:text-sm text-white/75">
                                 <strong className="text-white">{t.landing.whyTryThis}</strong> {sample.why}
                             </p>
                             <ol className="relative mt-5 space-y-2.5">

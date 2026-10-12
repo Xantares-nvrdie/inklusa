@@ -172,8 +172,8 @@ export function StrategyEvaluations() {
                     <BarChart3 size={18} />
                     <span>{a.title}</span>
                 </div>
-                <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">{a.title}</h1>
-                <p className="text-base sm:text-lg text-muted max-w-3xl">{a.sub}</p>
+                <h1 className="text-2xl sm:text-4xl font-bold tracking-tight">{a.title}</h1>
+                <p className="text-sm sm:text-lg text-muted max-w-3xl">{a.sub}</p>
             </div>
 
             {error && (
@@ -262,11 +262,11 @@ export function StrategyEvaluations() {
                     </div>
 
                     {/* Tabs */}
-                    <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-full bg-surface-2/60 border border-line/60">
+                    <div className="flex items-center gap-1.5 p-1 rounded-2xl sm:rounded-full bg-surface-2/60 border border-line/60 overflow-x-auto no-scrollbar flex-nowrap sm:flex-wrap">
                         <button
                             type="button"
                             onClick={() => setTab("needsReview")}
-                            className={`cursor-pointer rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all inline-flex items-center gap-1.5 ${
+                            className={`cursor-pointer rounded-full px-3 sm:px-3.5 py-1.5 text-xs font-semibold transition-all inline-flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
                                 tab === "needsReview"
                                     ? "bg-danger text-white shadow-xs"
                                     : "text-muted hover:text-foreground hover:bg-surface"
@@ -286,7 +286,7 @@ export function StrategyEvaluations() {
                         <button
                             type="button"
                             onClick={() => setTab("highSuccess")}
-                            className={`cursor-pointer rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all inline-flex items-center gap-1.5 ${
+                            className={`cursor-pointer rounded-full px-3 sm:px-3.5 py-1.5 text-xs font-semibold transition-all inline-flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
                                 tab === "highSuccess"
                                     ? "bg-success text-white shadow-xs"
                                     : "text-muted hover:text-foreground hover:bg-surface"
@@ -306,7 +306,7 @@ export function StrategyEvaluations() {
                         <button
                             type="button"
                             onClick={() => setTab("all")}
-                            className={`cursor-pointer rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all inline-flex items-center gap-1.5 ${
+                            className={`cursor-pointer rounded-full px-3 sm:px-3.5 py-1.5 text-xs font-semibold transition-all inline-flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
                                 tab === "all"
                                     ? "bg-primary text-white shadow-xs"
                                     : "text-muted hover:text-foreground hover:bg-surface"
@@ -492,11 +492,11 @@ export function StrategyEvaluations() {
                                         </div>
 
                                         {/* Action buttons */}
-                                        <div className="flex flex-wrap items-center gap-2 mt-2">
+                                        <div className="flex flex-wrap items-center gap-2 mt-2 w-full sm:w-auto">
                                             <button
                                                 type="button"
                                                 onClick={() => setHistorySlug(item.slug)}
-                                                className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary-soft px-3 py-1.5 text-xs font-semibold text-primary-strong transition-all hover:bg-primary hover:text-white cursor-pointer shadow-2xs"
+                                                className="inline-flex items-center justify-center gap-1.5 rounded-full border border-primary/30 bg-primary-soft px-3 py-1.5 text-xs font-semibold text-primary-strong transition-all hover:bg-primary hover:text-white cursor-pointer shadow-2xs w-full sm:w-auto"
                                             >
                                                 <History size={13} />
                                                 <span>{a.viewHistoryBtn}</span>
@@ -506,7 +506,7 @@ export function StrategyEvaluations() {
                                             </button>
                                             <Link
                                                 href={`/admin/knowledge?search=${encodeURIComponent(ivName(item.slug))}`}
-                                                className="inline-flex items-center gap-1 text-xs text-muted hover:text-primary transition-colors font-medium px-2 py-1.5"
+                                                className="inline-flex items-center justify-center gap-1 text-xs text-muted hover:text-primary transition-colors font-medium px-2 py-1.5 w-full sm:w-auto text-center"
                                             >
                                                 <span>{a.viewInKb}</span>
                                                 <ExternalLink size={12} />

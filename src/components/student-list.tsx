@@ -31,8 +31,8 @@ export function StudentList() {
     return (
         <div className="space-y-8">
             <div className="flex flex-wrap items-end justify-between gap-4">
-                <h1 className="text-4xl font-bold">{t.students.title}</h1>
-                <div className="flex gap-3">
+                <h1 className="text-2xl sm:text-4xl font-bold">{t.students.title}</h1>
+                <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
                     <ButtonLink href="/students/manage" variant="soft">{t.students.manageClasses}</ButtonLink>
                     <ButtonLink href="/quick-check">{t.myInterventions.btnNew}</ButtonLink>
                 </div>

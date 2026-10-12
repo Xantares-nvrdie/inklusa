@@ -129,10 +129,10 @@ export function AdminOverview() {
     const totalReflections = rawList.reduce((acc, curr) => acc + curr.total, 0);
 
     return (
-        <div className="space-y-10">
+        <div className="space-y-8 sm:space-y-10">
             <div className="space-y-2">
-                <h1 className="text-4xl font-bold">{a.title}</h1>
-                <p className="text-lg text-muted">{a.sub}</p>
+                <h1 className="text-2xl sm:text-4xl font-bold">{a.title}</h1>
+                <p className="text-base sm:text-lg text-muted">{a.sub}</p>
             </div>
             {error && (
                 <p role="alert" className="rounded-2xl bg-[#fbe9e7] px-5 py-4 text-danger">
@@ -140,16 +140,17 @@ export function AdminOverview() {
                 </p>
             )}
 
-            <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <section className="grid gap-4 grid-cols-2 lg:grid-cols-4">
                 {cards.map(({ label, value, sub, Icon, tone }) => (
-                    <Card key={label} className="space-y-3 glass border-white/60">
-                        <span className={`grid h-11 w-11 place-items-center rounded-2xl ${tone}`}>
-                            <Icon size={20} aria-hidden="true" />
+                    <Card key={label} className="space-y-3 glass border-white/60 p-4 sm:p-6">
+                        <span className={`grid h-10 w-10 sm:h-11 sm:w-11 place-items-center rounded-2xl ${tone}`}>
+                            <Icon size={18} className="sm:hidden" aria-hidden="true" />
+                            <Icon size={20} className="hidden sm:block" aria-hidden="true" />
                         </span>
                         <div>
-                            <p className="font-display text-4xl font-bold leading-none">{value ?? "–"}</p>
-                            <p className="mt-1 text-sm text-muted">{label}</p>
-                            {sub && <p className="text-xs text-muted">{sub}</p>}
+                            <p className="font-display text-2xl sm:text-4xl font-bold leading-none">{value ?? "–"}</p>
+                            <p className="mt-1 text-xs sm:text-sm text-muted">{label}</p>
+                            {sub && <p className="text-[11px] sm:text-xs text-muted">{sub}</p>}
                         </div>
                     </Card>
                 ))}
@@ -157,23 +158,23 @@ export function AdminOverview() {
 
             {/* Strategy Feedback & Rating Summary Widget */}
             {s && (
-                <Card className="glass border-white/60 p-6 sm:p-7 space-y-5">
+                <Card className="glass border-white/60 p-5 sm:p-7 space-y-5">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div className="space-y-1">
                             <div className="flex items-center gap-2">
                                 <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary-soft text-primary-strong">
                                     <BarChart3 size={17} />
                                 </span>
-                                <h2 className="text-xl sm:text-2xl font-bold text-foreground">
+                                <h2 className="text-lg sm:text-2xl font-bold text-foreground">
                                     {a.strategyEffectiveness}
                                 </h2>
                             </div>
-                            <p className="text-sm text-muted">{a.effectivenessSub}</p>
+                            <p className="text-xs sm:text-sm text-muted">{a.effectivenessSub}</p>
                         </div>
                         <Link
                             id="view-all-evaluations-btn"
                             href="/admin/evaluations"
-                            className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-hover shrink-0 self-start sm:self-auto"
+                            className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-xs font-semibold text-white shadow-xs transition-all hover:bg-primary-hover shrink-0 w-full sm:w-auto"
                         >
                             <span>{a.viewAllEvaluations}</span>
                         </Link>

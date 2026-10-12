@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
@@ -8,6 +8,13 @@ import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
+
+export const viewport: Viewport = {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+    themeColor: "#1f7a70",
+};
 
 export const metadata: Metadata = {
     title: "INKLUSA | Classroom Intervention Assistant",
@@ -23,10 +30,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                     <KnowledgeProvider>
                         {children}
                         <Toaster
-                            position="top-right"
+                            position="top-center"
                             toastOptions={{
                                 duration: 4000,
-                                style: { borderRadius: "1rem", background: "#fff", color: "#16302d" },
+                                style: { borderRadius: "1rem", background: "#fff", color: "#16302d", maxWidth: "90vw" },
                             }}
                         />
                     </KnowledgeProvider>

@@ -73,14 +73,14 @@ export function LandingHero() {
                 aria-hidden="true"
             />
 
-            <div className="mx-auto grid min-h-[calc(100svh-4rem)] max-w-6xl items-center gap-10 px-5 pb-28 pt-14 lg:grid-cols-[1.05fr_0.95fr]">
+            <div className="mx-auto grid min-h-[calc(100svh-4rem)] max-w-6xl items-center gap-10 px-4 sm:px-5 pb-20 sm:pb-28 pt-10 sm:pt-14 lg:grid-cols-[1.05fr_0.95fr]">
                 {/* Layer 2 — copy */}
-                <motion.div style={{ y: yText, opacity: textOpacity }} className="relative z-10 space-y-8">
+                <motion.div style={{ y: yText, opacity: textOpacity }} className="relative z-10 space-y-6 sm:space-y-8">
                     <motion.span
                         initial={{ opacity: 0, y: 12 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, ease: EASE }}
-                        className="inline-flex items-center gap-2 rounded-full border border-line bg-surface/80 px-4 py-1.5 text-sm font-medium text-primary-strong shadow-soft backdrop-blur"
+                        className="inline-flex items-center gap-2 rounded-full border border-line bg-surface/80 px-3.5 py-1 sm:px-4 sm:py-1.5 text-xs sm:text-sm font-medium text-primary-strong shadow-soft backdrop-blur"
                     >
                         <span className="relative grid h-2 w-2 place-items-center">
                             <span className="animate-pulse-ring absolute h-2 w-2 rounded-full bg-primary" />
@@ -91,10 +91,10 @@ export function LandingHero() {
 
                     <h1
                         id="hero-title"
-                        className="text-[2.9rem] font-bold leading-[1.02] tracking-[-0.035em] sm:text-7xl lg:text-[5.4rem]"
+                        className="text-3xl min-[420px]:text-4xl font-bold leading-[1.08] sm:leading-[1.02] tracking-[-0.035em] sm:text-7xl lg:text-[5.4rem]"
                     >
                         {titleLines.map((line, i) => (
-                            <span key={line} className="block overflow-hidden pb-2">
+                            <span key={line} className="block overflow-hidden pb-1 sm:pb-2">
                                 <motion.span
                                     className={`block ${i === 1 ? "text-gradient-warm" : ""}`}
                                     initial={{ y: "110%" }}
@@ -111,7 +111,7 @@ export function LandingHero() {
                         initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.7, delay: 0.35, ease: EASE }}
-                        className="max-w-xl text-lg leading-relaxed text-muted"
+                        className="max-w-xl text-base sm:text-lg leading-relaxed text-muted"
                     >
                         {t.landing.heroDescription}
                     </motion.p>
@@ -120,9 +120,9 @@ export function LandingHero() {
                         initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.7, delay: 0.45, ease: EASE }}
-                        className="flex flex-wrap items-center gap-3"
+                        className="flex flex-col min-[420px]:flex-row flex-wrap items-stretch min-[420px]:items-center gap-3"
                     >
-                        <ButtonLink id="cta-hero-start" href="/register" size="lg" className="group">
+                        <ButtonLink id="cta-hero-start" href="/register" size="lg" className="group w-full min-[420px]:w-auto justify-center">
                             {t.landing.ctaQuickCheck}
                             <ArrowRight
                                 size={18}
@@ -130,7 +130,7 @@ export function LandingHero() {
                                 className="transition-transform group-hover:translate-x-1"
                             />
                         </ButtonLink>
-                        <ButtonLink id="cta-hero-how" href="#how" variant="outline" size="lg">
+                        <ButtonLink id="cta-hero-how" href="#how" variant="outline" size="lg" className="w-full min-[420px]:w-auto justify-center">
                             {t.landing.ctaHow}
                         </ButtonLink>
                     </motion.div>
@@ -139,9 +139,9 @@ export function LandingHero() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.8, delay: 0.6 }}
-                        className="flex items-center gap-2 text-sm text-muted"
+                        className="flex items-center gap-2 text-xs sm:text-sm text-muted"
                     >
-                        <Sparkles size={14} className="text-accent" aria-hidden="true" />
+                        <Sparkles size={14} className="text-accent shrink-0" aria-hidden="true" />
                         {t.landing.quote}
                     </motion.p>
                 </motion.div>
@@ -182,13 +182,13 @@ export function LandingHero() {
                             initial={{ opacity: 0, scale: 0.85 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 0.8, delay: 0.7, ease: EASE }}
-                            className="glass w-56 rounded-2xl border border-white/70 p-4 shadow-lift"
+                            className="glass w-48 sm:w-56 rounded-2xl border border-white/70 p-3.5 sm:p-4 shadow-lift"
                         >
                             <p className="text-[0.65rem] font-semibold uppercase tracking-widest text-muted">
                                 {t.landing.observedBarrier}
                             </p>
-                            <p className="mt-1 font-display text-lg font-bold">{t.landing.sampleBarrierTitle}</p>
-                            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-surface-2">
+                            <p className="mt-1 font-display text-base sm:text-lg font-bold">{t.landing.sampleBarrierTitle}</p>
+                            <div className="mt-2.5 sm:mt-3 h-1.5 overflow-hidden rounded-full bg-surface-2">
                                 <motion.div
                                     className="h-full rounded-full bg-gradient-to-r from-primary to-accent"
                                     initial={{ width: 0 }}
@@ -206,12 +206,12 @@ export function LandingHero() {
                             initial={{ opacity: 0, scale: 0.85 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 0.8, delay: 0.85, ease: EASE }}
-                            className="flex items-center gap-3 rounded-full border border-line bg-surface px-4 py-2.5 shadow-lift"
+                            className="flex items-center gap-2.5 sm:gap-3 rounded-full border border-line bg-surface px-3.5 sm:px-4 py-2 sm:py-2.5 shadow-lift"
                         >
-                            <span className="grid h-8 w-8 place-items-center rounded-full bg-accent-soft text-[#9a5612]">
-                                <UserRoundCheck size={16} aria-hidden="true" />
+                            <span className="grid h-7 w-7 sm:h-8 sm:w-8 place-items-center rounded-full bg-accent-soft text-[#9a5612]">
+                                <UserRoundCheck size={15} aria-hidden="true" />
                             </span>
-                            <span className="text-sm font-semibold">{t.landing.teacherDecides}</span>
+                            <span className="text-xs sm:text-sm font-semibold">{t.landing.teacherDecides}</span>
                         </motion.div>
                     </motion.div>
 
@@ -222,12 +222,12 @@ export function LandingHero() {
                             initial={{ opacity: 0, scale: 0.85 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 0.8, delay: 1, ease: EASE }}
-                            className="rounded-2xl bg-primary-strong p-4 text-white shadow-lift"
+                            className="rounded-2xl bg-primary-strong p-3.5 sm:p-4 text-white shadow-lift"
                         >
                             <p className="text-[0.65rem] font-semibold uppercase tracking-widest text-white/60">
                                 {t.landing.strategyTried}
                             </p>
-                            <p className="mt-1 font-semibold">Graphic Organizer</p>
+                            <p className="mt-1 text-sm sm:text-base font-semibold">Graphic Organizer</p>
                             <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-xs font-medium">
                                 <Check size={12} aria-hidden="true" /> {t.landing.helped}
                             </p>
