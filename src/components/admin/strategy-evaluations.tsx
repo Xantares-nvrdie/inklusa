@@ -9,12 +9,14 @@ import {
     ChevronRight,
     ExternalLink,
     Filter,
+    History,
     Search,
     ThumbsDown,
     ThumbsUp,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { StrategyFeedbackHistoryModal } from "@/components/admin/strategy-feedback-history-modal";
 import { Card } from "@/components/ui/card";
 import { api } from "@/lib/api";
 import { adminDict } from "@/lib/i18n/admin";
@@ -56,6 +58,7 @@ export function StrategyEvaluations() {
     const [categoryFilter, setCategoryFilter] = useState("all");
     const [tab, setTab] = useState<"needsReview" | "highSuccess" | "all">("needsReview");
     const [page, setPage] = useState(1);
+    const [historySlug, setHistorySlug] = useState<string | null>(null);
 
     useEffect(() => {
         setLoading(true);
@@ -488,14 +491,27 @@ export function StrategyEvaluations() {
                                             </div>
                                         </div>
 
-                                        {/* Action link to Knowledge Base */}
-                                        <Link
-                                            href={`/admin/knowledge?search=${encodeURIComponent(ivName(item.slug))}`}
-                                            className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium mt-1"
-                                        >
-                                            <span>{a.viewInKb}</span>
-                                            <ExternalLink size={12} />
-                                        </Link>
+                                        {/* Action buttons */}
+                                        <div className="flex flex-wrap items-center gap-2 mt-2">
+                                            <button
+                                                type="button"
+                                                onClick={() => setHistorySlug(item.slug)}
+                                                className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary-soft px-3 py-1.5 text-xs font-semibold text-primary-strong transition-all hover:bg-primary hover:text-white cursor-pointer shadow-2xs"
+                                            >
+                                                <History size={13} />
+                                                <span>{a.viewHistoryBtn}</span>
+                                                <span className="rounded-full bg-surface px-1.5 py-0.2 text-[10px] text-foreground font-bold">
+                                                    {item.total}
+                                                </span>
+                                            </button>
+                                            <Link
+                                                href={`/admin/knowledge?search=${encodeURIComponent(ivName(item.slug))}`}
+                                                className="inline-flex items-center gap-1 text-xs text-muted hover:text-primary transition-colors font-medium px-2 py-1.5"
+                                            >
+                                                <span>{a.viewInKb}</span>
+                                                <ExternalLink size={12} />
+                                            </Link>
+                                        </div>
                                     </div>
                                 </div>
                             </Card>
@@ -565,6 +581,13 @@ export function StrategyEvaluations() {
                     </div>
                 </div>
             )}
+
+            {/* Feedback History Modal */}
+            <StrategyFeedbackHistoryModal
+                slug={historySlug}
+                strategyTitle={historySlug ? ivName(historySlug) : ""}
+                onClose={() => setHistorySlug(null)}
+            />
         </div>
     );
 }

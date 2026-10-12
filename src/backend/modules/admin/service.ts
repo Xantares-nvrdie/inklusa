@@ -1,7 +1,15 @@
 import { and, count, desc, eq, ne, sql } from "drizzle-orm";
 import { auth } from "@/auth";
 import { db } from "@/db";
-import { actionPlans, knowledgeClarifications, knowledgeInterventions, session, students, user } from "@/db/schema";
+import {
+    actionPlans,
+    classes,
+    knowledgeClarifications,
+    knowledgeInterventions,
+    session,
+    students,
+    user,
+} from "@/db/schema";
 import type { BarrierCategory, ClarificationData, InterventionData } from "@/lib/knowledge";
 
 const TEACHER = eq(user.role, "TEACHER");
@@ -262,5 +270,61 @@ export const AdminService = {
             .where(eq(knowledgeClarifications.id, id))
             .returning({ id: knowledgeClarifications.id });
         return row ?? null;
+    },
+
+    // ── Strategy Feedback History ─────────────────────────────────────────────
+    async getStrategyFeedbackHistory(slug: string) {
+        const rows = await db
+            .select({
+                id: actionPlans.id,
+                status: actionPlans.status,
+                barrierCategory: actionPlans.barrierCategory,
+                barrierTitle: actionPlans.barrierTitle,
+                goal: actionPlans.goal,
+                timing: actionPlans.timing,
+                reflectionResult: actionPlans.reflectionResult,
+                reflectionReason: actionPlans.reflectionReason,
+                reflectionNote: actionPlans.reflectionNote,
+                reflectedAt: actionPlans.reflectedAt,
+                createdAt: actionPlans.createdAt,
+                teacherId: user.id,
+                teacherName: user.name,
+                teacherEmail: user.email,
+                studentId: students.id,
+                studentName: students.name,
+                className: classes.name,
+            })
+            .from(actionPlans)
+            .innerJoin(user, eq(actionPlans.teacherId, user.id))
+            .leftJoin(students, eq(actionPlans.studentId, students.id))
+            .leftJoin(classes, eq(students.classId, classes.id))
+            .where(eq(actionPlans.interventionSlug, slug))
+            .orderBy(desc(actionPlans.reflectedAt), desc(actionPlans.createdAt));
+
+        return rows.map((r) => ({
+            id: r.id,
+            status: r.status,
+            barrierCategory: r.barrierCategory,
+            barrierTitle: r.barrierTitle,
+            goal: r.goal,
+            timing: r.timing,
+            reflectionResult: r.reflectionResult,
+            reflectionReason: r.reflectionReason,
+            reflectionNote: r.reflectionNote,
+            reflectedAt: r.reflectedAt,
+            createdAt: r.createdAt,
+            teacher: {
+                id: r.teacherId,
+                name: r.teacherName,
+                email: r.teacherEmail,
+            },
+            student: r.studentId
+                ? {
+                      id: r.studentId,
+                      name: r.studentName,
+                      className: r.className ?? null,
+                  }
+                : null,
+        }));
     },
 };

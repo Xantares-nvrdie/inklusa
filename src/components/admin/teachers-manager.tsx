@@ -20,7 +20,8 @@ interface Teacher {
     activePlans: number;
 }
 
-const inputCls = "h-12 w-full rounded-2xl border border-line bg-surface/80 glass px-4 outline-none focus:border-primary focus:ring-4 focus:ring-primary/15";
+const inputCls =
+    "h-12 w-full rounded-2xl border border-line bg-surface/80 glass px-4 outline-none focus:border-primary focus:ring-4 focus:ring-primary/15";
 
 export function TeachersManager() {
     const { locale } = useLanguage();
@@ -183,7 +184,9 @@ export function TeachersManager() {
                                 {t.email} · {a.joined}{" "}
                                 {new Date(t.createdAt).toLocaleDateString(locale === "id" ? "id-ID" : "en-US")}
                             </p>
-                            {t.banned && t.banReason && t.banReason !== "PENDING_APPROVAL" && <p className="text-sm text-danger">{t.banReason}</p>}
+                            {t.banned && t.banReason && t.banReason !== "PENDING_APPROVAL" && (
+                                <p className="text-sm text-danger">{t.banReason}</p>
+                            )}
                         </div>
                         <div className="flex gap-6 text-center text-sm">
                             <div>

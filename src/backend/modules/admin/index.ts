@@ -154,6 +154,15 @@ const adminModule = new Elysia({ prefix: "/admin", tags: ["Admin"] })
         },
         { adminOnly: true, params: t.Object({ slug: t.String() }) },
     )
+    .get(
+        "/knowledge/interventions/:slug/feedback",
+        ({ params }) => AdminService.getStrategyFeedbackHistory(params.slug),
+        {
+            adminOnly: true,
+            params: t.Object({ slug: t.String() }),
+            detail: { summary: "Feedback history for a strategy" },
+        },
+    )
 
     .get("/knowledge/clarifications", () => AdminService.listClarifications(), { adminOnly: true })
     .post(
