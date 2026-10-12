@@ -25,11 +25,19 @@ export const auth = betterAuth({
             clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
         },
     },
+    baseURL:
+        process.env.BETTER_AUTH_URL ||
+        process.env.NEXT_PUBLIC_APP_URL ||
+        (process.env.VERCEL_PROJECT_PRODUCTION_URL
+            ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+            : undefined),
     trustedOrigins: [
         "http://localhost:3000",
         "http://localhost:3001",
         process.env.NEXT_PUBLIC_APP_URL as string,
         process.env.BETTER_AUTH_URL as string,
+        process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "",
+        process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "",
     ].filter(Boolean),
     databaseHooks: {
         user: {
