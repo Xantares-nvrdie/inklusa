@@ -1,7 +1,7 @@
 "use client";
 
 import { type MotionValue, motion, useScroll, useSpring, useTransform } from "framer-motion";
-import { ArrowRight, MoveRight } from "lucide-react";
+import { MoveRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { CategoryIcon } from "@/components/category-icon";
 import { useLanguage } from "@/lib/i18n/context";
@@ -61,11 +61,8 @@ function CategoryCard({
             </span>
             <h3 className="mt-4 sm:mt-6 text-xl sm:text-2xl font-bold">{category.title}</h3>
             <p className="mt-2.5 sm:mt-3 line-clamp-4 text-sm sm:text-base text-muted">{category.description}</p>
-            <div className="mt-auto flex items-center justify-between border-t border-foreground/10 pt-4 sm:pt-5">
+            <div className="mt-auto border-t border-foreground/10 pt-4 sm:pt-5">
                 <span className="text-xs sm:text-sm font-semibold">{t.landing.strategyCount(count)}</span>
-                <span className="grid h-8 w-8 sm:h-9 sm:w-9 place-items-center rounded-full bg-surface text-foreground shadow-soft transition-transform duration-300 group-hover:translate-x-1">
-                    <ArrowRight size={16} aria-hidden="true" />
-                </span>
             </div>
         </article>
     );
