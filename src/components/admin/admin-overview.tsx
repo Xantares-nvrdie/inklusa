@@ -1,15 +1,6 @@
 "use client";
 
-import {
-    AlertTriangle,
-    BarChart3,
-    BookMarked,
-    CheckCircle2,
-    ChevronRight,
-    ClipboardList,
-    GraduationCap,
-    ListTree,
-} from "lucide-react";
+import { AlertTriangle, BarChart3, BookMarked, ClipboardList, GraduationCap, ListTree } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
@@ -190,18 +181,9 @@ export function AdminOverview() {
 
                     {/* Needs review alert if any */}
                     {needsReviewList.length > 0 && (
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-2xl border border-danger/25 bg-danger/5 p-4 text-sm text-danger">
-                            <div className="flex items-center gap-2.5">
-                                <AlertTriangle size={18} className="shrink-0" />
-                                <span className="font-medium">{a.reviewNeededAlert(needsReviewList.length)}</span>
-                            </div>
-                            <Link
-                                href="/admin/evaluations"
-                                className="font-semibold underline hover:no-underline text-xs shrink-0 inline-flex items-center gap-1"
-                            >
-                                <span>{a.viewAllEvaluations}</span>
-                                <ChevronRight size={13} />
-                            </Link>
+                        <div className="flex items-center gap-2.5 rounded-2xl border border-danger/25 bg-danger/5 p-4 text-sm text-danger">
+                            <AlertTriangle size={18} className="shrink-0" />
+                            <span className="font-medium">{a.reviewNeededAlert(needsReviewList.length)}</span>
                         </div>
                     )}
 
