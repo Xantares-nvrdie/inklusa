@@ -93,7 +93,9 @@ export function LandingSupports() {
                                     <CategoryIcon icon={c.icon} size={24} />
                                 </span>
                                 <h3 className="mt-4 sm:mt-6 text-xl sm:text-2xl font-bold">{c.title}</h3>
-                                <p className="mt-2.5 sm:mt-3 line-clamp-4 text-sm sm:text-base text-muted">{c.description}</p>
+                                <p className="mt-2.5 sm:mt-3 line-clamp-4 text-sm sm:text-base text-muted">
+                                    {c.description}
+                                </p>
                                 <div className="mt-auto flex items-center justify-between border-t border-foreground/10 pt-4 sm:pt-5">
                                     <span className="text-xs sm:text-sm font-semibold">
                                         {t.landing.strategyCount(count)}
@@ -115,7 +117,9 @@ export function LandingSupports() {
                             <p className="relative text-xs font-semibold uppercase tracking-widest text-white/60">
                                 {t.landing.exampleStrategy}
                             </p>
-                            <h3 className="relative mt-2.5 sm:mt-3 text-xl xs:text-2xl sm:text-3xl font-bold">{sample.title}</h3>
+                            <h3 className="relative mt-2.5 sm:mt-3 text-xl xs:text-2xl sm:text-3xl font-bold">
+                                {sample.title}
+                            </h3>
                             <p className="relative mt-2 sm:mt-3 line-clamp-3 text-xs sm:text-sm text-white/75">
                                 <strong className="text-white">{t.landing.whyTryThis}</strong> {sample.why}
                             </p>

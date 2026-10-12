@@ -1,14 +1,11 @@
 import { index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { user } from "./auth";
 
-export const classes = pgTable(
-    "classes",
-    {
-        id: uuid("id").primaryKey().defaultRandom(),
-        name: text("name").notNull(),
-        createdAt: timestamp("created_at").defaultNow().notNull(),
-    }
-);
+export const classes = pgTable("classes", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    name: text("name").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+});
 
 export const teacherClasses = pgTable(
     "teacher_classes",

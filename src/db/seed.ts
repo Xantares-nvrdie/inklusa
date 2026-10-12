@@ -1,9 +1,9 @@
 import "dotenv/config";
-import { db } from "./index";
-import { user, students, actionPlans, classes } from "./schema";
-import { KnowledgeService } from "@/backend/modules/knowledge/service";
-import { auth } from "@/auth";
 import { eq, isNull } from "drizzle-orm";
+import { auth } from "@/auth";
+import { KnowledgeService } from "@/backend/modules/knowledge/service";
+import { db } from "./index";
+import { actionPlans, classes, students, user } from "./schema";
 
 async function main() {
     console.log("🌱 Starting database seed for INKLUSA...");
@@ -15,7 +15,7 @@ async function main() {
     // 0. Admin account (knowledge curator + teacher maintainer)
     const adminEmail = "admin@inklusa.id";
     const adminPassword = "admin12345";
-    let adminUser = await db.query.user.findFirst({ where: eq(user.email, adminEmail) });
+    const adminUser = await db.query.user.findFirst({ where: eq(user.email, adminEmail) });
     if (!adminUser) {
         console.log(`🛡️  Creating admin user: ${adminEmail}...`);
         await auth.api.signUpEmail({
@@ -29,7 +29,9 @@ async function main() {
 
     // 0b. Import built-in knowledge into the DB (editable from the admin portal)
     const imported = await KnowledgeService.importDefaults();
-    console.log(`📚 Knowledge base ready (${imported.interventions} interventions, ${imported.clarifications} clarifications).`);
+    console.log(
+        `📚 Knowledge base ready (${imported.interventions} interventions, ${imported.clarifications} clarifications).`,
+    );
 
     // 1. Create or get Demo Teacher
     let teacher = await db.query.user.findFirst({
@@ -63,7 +65,7 @@ async function main() {
 
     // 2. Seed Classes & Students
     console.log("🎒 Seeding classes and students...");
-    
+
     // Create Class 7A
     let class7A = await db.query.classes.findFirst({
         where: (c, { eq }) => eq(c.name, "Kelas 7A"),
@@ -90,7 +92,7 @@ async function main() {
         { name: "Andi Saputra", classId: class7B.id },
         { name: "Rina Marlina", classId: class7B.id },
     ];
-    
+
     const studentMap: Record<string, string> = {};
 
     for (const s of sampleStudents) {
@@ -119,7 +121,9 @@ async function main() {
 
     const existingPlans = await db.select().from(actionPlans).where(eq(actionPlans.teacherId, teacher.id));
     if (existingPlans.length > 0) {
-        console.log(`ℹ️ Found ${existingPlans.length} existing action plans. Skipping plan seeding to avoid duplicates.`);
+        console.log(
+            `ℹ️ Found ${existingPlans.length} existing action plans. Skipping plan seeding to avoid duplicates.`,
+        );
     } else {
         const seedPlans = [
             {
@@ -144,7 +148,8 @@ async function main() {
                 timing: "Tomorrow science lab",
                 status: "COMPLETED" as const,
                 reflectionResult: "VERY_HELPFUL" as const,
-                reflectionNote: "Visual checklist placed on desk helped Siti complete steps without repeating instructions.",
+                reflectionNote:
+                    "Visual checklist placed on desk helped Siti complete steps without repeating instructions.",
                 reflectedAt: new Date(Date.now() - 24 * 60 * 60 * 1000), // yesterday
             },
             {

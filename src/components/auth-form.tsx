@@ -97,7 +97,9 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
     return (
         <Card className="space-y-6 p-5 sm:p-8 glass border-white/60">
             <div className="space-y-1.5">
-                <h1 className="text-2xl sm:text-3xl font-bold">{isLogin ? t.auth.welcomeBack : t.auth.createAccount}</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold">
+                    {isLogin ? t.auth.welcomeBack : t.auth.createAccount}
+                </h1>
                 <p className="text-sm sm:text-base text-muted">{isLogin ? t.auth.subLogin : t.auth.subRegister}</p>
             </div>
 

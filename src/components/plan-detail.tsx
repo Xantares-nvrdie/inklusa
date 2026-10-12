@@ -254,11 +254,15 @@ export function PlanDetail({ id }: { id: string }) {
 
             <Card className="grid gap-6 sm:grid-cols-2 glass border-white/60 p-5 sm:p-6">
                 <div>
-                    <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-muted">{t.planDetail.goal}</p>
+                    <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-muted">
+                        {t.planDetail.goal}
+                    </p>
                     <p className="mt-1 text-base sm:text-lg">{plan.goal}</p>
                 </div>
                 <div>
-                    <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-muted">{t.planDetail.when}</p>
+                    <p className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-muted">
+                        {t.planDetail.when}
+                    </p>
                     <p className="mt-1 text-base sm:text-lg">{plan.timing}</p>
                 </div>
             </Card>

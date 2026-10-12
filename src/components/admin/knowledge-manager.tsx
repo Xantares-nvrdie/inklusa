@@ -648,7 +648,12 @@ export function KnowledgeManager() {
                     <h1 className="text-2xl sm:text-4xl font-bold">{k.title}</h1>
                     <p className="max-w-2xl text-base sm:text-lg text-muted">{k.sub}</p>
                 </div>
-                <Button id="btn-import-defaults" variant="outline" onClick={importDefaults} className="w-full sm:w-auto">
+                <Button
+                    id="btn-import-defaults"
+                    variant="outline"
+                    onClick={importDefaults}
+                    className="w-full sm:w-auto"
+                >
                     <Download size={16} aria-hidden="true" /> {k.importDefaults}
                 </Button>
             </div>
@@ -670,7 +675,10 @@ export function KnowledgeManager() {
                         role="tab"
                         aria-selected={tab === "strategies"}
                         onClick={() => setTab("strategies")}
-                        className={tabCls(tab === "strategies") + " whitespace-nowrap shrink-0 text-xs sm:text-sm px-4 sm:px-5 py-1.5 sm:py-2"}
+                        className={
+                            tabCls(tab === "strategies") +
+                            " whitespace-nowrap shrink-0 text-xs sm:text-sm px-4 sm:px-5 py-1.5 sm:py-2"
+                        }
                     >
                         {k.tabStrategies} ({ivs?.length ?? 0})
                     </button>
@@ -679,7 +687,10 @@ export function KnowledgeManager() {
                         role="tab"
                         aria-selected={tab === "rules"}
                         onClick={() => setTab("rules")}
-                        className={tabCls(tab === "rules") + " whitespace-nowrap shrink-0 text-xs sm:text-sm px-4 sm:px-5 py-1.5 sm:py-2"}
+                        className={
+                            tabCls(tab === "rules") +
+                            " whitespace-nowrap shrink-0 text-xs sm:text-sm px-4 sm:px-5 py-1.5 sm:py-2"
+                        }
                     >
                         {k.tabRules} ({cls?.length ?? 0})
                     </button>

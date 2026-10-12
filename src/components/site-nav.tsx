@@ -28,7 +28,12 @@ export function SiteNav() {
                 </nav>
                 <div className="flex items-center gap-1.5 sm:gap-3">
                     <LanguageSwitcher />
-                    <ButtonLink href="/login" variant="ghost" size="sm" className="hidden xs:inline-flex px-2.5 sm:px-3 text-xs sm:text-sm">
+                    <ButtonLink
+                        href="/login"
+                        variant="ghost"
+                        size="sm"
+                        className="hidden xs:inline-flex px-2.5 sm:px-3 text-xs sm:text-sm"
+                    >
                         {t.nav.signIn}
                     </ButtonLink>
                     <ButtonLink href="/register" size="sm" className="px-3 sm:px-4 text-xs sm:text-sm">

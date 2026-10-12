@@ -51,7 +51,9 @@ export function InterventionDetail({ slug }: { slug: string }) {
                             key={s}
                             className="flex items-center gap-4 sm:gap-5 rounded-2xl border border-white/60 bg-surface/80 glass px-4 sm:px-6 py-3.5 sm:py-4 shadow-soft"
                         >
-                            <span className="font-display text-xl sm:text-2xl font-bold text-accent shrink-0">0{i + 1}</span>
+                            <span className="font-display text-xl sm:text-2xl font-bold text-accent shrink-0">
+                                0{i + 1}
+                            </span>
                             <span className="text-base sm:text-lg">{s}</span>
                         </li>
                     ))}
@@ -69,11 +71,22 @@ export function InterventionDetail({ slug }: { slug: string }) {
             </Card>
 
             {hasCtx ? (
-                <ButtonLink id="btn-use-strategy" href={`/action-plans/new?${flowQs(ctx)}&slug=${iv.slug}`} size="lg" className="w-full sm:w-auto text-center justify-center">
+                <ButtonLink
+                    id="btn-use-strategy"
+                    href={`/action-plans/new?${flowQs(ctx)}&slug=${iv.slug}`}
+                    size="lg"
+                    className="w-full sm:w-auto text-center justify-center"
+                >
                     {t.interventionDetail.useStrategy} <ArrowRight size={18} aria-hidden="true" />
                 </ButtonLink>
             ) : (
-                <ButtonLink id="btn-start-quick-check" href="/quick-check" size="lg" variant="soft" className="w-full sm:w-auto text-center justify-center">
+                <ButtonLink
+                    id="btn-start-quick-check"
+                    href="/quick-check"
+                    size="lg"
+                    variant="soft"
+                    className="w-full sm:w-auto text-center justify-center"
+                >
                     {t.interventionDetail.startQuickCheckToUse} <ArrowRight size={18} aria-hidden="true" />
                 </ButtonLink>
             )}

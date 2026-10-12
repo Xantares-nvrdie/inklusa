@@ -76,8 +76,16 @@ export function StudentDetail({ id }: { id: string }) {
                         <span
                             className={`grid h-12 w-12 sm:h-16 sm:w-16 shrink-0 place-items-center rounded-2xl ${isGeneral ? "bg-accent-soft text-[#9a5612]" : "bg-surface-2 text-primary-strong"}`}
                         >
-                            {isGeneral ? <Users size={24} className="sm:hidden" /> : <UserRound size={24} className="sm:hidden" />}
-                            {isGeneral ? <Users size={32} className="hidden sm:block" /> : <UserRound size={32} className="hidden sm:block" />}
+                            {isGeneral ? (
+                                <Users size={24} className="sm:hidden" />
+                            ) : (
+                                <UserRound size={24} className="sm:hidden" />
+                            )}
+                            {isGeneral ? (
+                                <Users size={32} className="hidden sm:block" />
+                            ) : (
+                                <UserRound size={32} className="hidden sm:block" />
+                            )}
                         </span>
                         <div>
                             <h1 className="text-2xl sm:text-4xl font-bold">{studentName}</h1>
@@ -90,7 +98,10 @@ export function StudentDetail({ id }: { id: string }) {
                             </p>
                         </div>
                     </div>
-                    <ButtonLink href={`/quick-check${!isGeneral ? `?student=${id}` : ""}`} className="w-full sm:w-auto text-center justify-center">
+                    <ButtonLink
+                        href={`/quick-check${!isGeneral ? `?student=${id}` : ""}`}
+                        className="w-full sm:w-auto text-center justify-center"
+                    >
                         {t.students.newQuickCheck}
                     </ButtonLink>
                 </div>

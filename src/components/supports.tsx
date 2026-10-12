@@ -57,7 +57,11 @@ export function Supports() {
                     const showLimited = stats && stats.helpful === 0 && stats.limited > 0;
 
                     return (
-                        <Card key={s.slug} interactive className="flex flex-col gap-4 sm:flex-row sm:items-start p-5 sm:p-6">
+                        <Card
+                            key={s.slug}
+                            interactive
+                            className="flex flex-col gap-4 sm:flex-row sm:items-start p-5 sm:p-6"
+                        >
                             <span className="grid h-10 w-10 sm:h-12 sm:w-12 shrink-0 place-items-center rounded-full bg-primary font-display text-base sm:text-lg font-bold text-white mt-0.5 sm:mt-1">
                                 {i + 1}
                             </span>

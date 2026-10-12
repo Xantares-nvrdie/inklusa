@@ -33,7 +33,9 @@ export function StudentList() {
             <div className="flex flex-wrap items-end justify-between gap-4">
                 <h1 className="text-2xl sm:text-4xl font-bold">{t.students.title}</h1>
                 <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
-                    <ButtonLink href="/students/manage" variant="soft">{t.students.manageClasses}</ButtonLink>
+                    <ButtonLink href="/students/manage" variant="soft">
+                        {t.students.manageClasses}
+                    </ButtonLink>
                     <ButtonLink href="/quick-check">{t.myInterventions.btnNew}</ButtonLink>
                 </div>
             </div>
@@ -82,9 +84,7 @@ export function StudentList() {
                                     </Link>
                                 ))}
                                 {c.students.length === 0 && (
-                                    <p className="text-muted col-span-full">
-                                        {t.students.noStudentsInClass}
-                                    </p>
+                                    <p className="text-muted col-span-full">{t.students.noStudentsInClass}</p>
                                 )}
                             </div>
                         </div>

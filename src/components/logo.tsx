@@ -8,13 +8,7 @@ export function Logo({ href = "/", className = "" }: { href?: string; className?
             className={`inline-flex items-center gap-2.5 font-display ${className}`}
             aria-label="INKLUSA home"
         >
-            <Image
-                src="/LOGO.png"
-                alt="INKLUSA Logo"
-                width={36}
-                height={36}
-                className="object-contain"
-            />
+            <Image src="/LOGO.png" alt="INKLUSA Logo" width={36} height={36} className="object-contain" />
             <span className="text-xl font-bold tracking-tight text-foreground">INKLUSA</span>
         </Link>
     );

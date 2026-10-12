@@ -35,7 +35,9 @@ export function LandingProblem() {
             <div className="grid gap-10 sm:gap-14 lg:grid-cols-[0.85fr_1.15fr]">
                 <div className="lg:sticky lg:top-32 lg:self-start">
                     <Eyebrow>{t.landing.eyebrowProblem}</Eyebrow>
-                    <h2 className="mt-4 sm:mt-5 text-2xl xs:text-3xl sm:text-5xl font-bold leading-[1.1]">{t.landing.problemTitle}</h2>
+                    <h2 className="mt-4 sm:mt-5 text-2xl xs:text-3xl sm:text-5xl font-bold leading-[1.1]">
+                        {t.landing.problemTitle}
+                    </h2>
                     <blockquote className="mt-6 sm:mt-8 border-l-4 border-accent pl-4 sm:pl-5 font-display text-base sm:text-xl italic text-muted">
                         {t.landing.problemSub}
                     </blockquote>

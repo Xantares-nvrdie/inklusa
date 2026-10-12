@@ -37,7 +37,9 @@ export function LandingPrinciples() {
             <div className="relative mx-auto max-w-6xl px-4 sm:px-5">
                 <motion.div style={{ y: yTitle }} className="mx-auto max-w-2xl text-center">
                     <Eyebrow>{t.landing.eyebrowPrinciples}</Eyebrow>
-                    <h2 className="mt-4 sm:mt-5 text-2xl xs:text-3xl sm:text-5xl font-bold">{t.landing.promisesTitle}</h2>
+                    <h2 className="mt-4 sm:mt-5 text-2xl xs:text-3xl sm:text-5xl font-bold">
+                        {t.landing.promisesTitle}
+                    </h2>
                 </motion.div>
                 <div className="mt-10 sm:mt-16 grid gap-5 sm:gap-6 md:grid-cols-3">
                     {items.map(({ title, desc, Icon }, i) => (
@@ -97,9 +99,17 @@ export function LandingCta() {
                     <h2 className="mx-auto max-w-3xl text-2xl xs:text-3xl sm:text-5xl lg:text-6xl font-bold leading-[1.1]">
                         {t.landing.ctaBottomTitle}
                     </h2>
-                    <p className="mx-auto mt-4 sm:mt-5 max-w-xl text-base sm:text-lg text-white/70">{t.landing.ctaBottomSub}</p>
+                    <p className="mx-auto mt-4 sm:mt-5 max-w-xl text-base sm:text-lg text-white/70">
+                        {t.landing.ctaBottomSub}
+                    </p>
                     <div className="mt-8 sm:mt-10 flex flex-col xs:flex-row flex-wrap justify-center items-stretch xs:items-center gap-3">
-                        <ButtonLink id="cta-bottom-start" href="/register" variant="accent" size="lg" className="group w-full xs:w-auto justify-center">
+                        <ButtonLink
+                            id="cta-bottom-start"
+                            href="/register"
+                            variant="accent"
+                            size="lg"
+                            className="group w-full xs:w-auto justify-center"
+                        >
                             {t.landing.ctaQuickCheck}
                             <ArrowRight
                                 size={18}

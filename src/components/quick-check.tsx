@@ -156,8 +156,12 @@ export function QuickCheck() {
                                         className="space-y-6"
                                     >
                                         <div>
-                                            <h1 className="text-2xl sm:text-4xl font-bold">{t.quickCheck.step1Title}</h1>
-                                            <p className="mt-1 text-sm sm:text-base text-muted">{t.quickCheck.step1Sub}</p>
+                                            <h1 className="text-2xl sm:text-4xl font-bold">
+                                                {t.quickCheck.step1Title}
+                                            </h1>
+                                            <p className="mt-1 text-sm sm:text-base text-muted">
+                                                {t.quickCheck.step1Sub}
+                                            </p>
                                         </div>
 
                                         <p className="rounded-2xl border border-sky/15 bg-sky-soft/70 px-4 py-3 text-sm text-foreground/80">

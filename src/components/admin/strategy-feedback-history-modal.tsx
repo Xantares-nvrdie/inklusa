@@ -162,7 +162,7 @@ export function StrategyFeedbackHistoryModal({ slug, strategyTitle, onClose }: S
 
                 {/* Filter and stats banner */}
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line/50 px-5 py-3 bg-surface-2/40">
-                    <div className="flex flex-wrap gap-1.5" role="group" aria-label="Filter history">
+                    <div className="flex flex-wrap gap-1.5" aria-label="Filter history">
                         <button
                             type="button"
                             onClick={() => setFilter("all")}
@@ -204,7 +204,7 @@ export function StrategyFeedbackHistoryModal({ slug, strategyTitle, onClose }: S
                 </div>
 
                 {/* Scrollable list */}
-                <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4">
+                <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
                     {loading ? (
                         <div className="space-y-3 py-8 text-center text-muted">
                             <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
@@ -241,7 +241,7 @@ export function StrategyFeedbackHistoryModal({ slug, strategyTitle, onClose }: S
                             return (
                                 <div
                                     key={item.id}
-                                    className="rounded-2xl border border-line/70 bg-surface/80 p-4 sm:p-5 space-y-3.5 transition-all hover:border-primary/40 hover:shadow-xs"
+                                    className="rounded-2xl border border-line/70 bg-surface/80 p-3.5 sm:p-5 space-y-3.5 transition-all hover:border-primary/40 hover:shadow-xs"
                                 >
                                     {/* Top: Student, Teacher, Date */}
                                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-line/40 pb-3">
@@ -287,7 +287,7 @@ export function StrategyFeedbackHistoryModal({ slug, strategyTitle, onClose }: S
                                     </div>
 
                                     {/* Middle: Outcome & Goal */}
-                                    <div className="flex flex-wrap items-center justify-between gap-3">
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                         <div className="space-y-1">
                                             <span className="text-[11px] font-semibold text-muted uppercase tracking-wider block">
                                                 {m.resultLabel}
@@ -295,7 +295,7 @@ export function StrategyFeedbackHistoryModal({ slug, strategyTitle, onClose }: S
                                             {getOutcomeBadge(item.reflectionResult, item.status)}
                                         </div>
 
-                                        <div className="flex-1 min-w-[200px] text-xs text-muted">
+                                        <div className="w-full sm:flex-1 text-xs text-muted">
                                             <span className="font-semibold text-foreground">{m.goal}:</span> {item.goal}
                                         </div>
                                     </div>
@@ -329,7 +329,7 @@ export function StrategyFeedbackHistoryModal({ slug, strategyTitle, onClose }: S
 
                 {/* Footer */}
                 <div className="border-t border-line/60 p-4 sm:p-5 bg-surface flex justify-end">
-                    <Button variant="outline" onClick={onClose}>
+                    <Button variant="outline" onClick={onClose} className="w-full sm:w-auto">
                         {m.close}
                     </Button>
                 </div>

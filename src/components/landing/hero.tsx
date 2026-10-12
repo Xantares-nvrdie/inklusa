@@ -122,7 +122,12 @@ export function LandingHero() {
                         transition={{ duration: 0.7, delay: 0.45, ease: EASE }}
                         className="flex flex-col min-[420px]:flex-row flex-wrap items-stretch min-[420px]:items-center gap-3"
                     >
-                        <ButtonLink id="cta-hero-start" href="/register" size="lg" className="group w-full min-[420px]:w-auto justify-center">
+                        <ButtonLink
+                            id="cta-hero-start"
+                            href="/register"
+                            size="lg"
+                            className="group w-full min-[420px]:w-auto justify-center"
+                        >
                             {t.landing.ctaQuickCheck}
                             <ArrowRight
                                 size={18}
@@ -130,7 +135,13 @@ export function LandingHero() {
                                 className="transition-transform group-hover:translate-x-1"
                             />
                         </ButtonLink>
-                        <ButtonLink id="cta-hero-how" href="#how" variant="outline" size="lg" className="w-full min-[420px]:w-auto justify-center">
+                        <ButtonLink
+                            id="cta-hero-how"
+                            href="#how"
+                            variant="outline"
+                            size="lg"
+                            className="w-full min-[420px]:w-auto justify-center"
+                        >
                             {t.landing.ctaHow}
                         </ButtonLink>
                     </motion.div>
@@ -187,7 +198,9 @@ export function LandingHero() {
                             <p className="text-[0.65rem] font-semibold uppercase tracking-widest text-muted">
                                 {t.landing.observedBarrier}
                             </p>
-                            <p className="mt-1 font-display text-base sm:text-lg font-bold">{t.landing.sampleBarrierTitle}</p>
+                            <p className="mt-1 font-display text-base sm:text-lg font-bold">
+                                {t.landing.sampleBarrierTitle}
+                            </p>
                             <div className="mt-2.5 sm:mt-3 h-1.5 overflow-hidden rounded-full bg-surface-2">
                                 <motion.div
                                     className="h-full rounded-full bg-gradient-to-r from-primary to-accent"

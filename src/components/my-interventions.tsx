@@ -131,7 +131,11 @@ export function MyInterventions() {
                     </ButtonLink>
                 </div>
             </div>
-            <div className="flex gap-2 overflow-x-auto no-scrollbar flex-nowrap pb-1 sm:flex-wrap" role="group" aria-label="Filter">
+            <div
+                className="flex gap-2 overflow-x-auto no-scrollbar flex-nowrap pb-1 sm:flex-wrap"
+                role="group"
+                aria-label="Filter"
+            >
                 {filters.map((f) => (
                     <button
                         key={f.id}
