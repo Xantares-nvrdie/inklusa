@@ -44,6 +44,82 @@ export const AdminService = {
             .where(eq(actionPlans.status, "COMPLETED"))
             .groupBy(actionPlans.reflectionResult);
 
+        const reflectedPlans = await db
+            .select({
+                slug: actionPlans.interventionSlug,
+                result: actionPlans.reflectionResult,
+                reason: actionPlans.reflectionReason,
+            })
+            .from(actionPlans)
+            .where(eq(actionPlans.status, "COMPLETED"));
+
+        const strategyMap: Record<
+            string,
+            {
+                slug: string;
+                total: number;
+                veryHelpful: number;
+                helpful: number;
+                someChange: number;
+                notHelpful: number;
+                reasons: Record<string, number>;
+            }
+        > = {};
+
+        for (const row of reflectedPlans) {
+            if (!row.slug || !row.result) continue;
+            if (!strategyMap[row.slug]) {
+                strategyMap[row.slug] = {
+                    slug: row.slug,
+                    total: 0,
+                    veryHelpful: 0,
+                    helpful: 0,
+                    someChange: 0,
+                    notHelpful: 0,
+                    reasons: {},
+                };
+            }
+            const item = strategyMap[row.slug];
+            item.total++;
+            if (row.result === "VERY_HELPFUL") item.veryHelpful++;
+            else if (row.result === "HELPFUL") item.helpful++;
+            else if (row.result === "SOME_CHANGE") item.someChange++;
+            else if (row.result === "NOT_HELPFUL") item.notHelpful++;
+
+            if (row.reason) {
+                item.reasons[row.reason] = (item.reasons[row.reason] || 0) + 1;
+            }
+        }
+
+        const strategyEffectiveness = Object.values(strategyMap).map((item) => {
+            const successCount = item.veryHelpful + item.helpful;
+            const struggleCount = item.someChange + item.notHelpful;
+            const successRate = Math.round((successCount / item.total) * 100);
+            const avgScore = Number(
+                (
+                    (item.veryHelpful * 4 + item.helpful * 3 + item.someChange * 2 + item.notHelpful * 1) /
+                    item.total
+                ).toFixed(1),
+            );
+            const topReasons = Object.entries(item.reasons)
+                .map(([reason, count]) => ({ reason, count }))
+                .sort((a, b) => b.count - a.count);
+
+            return {
+                slug: item.slug,
+                total: item.total,
+                successCount,
+                struggleCount,
+                successRate,
+                avgScore,
+                veryHelpful: item.veryHelpful,
+                helpful: item.helpful,
+                someChange: item.someChange,
+                notHelpful: item.notHelpful,
+                topReasons,
+            };
+        });
+
         return {
             totalTeachers: teachers.n,
             bannedTeachers: bannedTeachers.n,
@@ -55,6 +131,7 @@ export const AdminService = {
             topBarriers,
             topStrategies,
             results,
+            strategyEffectiveness,
         };
     },
 
@@ -81,7 +158,9 @@ export const AdminService = {
                 createdAt: u.createdAt,
                 students: studs.find((s) => s.teacherId === u.id)?.n ?? 0,
                 plans: mine.reduce((a, p) => a + p.n, 0),
-                activePlans: mine.filter((p) => p.status !== "COMPLETED" && p.status !== "CANCELLED").reduce((a, p) => a + p.n, 0),
+                activePlans: mine
+                    .filter((p) => p.status !== "COMPLETED" && p.status !== "CANCELLED")
+                    .reduce((a, p) => a + p.n, 0),
             };
         });
     },
