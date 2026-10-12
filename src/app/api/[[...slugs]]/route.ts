@@ -3,6 +3,7 @@ import { Elysia } from "elysia";
 import actionPlansModule from "@/backend/modules/action-plans";
 import adminModule from "@/backend/modules/admin";
 import knowledgeModule from "@/backend/modules/knowledge";
+import profileModule from "@/backend/modules/profile";
 import studentsModule from "@/backend/modules/students";
 import betterAuthView from "@/backend/utils/better-auth";
 
@@ -26,7 +27,8 @@ export const app = new Elysia({ prefix: "/api" })
     .use(knowledgeModule)
     .use(studentsModule)
     .use(adminModule)
-    .use(actionPlansModule);
+    .use(actionPlansModule)
+    .use(profileModule);
 
 export type app = typeof app;
 

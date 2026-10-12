@@ -1,6 +1,7 @@
 "use client";
 
 import { BarChart3, BookMarked, GraduationCap, LayoutDashboard, LogOut, Users } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -10,7 +11,7 @@ import { adminDict } from "@/lib/i18n/admin";
 import { useLanguage } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 
-export function AdminNav({ name }: { name: string }) {
+export function AdminNav({ name, image }: { name: string; image?: string | null }) {
     const pathname = usePathname();
     const router = useRouter();
     const { locale } = useLanguage();
@@ -57,7 +58,35 @@ export function AdminNav({ name }: { name: string }) {
                 </nav>
                 <div className="flex items-center gap-2 sm:gap-3">
                     <LanguageSwitcher />
-                    <span className="hidden text-sm text-muted md:inline">{name}</span>
+                    <Link
+                        href="/admin/profile"
+                        title={name || "Profil Admin"}
+                        aria-label="Profil Admin"
+                        className={cn(
+                            "flex items-center gap-2 rounded-full p-1 sm:px-2.5 sm:py-1 transition-all border shrink-0",
+                            pathname === "/admin/profile"
+                                ? "bg-primary-soft text-primary-strong border-primary/30 shadow-xs"
+                                : "border-line/70 hover:border-primary/40 hover:bg-surface-2 text-foreground",
+                        )}
+                    >
+                        <span className="relative h-7 w-7 sm:h-8 sm:w-8 rounded-full overflow-hidden bg-primary-soft text-primary-strong flex items-center justify-center font-bold text-xs shrink-0 border border-primary/20">
+                            {image ? (
+                                <Image
+                                    src={image}
+                                    alt={name || "Admin"}
+                                    width={32}
+                                    height={32}
+                                    className="h-full w-full object-cover"
+                                    unoptimized
+                                />
+                            ) : (
+                                <span>{(name || "A")[0]?.toUpperCase()}</span>
+                            )}
+                        </span>
+                        <span className="hidden text-xs sm:text-sm font-semibold max-w-28 truncate md:inline">
+                            {name}
+                        </span>
+                    </Link>
                     <button
                         id="admin-sign-out"
                         type="button"

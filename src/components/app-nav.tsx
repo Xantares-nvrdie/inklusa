@@ -1,6 +1,7 @@
 "use client";
 
 import { Home, Library, ListChecks, LogOut, Users } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -9,7 +10,7 @@ import { signOut } from "@/lib/auth-client";
 import { useLanguage } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 
-export function AppNav({ name }: { name: string }) {
+export function AppNav({ name, image }: { name: string; image?: string | null }) {
     const pathname = usePathname();
     const router = useRouter();
     const { t } = useLanguage();
@@ -23,7 +24,7 @@ export function AppNav({ name }: { name: string }) {
 
     return (
         <header className="sticky top-0 z-40 border-b border-line/70 glass">
-            <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-5">
+            <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-5">
                 <Logo href="/dashboard" />
                 <nav className="hidden items-center gap-1 md:flex" aria-label="App">
                     {links.map(({ href, label, Icon }) => {
@@ -49,7 +50,38 @@ export function AppNav({ name }: { name: string }) {
                 </nav>
                 <div className="flex items-center gap-2 sm:gap-3">
                     <LanguageSwitcher />
-                    <span className="hidden text-sm text-muted md:inline">{name}</span>
+
+                    {/* Profile avatar link */}
+                    <Link
+                        href="/profile"
+                        title={name || "Profil"}
+                        aria-label="Profil Pengguna"
+                        className={cn(
+                            "flex items-center gap-2 rounded-full p-1 sm:px-2.5 sm:py-1 transition-all border shrink-0",
+                            pathname === "/profile"
+                                ? "bg-primary-soft text-primary-strong border-primary/30 shadow-xs"
+                                : "border-line/70 hover:border-primary/40 hover:bg-surface-2 text-foreground",
+                        )}
+                    >
+                        <span className="relative h-7 w-7 sm:h-8 sm:w-8 rounded-full overflow-hidden bg-primary-soft text-primary-strong flex items-center justify-center font-bold text-xs shrink-0 border border-primary/20">
+                            {image ? (
+                                <Image
+                                    src={image}
+                                    alt={name || "User"}
+                                    width={32}
+                                    height={32}
+                                    className="h-full w-full object-cover"
+                                    unoptimized
+                                />
+                            ) : (
+                                <span>{(name || "U")[0]?.toUpperCase()}</span>
+                            )}
+                        </span>
+                        <span className="hidden text-xs sm:text-sm font-semibold max-w-28 truncate md:inline">
+                            {name}
+                        </span>
+                    </Link>
+
                     <button
                         id="btn-sign-out"
                         type="button"

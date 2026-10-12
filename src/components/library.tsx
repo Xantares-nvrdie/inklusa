@@ -53,39 +53,45 @@ export function Library() {
             </div>
 
             <div>
-                <fieldset className="m-0 flex gap-2 overflow-x-auto no-scrollbar flex-nowrap pb-1 sm:flex-wrap items-center border-0 p-0">
-                    <legend className="sr-only">{t.library.filterLabel}</legend>
-                    <button
-                        id="filter-all"
-                        type="button"
-                        onClick={() => setCat(null)}
-                        aria-pressed={!cat}
-                        className={`cursor-pointer rounded-full border px-3.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap shrink-0 ${!cat ? "border-primary bg-primary text-white" : "glass border-line bg-surface/80 hover:border-primary"}`}
-                    >
-                        {t.library.all}
-                    </button>
-                    {categories.map((c) => (
+                <div
+                    role="region"
+                    aria-label={t.library.filterLabel}
+                    className="w-full overflow-x-auto no-scrollbar pb-2 pt-1 touch-pan-x"
+                    style={{ WebkitOverflowScrolling: "touch" }}
+                >
+                    <div className="flex gap-2 flex-nowrap sm:flex-wrap items-center w-max sm:w-auto min-w-full">
                         <button
-                            key={c.id}
-                            id={`filter-${c.id.toLowerCase()}`}
-                            type="button"
-                            onClick={() => setCat(c.id)}
-                            aria-pressed={cat === c.id}
-                            className={`inline-flex cursor-pointer items-center gap-2 rounded-full border px-3.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap shrink-0 ${cat === c.id ? "border-primary bg-primary text-white" : "glass border-line bg-surface/80 hover:border-primary"}`}
-                        >
-                            <CategoryIcon icon={c.icon} size={14} /> {c.title}
-                        </button>
-                    ))}
-                    {cat && (
-                        <button
+                            id="filter-all"
                             type="button"
                             onClick={() => setCat(null)}
-                            className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-muted hover:bg-surface-2 hover:text-foreground whitespace-nowrap shrink-0"
+                            aria-pressed={!cat}
+                            className={`cursor-pointer rounded-full border px-3.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap shrink-0 ${!cat ? "border-primary bg-primary text-white" : "glass border-line bg-surface/80 hover:border-primary"}`}
                         >
-                            <X size={15} aria-hidden="true" /> {t.library.clearFilter}
+                            {t.library.all}
                         </button>
-                    )}
-                </fieldset>
+                        {categories.map((c) => (
+                            <button
+                                key={c.id}
+                                id={`filter-${c.id.toLowerCase()}`}
+                                type="button"
+                                onClick={() => setCat(c.id)}
+                                aria-pressed={cat === c.id}
+                                className={`inline-flex cursor-pointer items-center gap-2 rounded-full border px-3.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap shrink-0 ${cat === c.id ? "border-primary bg-primary text-white" : "glass border-line bg-surface/80 hover:border-primary"}`}
+                            >
+                                <CategoryIcon icon={c.icon} size={14} /> {c.title}
+                            </button>
+                        ))}
+                        {cat && (
+                            <button
+                                type="button"
+                                onClick={() => setCat(null)}
+                                className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-muted hover:bg-surface-2 hover:text-foreground whitespace-nowrap shrink-0"
+                            >
+                                <X size={15} aria-hidden="true" /> {t.library.clearFilter}
+                            </button>
+                        )}
+                    </div>
+                </div>
 
                 <p className="text-sm font-medium text-muted mt-6 mb-2 ml-1" aria-live="polite">
                     {t.library.resultCount(list.length)}

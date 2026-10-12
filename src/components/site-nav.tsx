@@ -30,13 +30,17 @@ export function SiteNav() {
                     <LanguageSwitcher />
                     <ButtonLink
                         href="/login"
-                        variant="ghost"
                         size="sm"
-                        className="hidden xs:inline-flex px-2.5 sm:px-3 text-xs sm:text-sm"
+                        className="px-3 sm:px-4 text-xs sm:text-sm"
                     >
                         {t.nav.signIn}
                     </ButtonLink>
-                    <ButtonLink href="/register" size="sm" className="px-3 sm:px-4 text-xs sm:text-sm">
+                    <ButtonLink
+                        href="/register"
+                        variant="outline"
+                        size="sm"
+                        className="hidden sm:inline-flex px-3 sm:px-4 text-xs sm:text-sm"
+                    >
                         {t.nav.getStarted}
                     </ButtonLink>
                 </div>

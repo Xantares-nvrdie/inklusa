@@ -11,7 +11,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     return (
         <div className="bg-canvas relative min-h-screen overflow-x-hidden">
             <div className="bg-grid pointer-events-none absolute inset-0 -z-10" aria-hidden="true" />
-            <AppNav name={session.user.name} />
+            <AppNav name={session.user.name} image={session.user.image} />
             <main className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-5 py-6 sm:py-10 pb-28 md:pb-10">
                 {children}
             </main>
