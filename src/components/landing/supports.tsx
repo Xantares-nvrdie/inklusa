@@ -1,13 +1,13 @@
 "use client";
 
-import { type MotionValue, motion, useScroll, useSpring, useTransform } from "framer-motion";
+import { type MotionValue, motion, useMotionValueEvent, useScroll, useSpring, useTransform } from "framer-motion";
 import { MoveRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { CategoryIcon } from "@/components/category-icon";
 import { useLanguage } from "@/lib/i18n/context";
 import { useKnowledge } from "@/lib/knowledge-context";
 import { cn } from "@/lib/utils";
-import { CarouselDots, CarouselEndSpacer, carouselTrackCls, Eyebrow, PARALLAX_SPRING, useSnapCarousel } from "./shared";
+import { Eyebrow, PARALLAX_SPRING } from "./shared";
 
 const CARD_TONES = [
     { bg: "from-[#dff1ed] to-[#f5fbf9]", icon: "bg-primary text-white", ring: "hover:ring-primary/30" },
@@ -201,64 +201,93 @@ function SupportsPinned() {
     );
 }
 
-/** Phones & tablets: native swipe carousel — no pinning, no scroll hijacking. */
+/** Phones & tablets: vertical scrolling advances a pinned horizontal story. */
 function SupportsCarousel() {
     const { t } = useLanguage();
     const { categories, interventions, getIntervention } = useKnowledge();
     const sample = getIntervention("graphic-organizer");
-    const { ref, active, progress, scrollTo } = useSnapCarousel();
+    const ref = useRef<HTMLDivElement>(null);
+    const trackRef = useRef<HTMLDivElement>(null);
+    const [distance, setDistance] = useState(0);
+    const [progress, setProgress] = useState(0);
     const total = categories.length + (sample ? 1 : 0);
 
+    useEffect(() => {
+        const measure = () => {
+            const track = trackRef.current;
+            const viewportWidth = track?.parentElement?.clientWidth ?? window.innerWidth;
+            if (!track) return;
+            setDistance(Math.max(0, track.scrollWidth - viewportWidth));
+        };
+        measure();
+
+        const ro = new ResizeObserver(measure);
+        if (trackRef.current) ro.observe(trackRef.current);
+        if (trackRef.current?.parentElement) ro.observe(trackRef.current.parentElement);
+        window.addEventListener("resize", measure);
+        return () => {
+            ro.disconnect();
+            window.removeEventListener("resize", measure);
+        };
+    }, []);
+
+    const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+    const p = useSpring(scrollYProgress, PARALLAX_SPRING);
+    const x = useTransform(p, [0, 1], [0, -distance]);
+    const bar = useTransform(p, [0, 1], ["0%", "100%"]);
+
+    useMotionValueEvent(p, "change", (latest) => {
+        const next = Math.round(latest * 100);
+        setProgress((current) => (current === next ? current : next));
+    });
+
     return (
-        <div className="py-16 sm:py-24 lg:hidden">
-            <div className="mx-auto max-w-2xl px-4 sm:px-5">
-                <Eyebrow>{t.landing.eyebrowSupports}</Eyebrow>
-                <h2 className="mt-4 text-[1.75rem] font-bold leading-[1.12] xs:text-3xl sm:mt-5 sm:text-4xl">
-                    {t.landing.supportsTitle}
-                </h2>
-                <p className="mt-3 text-[0.95rem] text-muted sm:mt-4 sm:text-lg">{t.landing.supportsDesc}</p>
-            </div>
+        <div ref={ref} className="relative block lg:hidden" style={{ height: `${Math.max(220, total * 52)}vh` }}>
+            <div className="sticky top-0 flex h-svh flex-col justify-center overflow-hidden py-8">
+                <div className="mx-auto w-full max-w-2xl px-4 sm:px-5">
+                    <Eyebrow>{t.landing.eyebrowSupports}</Eyebrow>
+                    <h2 className="mt-4 text-[1.75rem] font-bold leading-[1.12] xs:text-3xl sm:mt-5 sm:text-4xl">
+                        {t.landing.supportsTitle}
+                    </h2>
+                    <p className="mt-3 text-[0.95rem] text-muted sm:mt-4 sm:text-lg">{t.landing.supportsDesc}</p>
+                </div>
 
-            <section
-                ref={ref}
-                aria-roledescription="carousel"
-                aria-label={t.landing.eyebrowSupports}
-                className={cn(carouselTrackCls, "mt-7 items-stretch pt-1")}
-            >
-                {categories.map((c, i) => (
-                    <div key={c.id} data-slide className="flex w-[78%] max-w-[20rem] shrink-0 snap-start">
-                        <CategoryCard
-                            category={c}
-                            index={i}
-                            count={interventions.filter((iv) => iv.category === c.id).length}
-                            className="min-h-[19rem] w-full hover:translate-y-0"
-                            slideLabel={`${i + 1} / ${total}`}
+                <section aria-label={t.landing.supportsTitle} className="mt-6 overflow-hidden">
+                    <motion.div ref={trackRef} style={{ x }} className="flex w-max gap-3 px-4 sm:gap-4 sm:px-5">
+                        {categories.map((c, i) => (
+                            <CategoryCard
+                                key={c.id}
+                                category={c}
+                                index={i}
+                                count={interventions.filter((iv) => iv.category === c.id).length}
+                                className="h-[clamp(17rem,48svh,21rem)] w-[calc(100vw-3rem)] max-w-[22rem] hover:translate-y-0"
+                            />
+                        ))}
+                        {sample && (
+                            <SampleCard
+                                sample={sample}
+                                className="h-[clamp(17rem,48svh,21rem)] w-[calc(100vw-3rem)] max-w-[22rem]"
+                            />
+                        )}
+                    </motion.div>
+                </section>
+
+                <div className="mx-auto mt-5 w-full max-w-2xl px-4 sm:px-5">
+                    <div
+                        role="progressbar"
+                        aria-label={t.landing.supportsTitle}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-valuenow={progress}
+                        aria-valuetext={`${progress}%`}
+                        className="h-1 overflow-hidden rounded-full bg-line"
+                    >
+                        <motion.div
+                            style={{ width: bar }}
+                            className="h-full rounded-full bg-gradient-to-r from-primary to-accent"
                         />
                     </div>
-                ))}
-                {sample && (
-                    <div data-slide className="flex w-[86%] max-w-[24rem] shrink-0 snap-start">
-                        <SampleCard
-                            sample={sample}
-                            className="min-h-[19rem] w-full"
-                            slideLabel={`${total} / ${total}`}
-                        />
-                    </div>
-                )}
-                <CarouselEndSpacer />
-            </section>
-
-            <div className="mx-auto mt-4 flex max-w-2xl items-center justify-between gap-4 px-4 sm:px-5">
-                <p className="inline-flex items-center gap-2 text-xs font-medium text-primary">
-                    <MoveRight size={15} aria-hidden="true" className={progress < 0.02 ? "animate-pulse" : ""} />
-                    {t.landing.swipeHint}
-                </p>
-                <CarouselDots
-                    count={total}
-                    active={active}
-                    onSelect={scrollTo}
-                    label={(i) => (i < categories.length ? categories[i].title : t.landing.exampleStrategy)}
-                />
+                </div>
             </div>
         </div>
     );

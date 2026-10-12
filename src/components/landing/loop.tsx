@@ -2,12 +2,12 @@
 
 import { AnimatePresence, motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { Check, Eye, Lightbulb, MessageSquareHeart, Route, Sparkles } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CategoryIcon } from "@/components/category-icon";
 import { useLanguage } from "@/lib/i18n/context";
 import { useKnowledge } from "@/lib/knowledge-context";
 import { cn } from "@/lib/utils";
-import { CarouselDots, CarouselEndSpacer, carouselTrackCls, Eyebrow, useSnapCarousel } from "./shared";
+import { Eyebrow } from "./shared";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -292,114 +292,151 @@ export function LandingLoop() {
                 </div>
             </div>
 
-            {/* Mobile / tablet — swipeable steps */}
-            <LoopCarousel steps={steps} />
+            {/* Mobile / tablet — pinned horizontal scrollytelling */}
+            <LoopScrollytelling steps={steps} />
         </section>
     );
 }
 
 /**
- * Phones get the same story as a native swipe carousel: a 4-segment step
- * control on top, one framed "app screen" per step, no scroll hijacking.
+ * Phones and tablets translate a measured horizontal track with vertical page
+ * scroll. The card preview stays deliberately compact, including three action
+ * steps, so the pinned scene fits comfortably on short mobile viewports.
  */
-function LoopCarousel({ steps }: { steps: ReturnType<typeof useSteps> }) {
+function LoopScrollytelling({ steps }: { steps: ReturnType<typeof useSteps> }) {
     const { t } = useLanguage();
-    const { ref, active, scrollTo } = useSnapCarousel();
-    const shortTitle = (title: string) => title.split(" (")[0];
+    const ref = useRef<HTMLDivElement>(null);
+    const viewportRef = useRef<HTMLElement>(null);
+    const trackRef = useRef<HTMLDivElement>(null);
+    const [distance, setDistance] = useState(0);
+    const [active, setActive] = useState(0);
+
+    useEffect(() => {
+        const measure = () => {
+            const viewport = viewportRef.current;
+            const track = trackRef.current;
+            if (!viewport || !track) return;
+            setDistance(Math.max(0, track.scrollWidth - viewport.clientWidth));
+        };
+
+        measure();
+        const observer = new ResizeObserver(measure);
+        if (viewportRef.current) observer.observe(viewportRef.current);
+        if (trackRef.current) observer.observe(trackRef.current);
+        window.addEventListener("resize", measure);
+
+        return () => {
+            observer.disconnect();
+            window.removeEventListener("resize", measure);
+        };
+    }, []);
+
+    const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+    const x = useTransform(scrollYProgress, [0, 1], [0, -distance]);
+    const fill = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+
+    useMotionValueEvent(scrollYProgress, "change", (value) => {
+        const next = Math.min(steps.length - 1, Math.max(0, Math.floor(value * steps.length)));
+        setActive((current) => (current === next ? current : next));
+    });
 
     return (
-        <div className="relative py-16 sm:py-24 lg:hidden">
-            <div className="mx-auto max-w-2xl px-4 sm:px-5">
-                <Eyebrow dark>{t.landing.eyebrowLoop}</Eyebrow>
-                <h2 className="mt-4 text-[1.75rem] font-bold leading-tight xs:text-3xl sm:mt-5 sm:text-4xl">
-                    {t.landing.loopTitle}
-                </h2>
-                <p className="mt-3 text-[0.95rem] text-white/65 sm:mt-4 sm:text-lg">{t.landing.loopSub}</p>
+        <div ref={ref} className="relative block lg:hidden" style={{ height: `${Math.max(260, steps.length * 68)}vh` }}>
+            <div className="sticky top-0 flex h-svh flex-col justify-center overflow-hidden py-5 sm:py-8">
+                <div className="mx-auto w-full max-w-2xl px-4 sm:px-5">
+                    <Eyebrow dark>{t.landing.eyebrowLoop}</Eyebrow>
+                    <h2 className="mt-4 text-[1.75rem] font-bold leading-tight xs:text-3xl sm:mt-5 sm:text-4xl">
+                        {t.landing.loopTitle}
+                    </h2>
+                    <p className="mt-3 text-[0.95rem] text-white/65 sm:mt-4 sm:text-lg">{t.landing.loopSub}</p>
 
-                {/* Step control — mirrors and drives the carousel */}
-                <ol className="mt-7 grid grid-cols-4 gap-2">
-                    {steps.map((s, i) => (
-                        <li key={s.key}>
-                            <button
-                                type="button"
-                                onClick={() => scrollTo(i)}
-                                aria-label={`${i + 1}. ${s.title}`}
-                                aria-current={i === active ? "step" : undefined}
-                                className="block w-full cursor-pointer py-1 text-left"
-                            >
-                                <span className="block h-1 overflow-hidden rounded-full bg-white/10">
+                    <ol aria-label={t.landing.loopTitle} className="mt-6 grid grid-cols-4 gap-2 sm:mt-7">
+                        {steps.map((step, index) => (
+                            <li key={step.key} aria-current={index === active ? "step" : undefined}>
+                                <span className="block h-1 overflow-hidden rounded-full bg-white/10" aria-hidden="true">
                                     <span
-                                        className="block h-full rounded-full transition-[width] duration-500"
-                                        style={{ width: i <= active ? "100%" : "0%", background: s.accent }}
+                                        className="block h-full rounded-full transition-[width] duration-300"
+                                        style={{ width: index <= active ? "100%" : "0%", background: step.accent }}
                                     />
                                 </span>
                                 <span
                                     className={cn(
-                                        "mt-2 flex items-baseline gap-1 text-[11px] font-semibold transition-colors xs:text-xs",
-                                        i === active ? "text-white" : "text-white/45",
+                                        "mt-2 block font-display text-xs font-semibold transition-colors",
+                                        index === active ? "text-white" : "text-white/45",
                                     )}
                                 >
-                                    <span className="font-display">0{i + 1}</span>
-                                    <span className="truncate">{shortTitle(s.title)}</span>
+                                    <span aria-hidden="true">0{index + 1}</span>
+                                    <span className="sr-only">{step.title}</span>
                                 </span>
-                            </button>
-                        </li>
-                    ))}
-                </ol>
-            </div>
+                            </li>
+                        ))}
+                    </ol>
+                    <p className="sr-only" aria-live="polite">
+                        {active + 1} / {steps.length}: {steps[active].title}
+                    </p>
+                </div>
 
-            <section
-                ref={ref}
-                aria-roledescription="carousel"
-                aria-label={t.landing.loopTitle}
-                className={cn(carouselTrackCls, "mt-4 items-stretch")}
-            >
-                {steps.map((s, i) => (
-                    <article
-                        key={s.key}
-                        data-slide
-                        aria-roledescription="slide"
-                        aria-label={`${i + 1} / ${steps.length}`}
-                        className={cn(
-                            "flex w-[86%] max-w-[26rem] shrink-0 snap-start flex-col rounded-[1.75rem] border bg-white/[0.06] p-4 transition-colors duration-300 sm:p-5",
-                            i === active ? "border-white/20" : "border-white/10",
-                        )}
+                <section ref={viewportRef} aria-label={t.landing.loopTitle} className="mt-4 overflow-hidden sm:mt-5">
+                    <motion.div
+                        ref={trackRef}
+                        style={{ x }}
+                        className="flex w-max items-stretch gap-3 px-4 pr-4 sm:gap-4 sm:px-5 sm:pr-5"
                     >
-                        <div className="flex items-start gap-3">
-                            <span
-                                className="grid h-10 w-10 shrink-0 place-items-center rounded-xl text-[#0c2421]"
-                                style={{ background: s.accent }}
+                        {steps.map((step, index) => (
+                            <article
+                                key={step.key}
+                                aria-hidden={index !== active}
+                                aria-label={`${index + 1} / ${steps.length}: ${step.title}`}
+                                className={cn(
+                                    "flex h-[clamp(20rem,54svh,26rem)] w-[calc(100vw-2rem)] max-w-[38rem] shrink-0 flex-col rounded-[1.75rem] border bg-white/[0.06] p-4 transition-colors duration-300 sm:p-5",
+                                    index === active ? "border-white/20" : "border-white/10",
+                                )}
                             >
-                                <s.Icon size={18} aria-hidden="true" />
-                            </span>
-                            <div className="min-w-0">
-                                <p className="font-display text-lg font-semibold leading-snug">{s.title}</p>
-                                <p className="text-sm leading-snug text-white/65">{s.desc}</p>
-                            </div>
-                        </div>
-                        {/* Framed app screen */}
-                        <div className="mt-4 flex-1 rounded-[1.25rem] border border-white/10 bg-[#0c2421]/70 p-4 shadow-inner">
-                            <div className="mb-3 flex gap-1.5" aria-hidden="true">
-                                <span className="h-2 w-2 rounded-full bg-white/15" />
-                                <span className="h-2 w-2 rounded-full bg-white/15" />
-                                <span className="h-2 w-2 rounded-full bg-white/15" />
-                            </div>
-                            <StepVisual index={i} compact />
-                        </div>
-                    </article>
-                ))}
-                <CarouselEndSpacer />
-            </section>
+                                <div className="flex items-start gap-3">
+                                    <span
+                                        className="grid h-10 w-10 shrink-0 place-items-center rounded-xl text-[#0c2421]"
+                                        style={{ background: step.accent }}
+                                    >
+                                        <step.Icon size={18} aria-hidden="true" />
+                                    </span>
+                                    <div className="min-w-0">
+                                        <p className="line-clamp-2 font-display text-lg font-semibold leading-snug">
+                                            {step.title}
+                                        </p>
+                                        <p className="mt-0.5 line-clamp-2 text-sm leading-snug text-white/65">
+                                            {step.desc}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="mt-3 min-h-0 flex-1 overflow-hidden rounded-[1.25rem] border border-white/10 bg-[#0c2421]/70 p-3 shadow-inner sm:mt-4 sm:p-4">
+                                    <div className="mb-3 flex gap-1.5" aria-hidden="true">
+                                        <span className="h-2 w-2 rounded-full bg-white/15" />
+                                        <span className="h-2 w-2 rounded-full bg-white/15" />
+                                        <span className="h-2 w-2 rounded-full bg-white/15" />
+                                    </div>
+                                    <StepVisual index={index} compact />
+                                </div>
+                            </article>
+                        ))}
+                    </motion.div>
+                </section>
 
-            <div className="mx-auto mt-3 flex max-w-2xl items-center justify-between gap-3 px-4 sm:px-5">
-                <p className="text-xs text-white/45">{t.landing.loopSwipeHint}</p>
-                <CarouselDots
-                    dark
-                    count={steps.length}
-                    active={active}
-                    onSelect={scrollTo}
-                    label={(i) => `${i + 1}. ${steps[i].title}`}
-                />
+                <div className="mx-auto mt-4 w-full max-w-2xl px-4 sm:mt-5 sm:px-5">
+                    <div
+                        role="progressbar"
+                        aria-label={t.landing.loopTitle}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-valuenow={Math.round((active / (steps.length - 1)) * 100)}
+                        aria-valuetext={`${active + 1} / ${steps.length}: ${steps[active].title}`}
+                        className="h-1 overflow-hidden rounded-full bg-white/10"
+                    >
+                        <motion.div
+                            style={{ width: fill }}
+                            className="h-full rounded-full bg-gradient-to-r from-[#7fb6ec] via-[#7fd1c4] to-[#d5a6e6]"
+                        />
+                    </div>
+                </div>
             </div>
         </div>
     );
