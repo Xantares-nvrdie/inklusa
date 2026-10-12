@@ -172,6 +172,12 @@ export interface TranslationDict {
         addClass: string;
         addStudentTo: (className: string) => string;
         stepProgress: (current: number, total: number) => string;
+        backToClasses: string;
+        selectAClass: string;
+        chooseStudentInClass: (className: string) => string;
+        studentsCount: (count: number) => string;
+        noStudentsInClass: string;
+        selectedStudentBadge: (studentName: string) => string;
     };
     supports: {
         badge: string;
@@ -469,6 +475,12 @@ export const translations: Record<Locale, TranslationDict> = {
             addClass: "Add a new class",
             addStudentTo: (className) => `Add student to ${className}`,
             stepProgress: (current, total) => `Step ${current} of ${total}`,
+            backToClasses: "Back to class list",
+            selectAClass: "Choose a class",
+            chooseStudentInClass: (className) => `Choose student in ${className}`,
+            studentsCount: (count) => `${count} ${count === 1 ? "student" : "students"}`,
+            noStudentsInClass: "No students in this class yet. Add a student below to start.",
+            selectedStudentBadge: (studentName) => `Selected: ${studentName}`,
         },
         supports: {
             badge: "Possible supports",
@@ -766,6 +778,12 @@ export const translations: Record<Locale, TranslationDict> = {
             addClass: "Tambah kelas baru",
             addStudentTo: (className) => `Tambah siswa ke ${className}`,
             stepProgress: (current, total) => `Langkah ${current} dari ${total}`,
+            backToClasses: "Kembali ke daftar kelas",
+            selectAClass: "Pilih kelas",
+            chooseStudentInClass: (className) => `Pilih siswa di ${className}`,
+            studentsCount: (count) => `${count} siswa`,
+            noStudentsInClass: "Belum ada siswa di kelas ini. Tambahkan siswa di bawah untuk memulai.",
+            selectedStudentBadge: (studentName) => `Terpilih: ${studentName}`,
         },
         supports: {
             badge: "Pilihan dukungan",

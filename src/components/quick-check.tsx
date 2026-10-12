@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Check, Plus, UserRound, Users } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, ChevronRight, GraduationCap, Plus, UserRound, Users } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -38,6 +38,7 @@ export function QuickCheck() {
     const [step, setStep] = useState(0); // 0..2 questions, 3 = result
     const [classesData, setClassesData] = useState<ClassData[]>([]);
     const [student, setStudent] = useState<string | null>(null);
+    const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
     const [addingClass, setAddingClass] = useState(false);
     const [addingStudentTo, setAddingStudentTo] = useState<string | null>(null);
     const [newClassName, setNewClassName] = useState("");
@@ -56,8 +57,16 @@ export function QuickCheck() {
         api<ClassData[]>("/students/classes")
             .then((data) => {
                 setClassesData(data);
-                if (requestedStudent && data.some((c) => c.students.some((s) => s.id === requestedStudent))) {
-                    setStudent(requestedStudent);
+                if (requestedStudent) {
+                    if (requestedStudent === "general") {
+                        setStudent("general");
+                    } else {
+                        const targetClass = data.find((c) => c.students.some((s) => s.id === requestedStudent));
+                        if (targetClass) {
+                            setStudent(requestedStudent);
+                            setSelectedClassId(targetClass.id);
+                        }
+                    }
                 }
             })
             .catch(() => setClassesData([]));
@@ -72,6 +81,7 @@ export function QuickCheck() {
             setClassesData((p) => [...p, { ...c, students: [] }]);
             setAddingClass(false);
             setNewClassName("");
+            setSelectedClassId(c.id);
         } finally {
             setSavingTarget(null);
         }
@@ -93,6 +103,8 @@ export function QuickCheck() {
     }
 
     const canNext = step === 0 ? !!student : step === 1 ? !!selectedCatId : step === 2 ? !!clarId : false;
+
+    const currentClass = selectedClassId ? classesData.find((c) => c.id === selectedClassId) : null;
 
     return (
         <div className="mx-auto max-w-3xl space-y-8">
@@ -132,124 +144,317 @@ export function QuickCheck() {
                     className="space-y-6"
                 >
                     {step === 0 && (
-                        <>
-                            <h1 className="text-4xl font-bold">{t.quickCheck.step1Title}</h1>
-                            <p className="-mt-3 text-muted">{t.quickCheck.step1Sub}</p>
-                            <div className="space-y-6">
-                                <p className="rounded-2xl border border-sky/15 bg-sky-soft/70 px-4 py-3 text-sm text-foreground/80">
-                                    {t.quickCheck.privacyHint}
-                                </p>
-                                <button
-                                    id="student-general"
-                                    type="button"
-                                    onClick={() => setStudent("general")}
-                                    aria-pressed={student === "general"}
-                                    className={choiceCls(student === "general")}
-                                >
-                                    <span className="grid h-11 w-11 place-items-center rounded-xl bg-accent-soft text-[#9a5612]">
-                                        <Users size={20} aria-hidden="true" />
-                                    </span>
-                                    <span>
-                                        <span className="block text-lg font-semibold">
-                                            {t.quickCheck.generalClassroom}
-                                        </span>
-                                        <span className="block text-sm text-muted">
-                                            {t.quickCheck.generalClassroomDesc}
-                                        </span>
-                                    </span>
-                                </button>
+                        <div className="space-y-6">
+                            <AnimatePresence mode="wait">
+                                {!selectedClassId || !currentClass ? (
+                                    <motion.div
+                                        key="class-list-view"
+                                        initial={{ opacity: 0, x: -14 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -14 }}
+                                        transition={{ duration: 0.22 }}
+                                        className="space-y-6"
+                                    >
+                                        <div>
+                                            <h1 className="text-4xl font-bold">{t.quickCheck.step1Title}</h1>
+                                            <p className="mt-1 text-muted">{t.quickCheck.step1Sub}</p>
+                                        </div>
 
-                                <div className="space-y-4">
-                                    {classesData.map((c) => (
-                                        <Card key={c.id} className="p-4 space-y-4 bg-surface/50 glass border-white/60">
-                                            <h3 className="font-semibold text-lg flex items-center gap-2">
-                                                <Users size={18} /> {c.name}
-                                            </h3>
-                                            <div className="grid gap-3 sm:grid-cols-2">
-                                                {c.students.map((s) => (
-                                                    <button
-                                                        key={s.id}
-                                                        type="button"
-                                                        onClick={() => setStudent(s.id)}
-                                                        aria-pressed={student === s.id}
-                                                        className={choiceCls(student === s.id)}
-                                                    >
-                                                        <span className="grid h-11 w-11 place-items-center rounded-xl bg-surface-2 text-primary-strong">
-                                                            <UserRound size={20} aria-hidden="true" />
-                                                        </span>
-                                                        <span className="text-lg font-semibold">{s.name}</span>
-                                                    </button>
-                                                ))}
+                                        <p className="rounded-2xl border border-sky/15 bg-sky-soft/70 px-4 py-3 text-sm text-foreground/80">
+                                            {t.quickCheck.privacyHint}
+                                        </p>
+
+                                        {/* General Classroom Option */}
+                                        <button
+                                            id="student-general"
+                                            type="button"
+                                            onClick={() => setStudent("general")}
+                                            aria-pressed={student === "general"}
+                                            className={choiceCls(student === "general")}
+                                        >
+                                            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-accent-soft text-[#9a5612]">
+                                                <Users size={20} aria-hidden="true" />
+                                            </span>
+                                            <span className="flex-1">
+                                                <span className="block text-lg font-semibold">
+                                                    {t.quickCheck.generalClassroom}
+                                                </span>
+                                                <span className="block text-sm text-muted">
+                                                    {t.quickCheck.generalClassroomDesc}
+                                                </span>
+                                            </span>
+                                            {student === "general" && (
+                                                <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-primary text-white">
+                                                    <Check size={16} />
+                                                </span>
+                                            )}
+                                        </button>
+
+                                        {/* Class Drill-down List */}
+                                        <div className="space-y-3 pt-2">
+                                            <div className="flex items-center justify-between">
+                                                <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                                                    <GraduationCap size={20} className="text-primary" />
+                                                    {t.quickCheck.selectAClass}
+                                                </h2>
+                                                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-surface-2 text-muted">
+                                                    {classesData.length}{" "}
+                                                    {locale === "en"
+                                                        ? classesData.length === 1
+                                                            ? "class"
+                                                            : "classes"
+                                                        : "kelas"}
+                                                </span>
                                             </div>
 
-                                            {addingStudentTo === c.id ? (
-                                                <div className="flex flex-col gap-3 sm:flex-row mt-2">
+                                            {classesData.length === 0 ? (
+                                                <div className="p-8 text-center rounded-2xl border border-dashed border-line bg-surface/40 space-y-2">
+                                                    <GraduationCap className="mx-auto text-muted" size={32} />
+                                                    <p className="text-sm font-medium text-muted">
+                                                        {locale === "en"
+                                                            ? "No classes found. Add your first class below."
+                                                            : "Belum ada kelas terdaftar. Tambahkan kelas pertama di bawah."}
+                                                    </p>
+                                                </div>
+                                            ) : (
+                                                <div className="grid gap-3 sm:grid-cols-2">
+                                                    {classesData.map((c) => {
+                                                        const activeStudent = c.students.find((s) => s.id === student);
+                                                        const isClassActive = !!activeStudent;
+
+                                                        return (
+                                                            <button
+                                                                key={c.id}
+                                                                type="button"
+                                                                onClick={() => setSelectedClassId(c.id)}
+                                                                className={`group relative flex w-full cursor-pointer items-center justify-between gap-4 rounded-2xl border-[1.5px] p-5 text-left transition-all duration-200 glass ${
+                                                                    isClassActive
+                                                                        ? "border-primary bg-primary-soft/40 shadow-soft"
+                                                                        : "border-white/60 bg-surface/80 hover:border-primary/50 hover:bg-surface hover:-translate-y-0.5"
+                                                                }`}
+                                                            >
+                                                                <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                                                                    <span
+                                                                        className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl transition-colors ${
+                                                                            isClassActive
+                                                                                ? "bg-primary text-white"
+                                                                                : "bg-surface-2 text-primary-strong group-hover:bg-primary group-hover:text-white"
+                                                                        }`}
+                                                                    >
+                                                                        <GraduationCap size={20} aria-hidden="true" />
+                                                                    </span>
+                                                                    <div className="min-w-0 flex-1">
+                                                                        <span className="block text-lg font-bold truncate text-foreground">
+                                                                            {c.name}
+                                                                        </span>
+                                                                        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                                                                            <span className="text-xs text-muted">
+                                                                                {t.quickCheck.studentsCount(
+                                                                                    c.students.length,
+                                                                                )}
+                                                                            </span>
+                                                                            {activeStudent && (
+                                                                                <span className="text-xs font-semibold text-primary truncate">
+                                                                                    •{" "}
+                                                                                    {t.quickCheck.selectedStudentBadge(
+                                                                                        activeStudent.name,
+                                                                                    )}
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-surface-2 text-muted group-hover:bg-primary/10 group-hover:text-primary transition-all group-hover:translate-x-0.5">
+                                                                    <ChevronRight size={18} />
+                                                                </span>
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            )}
+
+                                            {addingClass ? (
+                                                <Card className="flex flex-col gap-3 sm:flex-row glass border-white/60 mt-3">
                                                     <input
-                                                        value={newStudentName}
-                                                        onChange={(e) => setNewStudentName(e.target.value)}
-                                                        placeholder={t.quickCheck.studentNamePlaceholder}
-                                                        aria-label={t.quickCheck.studentNamePlaceholder}
+                                                        value={newClassName}
+                                                        onChange={(e) => setNewClassName(e.target.value)}
+                                                        placeholder={t.quickCheck.classNamePlaceholder}
+                                                        aria-label={t.quickCheck.classNamePlaceholder}
                                                         maxLength={50}
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === "Enter") {
+                                                                e.preventDefault();
+                                                                addClass();
+                                                            }
+                                                        }}
                                                         className="h-12 flex-1 rounded-2xl border border-line px-4 outline-none focus:border-primary focus:ring-4 focus:ring-primary/15"
                                                     />
                                                     <div className="flex gap-2">
                                                         <Button
                                                             variant="ghost"
-                                                            onClick={() => setAddingStudentTo(null)}
+                                                            onClick={() => {
+                                                                setAddingClass(false);
+                                                                setNewClassName("");
+                                                            }}
                                                         >
                                                             {t.quickCheck.cancel}
                                                         </Button>
                                                         <Button
-                                                            disabled={savingTarget === c.id}
-                                                            onClick={() => addStudent(c.id)}
+                                                            disabled={savingTarget === "class" || !newClassName.trim()}
+                                                            onClick={addClass}
                                                         >
-                                                            {t.quickCheck.save}
+                                                            {t.quickCheck.saveClass}
                                                         </Button>
                                                     </div>
-                                                </div>
+                                                </Card>
                                             ) : (
+                                                <div className="pt-2">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setAddingClass(true)}
+                                                        className="inline-flex cursor-pointer items-center gap-2 font-semibold text-primary hover:underline"
+                                                    >
+                                                        <Plus size={16} aria-hidden="true" /> {t.quickCheck.addClass}
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </motion.div>
+                                ) : (
+                                    <motion.div
+                                        key={`class-detail-${selectedClassId}`}
+                                        initial={{ opacity: 0, x: 14 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: 14 }}
+                                        transition={{ duration: 0.22 }}
+                                        className="space-y-6"
+                                    >
+                                        <button
+                                            type="button"
+                                            onClick={() => setSelectedClassId(null)}
+                                            className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline hover:-translate-x-0.5 transition-transform cursor-pointer"
+                                        >
+                                            <ArrowLeft size={16} /> {t.quickCheck.backToClasses}
+                                        </button>
+
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-5 rounded-2xl glass border border-white/60 bg-surface/70">
+                                            <div className="flex items-center gap-3.5">
+                                                <span className="grid h-12 w-12 place-items-center rounded-xl bg-primary text-white shadow-soft">
+                                                    <GraduationCap size={24} />
+                                                </span>
+                                                <div>
+                                                    <h2 className="text-2xl font-bold text-foreground">
+                                                        {currentClass.name}
+                                                    </h2>
+                                                    <p className="text-sm text-muted">
+                                                        {t.quickCheck.chooseStudentInClass(currentClass.name)}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <span className="inline-flex items-center self-start sm:self-auto px-3 py-1 rounded-full text-xs font-semibold bg-surface-2 text-muted">
+                                                {t.quickCheck.studentsCount(currentClass.students.length)}
+                                            </span>
+                                        </div>
+
+                                        <p className="rounded-2xl border border-sky/15 bg-sky-soft/70 px-4 py-3 text-sm text-foreground/80">
+                                            {t.quickCheck.privacyHint}
+                                        </p>
+
+                                        {/* Student list */}
+                                        {currentClass.students.length === 0 ? (
+                                            <div className="p-8 text-center rounded-2xl border border-dashed border-line bg-surface/40 space-y-2">
+                                                <UserRound className="mx-auto text-muted" size={32} />
+                                                <p className="text-sm font-medium text-muted">
+                                                    {t.quickCheck.noStudentsInClass}
+                                                </p>
+                                            </div>
+                                        ) : (
+                                            <div className="grid gap-3 sm:grid-cols-2">
+                                                {currentClass.students.map((s) => {
+                                                    const isSelected = student === s.id;
+                                                    return (
+                                                        <button
+                                                            key={s.id}
+                                                            type="button"
+                                                            onClick={() => setStudent(s.id)}
+                                                            aria-pressed={isSelected}
+                                                            className={choiceCls(isSelected)}
+                                                        >
+                                                            <span
+                                                                className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl transition-colors ${
+                                                                    isSelected
+                                                                        ? "bg-primary text-white"
+                                                                        : "bg-surface-2 text-primary-strong"
+                                                                }`}
+                                                            >
+                                                                <UserRound size={20} aria-hidden="true" />
+                                                            </span>
+                                                            <span className="text-lg font-semibold flex-1 truncate">
+                                                                {s.name}
+                                                            </span>
+                                                            {isSelected && (
+                                                                <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-primary text-white">
+                                                                    <Check size={16} />
+                                                                </span>
+                                                            )}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+
+                                        {/* Add Student to Class */}
+                                        {addingStudentTo === currentClass.id ? (
+                                            <div className="flex flex-col gap-3 sm:flex-row mt-2 p-4 rounded-2xl glass border border-white/60 bg-surface/50">
+                                                <input
+                                                    value={newStudentName}
+                                                    onChange={(e) => setNewStudentName(e.target.value)}
+                                                    placeholder={t.quickCheck.studentNamePlaceholder}
+                                                    aria-label={t.quickCheck.studentNamePlaceholder}
+                                                    maxLength={50}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === "Enter") {
+                                                            e.preventDefault();
+                                                            addStudent(currentClass.id);
+                                                        }
+                                                    }}
+                                                    className="h-12 flex-1 rounded-2xl border border-line px-4 outline-none focus:border-primary focus:ring-4 focus:ring-primary/15"
+                                                />
+                                                <div className="flex gap-2">
+                                                    <Button
+                                                        variant="ghost"
+                                                        onClick={() => {
+                                                            setAddingStudentTo(null);
+                                                            setNewStudentName("");
+                                                        }}
+                                                    >
+                                                        {t.quickCheck.cancel}
+                                                    </Button>
+                                                    <Button
+                                                        disabled={
+                                                            savingTarget === currentClass.id || !newStudentName.trim()
+                                                        }
+                                                        onClick={() => addStudent(currentClass.id)}
+                                                    >
+                                                        {t.quickCheck.save}
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="pt-2">
                                                 <button
                                                     type="button"
-                                                    onClick={() => setAddingStudentTo(c.id)}
-                                                    className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+                                                    onClick={() => setAddingStudentTo(currentClass.id)}
+                                                    className="inline-flex cursor-pointer items-center gap-2 text-sm font-semibold text-primary hover:underline"
                                                 >
-                                                    <Plus size={16} /> {t.quickCheck.addStudentTo(c.name)}
+                                                    <Plus size={16} /> {t.quickCheck.addStudentTo(currentClass.name)}
                                                 </button>
-                                            )}
-                                        </Card>
-                                    ))}
-                                </div>
-
-                                {addingClass ? (
-                                    <Card className="flex flex-col gap-3 sm:flex-row glass border-white/60">
-                                        <input
-                                            value={newClassName}
-                                            onChange={(e) => setNewClassName(e.target.value)}
-                                            placeholder={t.quickCheck.classNamePlaceholder}
-                                            aria-label={t.quickCheck.classNamePlaceholder}
-                                            maxLength={50}
-                                            className="h-12 flex-1 rounded-2xl border border-line px-4 outline-none focus:border-primary focus:ring-4 focus:ring-primary/15"
-                                        />
-                                        <div className="flex gap-2">
-                                            <Button variant="ghost" onClick={() => setAddingClass(false)}>
-                                                {t.quickCheck.cancel}
-                                            </Button>
-                                            <Button disabled={savingTarget === "class"} onClick={addClass}>
-                                                {t.quickCheck.saveClass}
-                                            </Button>
-                                        </div>
-                                    </Card>
-                                ) : (
-                                    <button
-                                        type="button"
-                                        onClick={() => setAddingClass(true)}
-                                        className="inline-flex cursor-pointer items-center gap-2 font-semibold text-primary hover:underline"
-                                    >
-                                        <Plus size={16} aria-hidden="true" /> {t.quickCheck.addClass}
-                                    </button>
+                                            </div>
+                                        )}
+                                    </motion.div>
                                 )}
-                            </div>
-                        </>
+                            </AnimatePresence>
+                        </div>
                     )}
 
                     {step === 1 && (

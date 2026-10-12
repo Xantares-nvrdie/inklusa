@@ -175,9 +175,56 @@ export const AdminService = {
     },
 
     async createTeacher(input: { name: string; email: string; password: string }) {
-        const res = await auth.api.signUpEmail({ body: input });
-        await db.update(user).set({ banned: false, banReason: null }).where(eq(user.id, res.user.id));
-        return { id: res.user.id, name: res.user.name, email: res.user.email };
+        const normalizedEmail = input.email.trim().toLowerCase();
+
+        // Check if user already exists
+        const [existing] = await db.select({ id: user.id }).from(user).where(eq(user.email, normalizedEmail));
+        if (existing) {
+            throw new Error("User with this email already exists");
+        }
+
+        let createdUserId: string | null = null;
+        let createdUserName = input.name.trim();
+
+        try {
+            const res = await auth.api.signUpEmail({
+                body: {
+                    name: createdUserName,
+                    email: normalizedEmail,
+                    password: input.password,
+                },
+            });
+            createdUserId = res.user.id;
+            createdUserName = res.user.name;
+        } catch (err: any) {
+            // If better-auth throws BANNED_USER (due to databaseHooks setting banned: true),
+            // check if the user row was created in the database.
+            const [found] = await db
+                .select({ id: user.id, name: user.name })
+                .from(user)
+                .where(eq(user.email, normalizedEmail));
+            if (found) {
+                createdUserId = found.id;
+                createdUserName = found.name;
+            } else {
+                throw err;
+            }
+        }
+
+        if (createdUserId) {
+            // Activate teacher account immediately because it was created directly by Admin
+            await db
+                .update(user)
+                .set({ banned: false, banReason: null, role: "TEACHER" })
+                .where(eq(user.id, createdUserId));
+
+            // Delete any session created during signUpEmail so admin's session remains untouched
+            await db.delete(session).where(eq(session.userId, createdUserId));
+
+            return { id: createdUserId, name: createdUserName, email: normalizedEmail };
+        }
+
+        throw new Error("Failed to create teacher account");
     },
 
     async setBan(id: string, banned: boolean, reason?: string) {

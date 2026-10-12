@@ -43,6 +43,15 @@ export const auth = betterAuth({
         user: {
             create: {
                 before: async (user) => {
+                    if (user.banned === false) {
+                        return {
+                            data: {
+                                ...user,
+                                banned: false,
+                                banReason: null,
+                            },
+                        };
+                    }
                     return {
                         data: {
                             ...user,
