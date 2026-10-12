@@ -38,7 +38,7 @@ export function PlanCard({ plan }: { plan: PlanRow }) {
                 {iv?.title ?? plan.interventionSlug}
             </p>
             {done && (
-                <p className="text-xs text-muted sm:hidden">
+                <p className="text-xs text-muted">
                     <time dateTime={plan.reflectedAt ?? plan.createdAt}>
                         {plan.reflectedAt
                             ? locale === "id"
