@@ -1,6 +1,6 @@
 "use client";
 
-import { BookMarked, LayoutDashboard, LogOut, Users } from "lucide-react";
+import { BarChart3, BookMarked, GraduationCap, LayoutDashboard, LogOut, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LanguageSwitcher } from "@/components/language-switcher";
@@ -19,7 +19,8 @@ export function AdminNav({ name }: { name: string }) {
     const links = [
         { href: "/admin", label: a.nav.overview, Icon: LayoutDashboard },
         { href: "/admin/teachers", label: a.nav.teachers, Icon: Users },
-        { href: "/admin/classes", label: a.nav.classes, Icon: Users },
+        { href: "/admin/classes", label: a.nav.classes, Icon: GraduationCap },
+        { href: "/admin/evaluations", label: a.nav.evaluations, Icon: BarChart3 },
         { href: "/admin/knowledge", label: a.nav.knowledge, Icon: BookMarked },
     ];
 
@@ -73,7 +74,7 @@ export function AdminNav({ name }: { name: string }) {
                 </div>
             </div>
             <nav
-                className="fixed inset-x-3 bottom-3 z-50 grid grid-cols-4 rounded-2xl border border-line/70 bg-surface/95 p-1.5 shadow-lift backdrop-blur md:hidden"
+                className="fixed inset-x-3 bottom-3 z-50 grid grid-cols-5 rounded-2xl border border-line/70 bg-surface/95 p-1.5 shadow-lift backdrop-blur md:hidden"
                 aria-label="Admin"
             >
                 {links.map(({ href, label, Icon }) => {

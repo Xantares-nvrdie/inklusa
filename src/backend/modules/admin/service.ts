@@ -94,13 +94,13 @@ export const AdminService = {
         const strategyEffectiveness = Object.values(strategyMap).map((item) => {
             const successCount = item.veryHelpful + item.helpful;
             const struggleCount = item.someChange + item.notHelpful;
-            const successRate = Math.round((successCount / item.total) * 100);
             const avgScore = Number(
                 (
                     (item.veryHelpful * 4 + item.helpful * 3 + item.someChange * 2 + item.notHelpful * 1) /
                     item.total
                 ).toFixed(1),
             );
+            const effectivenessRate = Math.round((avgScore / 4) * 100);
             const topReasons = Object.entries(item.reasons)
                 .map(([reason, count]) => ({ reason, count }))
                 .sort((a, b) => b.count - a.count);
@@ -110,8 +110,9 @@ export const AdminService = {
                 total: item.total,
                 successCount,
                 struggleCount,
-                successRate,
                 avgScore,
+                effectivenessRate,
+                successRate: effectivenessRate,
                 veryHelpful: item.veryHelpful,
                 helpful: item.helpful,
                 someChange: item.someChange,
