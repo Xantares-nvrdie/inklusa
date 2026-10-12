@@ -169,7 +169,7 @@ const en = {
         summaryEffective: "High Effectiveness",
         summaryTotalReflections: "Total Reflections",
         viewInKb: "Edit in Knowledge Base",
-        viewHistoryBtn: "Usage History & Feedback",
+        viewHistoryBtn: "History",
         historyModal: {
             title: "Usage & Feedback History",
             sub: "Teacher notes and evaluations who applied this strategy in classroom.",
@@ -362,7 +362,7 @@ const id: typeof en = {
         summaryEffective: "Efektivitas Tinggi",
         summaryTotalReflections: "Total Refleksi",
         viewInKb: "Kelola di Basis Pengetahuan",
-        viewHistoryBtn: "Riwayat Penggunaan & Feedback",
+        viewHistoryBtn: "Riwayat",
         historyModal: {
             title: "Riwayat Penggunaan & Feedback",
             sub: "Catatan dan evaluasi guru yang telah menerapkan strategi ini di kelas.",
