@@ -1,45 +1,43 @@
-import { Elysia, t } from "elysia";
+import { Elysia } from "elysia";
 import betterAuthMiddleware from "@/backend/utils/better-auth/middleware";
+import { StudentModel } from "./model";
 import { StudentService } from "./service";
 
 const studentsModule = new Elysia({ prefix: "/students", tags: ["Students"] })
     .use(betterAuthMiddleware)
 
+    // ── Classes ──
     .get("/classes", () => StudentService.listClasses(), {
         auth: true,
         detail: { summary: "List all classes with their students" },
     })
-
     .post("/classes", ({ body }) => StudentService.createClass(body.name), {
         auth: true,
-        body: t.Object({ name: t.String({ minLength: 1, maxLength: 50 }) }),
+        body: StudentModel.nameBody,
         detail: { summary: "Create a new class" },
     })
-
-    .patch("/classes/:id", async ({ params, body }) => {
-        return await StudentService.updateClass(params.id, body.name);
-    }, {
+    .patch("/classes/:id", ({ params, body }) => StudentService.updateClass(params.id, body.name), {
         auth: true,
-        params: t.Object({ id: t.String() }),
-        body: t.Object({ name: t.String({ minLength: 1, maxLength: 50 }) }),
+        params: StudentModel.params,
+        body: StudentModel.nameBody,
     })
+    .delete(
+        "/classes/:id",
+        async ({ params }) => {
+            await StudentService.deleteClass(params.id);
+            return { success: true };
+        },
+        { auth: true, params: StudentModel.params },
+    )
 
-    .delete("/classes/:id", async ({ params }) => {
-        await StudentService.deleteClass(params.id);
-        return { success: true };
-    }, {
-        auth: true,
-        params: t.Object({ id: t.String() }),
-    })
-
+    // ── Students ──
     .get("/", () => StudentService.list(), {
         auth: true,
         detail: { summary: "List all students" },
     })
-
     .post("/", ({ body }) => StudentService.createStudent(body.classId, body.name), {
         auth: true,
-        body: t.Object({ classId: t.String(), name: t.String({ minLength: 1, maxLength: 50 }) }),
+        body: StudentModel.createStudentBody,
         detail: { summary: "Add a new student to a class" },
     })
     .get(
@@ -52,26 +50,20 @@ const studentsModule = new Elysia({ prefix: "/students", tags: ["Students"] })
             }
             return row;
         },
-        {
-            auth: true,
-            params: t.Object({ id: t.String() }),
-        },
+        { auth: true, params: StudentModel.params },
     )
-    
-    .patch("/:id", async ({ params, body }) => {
-        return await StudentService.updateStudent(params.id, body.name);
-    }, {
+    .patch("/:id", ({ params, body }) => StudentService.updateStudent(params.id, body.name), {
         auth: true,
-        params: t.Object({ id: t.String() }),
-        body: t.Object({ name: t.String({ minLength: 1, maxLength: 50 }) }),
+        params: StudentModel.params,
+        body: StudentModel.nameBody,
     })
-
-    .delete("/:id", async ({ params }) => {
-        await StudentService.deleteStudent(params.id);
-        return { success: true };
-    }, {
-        auth: true,
-        params: t.Object({ id: t.String() }),
-    });
+    .delete(
+        "/:id",
+        async ({ params }) => {
+            await StudentService.deleteStudent(params.id);
+            return { success: true };
+        },
+        { auth: true, params: StudentModel.params },
+    );
 
 export default studentsModule;

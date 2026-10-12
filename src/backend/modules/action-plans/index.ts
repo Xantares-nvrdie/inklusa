@@ -1,14 +1,10 @@
-import { Elysia, t } from "elysia";
+import { Elysia } from "elysia";
 import betterAuthMiddleware from "@/backend/utils/better-auth/middleware";
-import { ActionPlanService, type PlanFilter } from "./service";
+import { ActionPlanModel, type PlanFilter } from "./model";
+import { ActionPlanService } from "./service";
 
-const CATEGORIES = t.Union([
-    t.Literal("INSTRUCTION"),
-    t.Literal("READING"),
-    t.Literal("FOCUS"),
-    t.Literal("EXPRESSION"),
-    t.Literal("PARTICIPATION"),
-]);
+const NOT_FOUND = { message: "Action plan not found" };
+const NOT_OWNED = { message: "Action plan not found or not owned by you" };
 
 const actionPlansModule = new Elysia({ prefix: "/action-plans", tags: ["Action Plans"] })
     .use(betterAuthMiddleware)
@@ -23,11 +19,7 @@ const actionPlansModule = new Elysia({ prefix: "/action-plans", tags: ["Action P
             ),
         {
             auth: true,
-            query: t.Object({
-                filter: t.Optional(t.String()),
-                student: t.Optional(t.String()),
-                global: t.Optional(t.String()),
-            }),
+            query: ActionPlanModel.listQuery,
             detail: { summary: "List interventions (filter: all | active | completed)" },
         },
     )
@@ -46,15 +38,7 @@ const actionPlansModule = new Elysia({ prefix: "/action-plans", tags: ["Action P
             }),
         {
             auth: true,
-            query: t.Object({
-                filter: t.Optional(t.String()),
-                page: t.Optional(t.String()),
-                pageSize: t.Optional(t.String()),
-                from: t.Optional(t.String()),
-                to: t.Optional(t.String()),
-                teacher: t.Optional(t.String()),
-                q: t.Optional(t.String()),
-            }),
+            query: ActionPlanModel.browseQuery,
             detail: { summary: "Paginated, filterable list of all teachers' plans" },
         },
     )
@@ -64,19 +48,11 @@ const actionPlansModule = new Elysia({ prefix: "/action-plans", tags: ["Action P
         detail: { summary: "Dashboard counters" },
     })
 
-    .get(
-        "/history",
-        ({ user, query }) => ActionPlanService.history(user.id, query.cat as any, query.clar, query.student),
-        {
-            auth: true,
-            query: t.Object({
-                cat: t.String(),
-                clar: t.String(),
-                student: t.Optional(t.String()),
-            }),
-            detail: { summary: "Historical reflection stats for a barrier" },
-        },
-    )
+    .get("/history", ({ user, query }) => ActionPlanService.history(user.id, query.cat, query.clar, query.student), {
+        auth: true,
+        query: ActionPlanModel.historyQuery,
+        detail: { summary: "Historical reflection stats for a barrier" },
+    })
 
     .get(
         "/:id",
@@ -84,11 +60,11 @@ const actionPlansModule = new Elysia({ prefix: "/action-plans", tags: ["Action P
             const row = await ActionPlanService.getById(user.id, params.id);
             if (!row) {
                 set.status = 404;
-                return { message: "Action plan not found" };
+                return NOT_FOUND;
             }
             return row;
         },
-        { auth: true, params: t.Object({ id: t.String() }) },
+        { auth: true, params: ActionPlanModel.params },
     )
 
     .post(
@@ -105,15 +81,7 @@ const actionPlansModule = new Elysia({ prefix: "/action-plans", tags: ["Action P
             }),
         {
             auth: true,
-            body: t.Object({
-                studentId: t.Optional(t.Nullable(t.String())),
-                barrierCategory: CATEGORIES,
-                clarificationId: t.String(),
-                barrierTitle: t.String(),
-                interventionSlug: t.String(),
-                goal: t.String({ minLength: 1, maxLength: 300 }),
-                timing: t.Optional(t.String({ maxLength: 120 })),
-            }),
+            body: ActionPlanModel.createBody,
             detail: { summary: "Save an action plan" },
         },
     )
@@ -124,17 +92,11 @@ const actionPlansModule = new Elysia({ prefix: "/action-plans", tags: ["Action P
             const row = await ActionPlanService.setStatus(user.id, params.id, body.status);
             if (!row) {
                 set.status = 404;
-                return { message: "Action plan not found" };
+                return NOT_FOUND;
             }
             return row;
         },
-        {
-            auth: true,
-            params: t.Object({ id: t.String() }),
-            body: t.Object({
-                status: t.Union([t.Literal("PLANNED"), t.Literal("IN_PROGRESS"), t.Literal("NEEDS_REFLECTION")]),
-            }),
-        },
+        { auth: true, params: ActionPlanModel.params, body: ActionPlanModel.statusBody },
     )
 
     .post(
@@ -143,44 +105,32 @@ const actionPlansModule = new Elysia({ prefix: "/action-plans", tags: ["Action P
             const row = await ActionPlanService.reflect(user.id, params.id, body);
             if (!row) {
                 set.status = 404;
-                return { message: "Action plan not found" };
+                return NOT_FOUND;
             }
             return row;
         },
         {
             auth: true,
-            params: t.Object({ id: t.String() }),
-            body: t.Object({
-                result: t.Union([
-                    t.Literal("VERY_HELPFUL"),
-                    t.Literal("HELPFUL"),
-                    t.Literal("SOME_CHANGE"),
-                    t.Literal("NOT_HELPFUL"),
-                ]),
-                reason: t.Optional(t.String()),
-                note: t.Optional(t.String({ maxLength: 1000 })),
-            }),
+            params: ActionPlanModel.params,
+            body: ActionPlanModel.reflectionBody,
             detail: { summary: "Save reflection and complete the intervention" },
         },
     )
+
     .patch(
         "/:id",
         async ({ user, params, body, set }) => {
             const row = await ActionPlanService.update(user.id, params.id, body);
             if (!row) {
                 set.status = 404;
-                return { message: "Action plan not found or not owned by you" };
+                return NOT_OWNED;
             }
             return row;
         },
         {
             auth: true,
-            params: t.Object({ id: t.String() }),
-            body: t.Object({
-                goal: t.Optional(t.String({ minLength: 1, maxLength: 300 })),
-                timing: t.Optional(t.String({ maxLength: 120 })),
-                studentId: t.Optional(t.Nullable(t.String())),
-            }),
+            params: ActionPlanModel.params,
+            body: ActionPlanModel.updateBody,
             detail: { summary: "Update an action plan (goal, timing, student)" },
         },
     )
@@ -191,13 +141,13 @@ const actionPlansModule = new Elysia({ prefix: "/action-plans", tags: ["Action P
             const row = await ActionPlanService.cancel(user.id, params.id);
             if (!row) {
                 set.status = 404;
-                return { message: "Action plan not found or not owned by you" };
+                return NOT_OWNED;
             }
             return { success: true, message: "Action plan cancelled", plan: row };
         },
         {
             auth: true,
-            params: t.Object({ id: t.String() }),
+            params: ActionPlanModel.params,
             detail: { summary: "Soft delete (cancel) an action plan" },
         },
     )
@@ -208,13 +158,13 @@ const actionPlansModule = new Elysia({ prefix: "/action-plans", tags: ["Action P
             const row = await ActionPlanService.restore(user.id, params.id);
             if (!row) {
                 set.status = 404;
-                return { message: "Action plan not found or not owned by you" };
+                return NOT_OWNED;
             }
             return { success: true, message: "Action plan restored", plan: row };
         },
         {
             auth: true,
-            params: t.Object({ id: t.String() }),
+            params: ActionPlanModel.params,
             detail: { summary: "Restore a cancelled action plan" },
         },
     );

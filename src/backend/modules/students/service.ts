@@ -3,6 +3,7 @@ import { db } from "@/db";
 import { classes, students } from "@/db/schema";
 
 export const StudentService = {
+    /** Classes with their students, loaded in one query (drizzle relational query). */
     listClasses() {
         return db.query.classes.findMany({
             orderBy: asc(classes.createdAt),
@@ -17,28 +18,6 @@ export const StudentService = {
         });
     },
 
-    async createClass(name: string) {
-        const clean = name.trim();
-        const existing = await db
-            .select()
-            .from(classes)
-            .where(eq(classes.name, clean));
-        if (existing[0]) return existing[0];
-        const [row] = await db.insert(classes).values({ name: clean }).returning();
-        return row;
-    },
-
-    async createStudent(classId: string, name: string) {
-        const clean = name.trim();
-        const existing = await db
-            .select()
-            .from(students)
-            .where(and(eq(students.classId, classId), eq(students.name, clean)));
-        if (existing[0]) return existing[0];
-        const [row] = await db.insert(students).values({ classId, name: clean }).returning();
-        return row;
-    },
-
     getById(id: string) {
         return db.query.students.findFirst({
             where: eq(students.id, id),
@@ -46,9 +25,17 @@ export const StudentService = {
         });
     },
 
-    async updateClass(id: string, name: string) {
+    /** Idempotent: returns the existing class when the name is already taken. */
+    async createClass(name: string) {
         const clean = name.trim();
-        const [row] = await db.update(classes).set({ name: clean }).where(eq(classes.id, id)).returning();
+        const [existing] = await db.select().from(classes).where(eq(classes.name, clean)).limit(1);
+        if (existing) return existing;
+        const [row] = await db.insert(classes).values({ name: clean }).returning();
+        return row;
+    },
+
+    async updateClass(id: string, name: string) {
+        const [row] = await db.update(classes).set({ name: name.trim() }).where(eq(classes.id, id)).returning();
         return row;
     },
 
@@ -56,9 +43,21 @@ export const StudentService = {
         await db.delete(classes).where(eq(classes.id, id));
     },
 
-    async updateStudent(id: string, name: string) {
+    /** Idempotent: returns the existing student when the name already exists in the class. */
+    async createStudent(classId: string, name: string) {
         const clean = name.trim();
-        const [row] = await db.update(students).set({ name: clean }).where(eq(students.id, id)).returning();
+        const [existing] = await db
+            .select()
+            .from(students)
+            .where(and(eq(students.classId, classId), eq(students.name, clean)))
+            .limit(1);
+        if (existing) return existing;
+        const [row] = await db.insert(students).values({ classId, name: clean }).returning();
+        return row;
+    },
+
+    async updateStudent(id: string, name: string) {
+        const [row] = await db.update(students).set({ name: name.trim() }).where(eq(students.id, id)).returning();
         return row;
     },
 

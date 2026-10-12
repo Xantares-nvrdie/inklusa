@@ -1,39 +1,11 @@
-import { Elysia, t } from "elysia";
+import { Elysia } from "elysia";
 import betterAuthMiddleware from "@/backend/utils/better-auth/middleware";
 import { KnowledgeService } from "../knowledge/service";
+import { AdminModel } from "./model";
 import { AdminService } from "./service";
 
-const Bi = t.Object({ en: t.String({ minLength: 1 }), id: t.String({ minLength: 1 }) });
-const Steps = t.Object({
-    en: t.Array(t.String({ minLength: 1 }), { minItems: 3, maxItems: 6 }),
-    id: t.Array(t.String({ minLength: 1 }), { minItems: 3, maxItems: 6 }),
-});
-const Category = t.Union([
-    t.Literal("INSTRUCTION"),
-    t.Literal("READING"),
-    t.Literal("FOCUS"),
-    t.Literal("EXPRESSION"),
-    t.Literal("PARTICIPATION"),
-]);
-const Slug = t.String({ pattern: "^[a-z0-9]+(-[a-z0-9]+)*$", maxLength: 60 });
-
-const InterventionBody = t.Object({
-    category: Category,
-    title: Bi,
-    summary: Bi,
-    why: Bi,
-    steps: Steps,
-    observe: Bi,
-    isActive: t.Optional(t.Boolean()),
-});
-const ClarificationBody = t.Object({
-    category: Category,
-    label: Bi,
-    barrier: Bi,
-    insight: Bi,
-    supports: t.Array(t.Object({ slug: t.String(), reason: Bi }), { minItems: 1, maxItems: 5 }),
-    isActive: t.Optional(t.Boolean()),
-});
+const NOT_FOUND = { message: "Not found" };
+const TEACHER_NOT_FOUND = { message: "Teacher not found" };
 
 const adminModule = new Elysia({ prefix: "/admin", tags: ["Admin"] })
     .use(betterAuthMiddleware)
@@ -53,15 +25,7 @@ const adminModule = new Elysia({ prefix: "/admin", tags: ["Admin"] })
                 return { message: (e as Error).message || "Could not create teacher" };
             }
         },
-        {
-            adminOnly: true,
-            body: t.Object({
-                name: t.String({ minLength: 1, maxLength: 80 }),
-                email: t.String({ format: "email" }),
-                password: t.String({ minLength: 8, maxLength: 100 }),
-            }),
-            detail: { summary: "Create a teacher account" },
-        },
+        { adminOnly: true, body: AdminModel.createTeacherBody, detail: { summary: "Create a teacher account" } },
     )
     .patch(
         "/teachers/:id/ban",
@@ -69,14 +33,14 @@ const adminModule = new Elysia({ prefix: "/admin", tags: ["Admin"] })
             const row = await AdminService.setBan(params.id, body.banned, body.reason);
             if (!row) {
                 set.status = 404;
-                return { message: "Teacher not found" };
+                return TEACHER_NOT_FOUND;
             }
             return { ok: true };
         },
         {
             adminOnly: true,
-            params: t.Object({ id: t.String() }),
-            body: t.Object({ banned: t.Boolean(), reason: t.Optional(t.String({ maxLength: 200 })) }),
+            params: AdminModel.idParams,
+            body: AdminModel.banBody,
             detail: { summary: "Ban / unban a teacher" },
         },
     )
@@ -86,15 +50,11 @@ const adminModule = new Elysia({ prefix: "/admin", tags: ["Admin"] })
             const row = await AdminService.deleteTeacher(params.id);
             if (!row) {
                 set.status = 404;
-                return { message: "Teacher not found" };
+                return TEACHER_NOT_FOUND;
             }
             return { ok: true };
         },
-        {
-            adminOnly: true,
-            params: t.Object({ id: t.String() }),
-            detail: { summary: "Delete a teacher and their data" },
-        },
+        { adminOnly: true, params: AdminModel.idParams, detail: { summary: "Delete a teacher and their data" } },
     )
 
     // ── Knowledge ──
@@ -103,6 +63,7 @@ const adminModule = new Elysia({ prefix: "/admin", tags: ["Admin"] })
         detail: { summary: "Import built-in knowledge into the database" },
     })
 
+    // Interventions
     .get("/knowledge/interventions", () => AdminService.listInterventions(), { adminOnly: true })
     .post(
         "/knowledge/interventions",
@@ -115,7 +76,7 @@ const adminModule = new Elysia({ prefix: "/admin", tags: ["Admin"] })
             }
             return row;
         },
-        { adminOnly: true, body: t.Composite([t.Object({ slug: Slug }), InterventionBody]) },
+        { adminOnly: true, body: AdminModel.createInterventionBody },
     )
     .put(
         "/knowledge/interventions/:slug",
@@ -124,11 +85,11 @@ const adminModule = new Elysia({ prefix: "/admin", tags: ["Admin"] })
             const row = await AdminService.updateIntervention(params.slug, category, rest, isActive);
             if (!row) {
                 set.status = 404;
-                return { message: "Not found" };
+                return NOT_FOUND;
             }
             return row;
         },
-        { adminOnly: true, params: t.Object({ slug: t.String() }), body: InterventionBody },
+        { adminOnly: true, params: AdminModel.slugParams, body: AdminModel.interventionBody },
     )
     .patch(
         "/knowledge/interventions/:slug/active",
@@ -136,11 +97,11 @@ const adminModule = new Elysia({ prefix: "/admin", tags: ["Admin"] })
             const row = await AdminService.setInterventionActive(params.slug, body.isActive);
             if (!row) {
                 set.status = 404;
-                return { message: "Not found" };
+                return NOT_FOUND;
             }
             return row;
         },
-        { adminOnly: true, params: t.Object({ slug: t.String() }), body: t.Object({ isActive: t.Boolean() }) },
+        { adminOnly: true, params: AdminModel.slugParams, body: AdminModel.activeBody },
     )
     .delete(
         "/knowledge/interventions/:slug",
@@ -148,22 +109,23 @@ const adminModule = new Elysia({ prefix: "/admin", tags: ["Admin"] })
             const row = await AdminService.deleteIntervention(params.slug);
             if (!row) {
                 set.status = 404;
-                return { message: "Not found" };
+                return NOT_FOUND;
             }
             return { ok: true };
         },
-        { adminOnly: true, params: t.Object({ slug: t.String() }) },
+        { adminOnly: true, params: AdminModel.slugParams },
     )
     .get(
         "/knowledge/interventions/:slug/feedback",
         ({ params }) => AdminService.getStrategyFeedbackHistory(params.slug),
         {
             adminOnly: true,
-            params: t.Object({ slug: t.String() }),
+            params: AdminModel.slugParams,
             detail: { summary: "Feedback history for a strategy" },
         },
     )
 
+    // Clarifications
     .get("/knowledge/clarifications", () => AdminService.listClarifications(), { adminOnly: true })
     .post(
         "/knowledge/clarifications",
@@ -176,7 +138,7 @@ const adminModule = new Elysia({ prefix: "/admin", tags: ["Admin"] })
             }
             return row;
         },
-        { adminOnly: true, body: t.Composite([t.Object({ id: Slug }), ClarificationBody]) },
+        { adminOnly: true, body: AdminModel.createClarificationBody },
     )
     .put(
         "/knowledge/clarifications/:id",
@@ -185,11 +147,11 @@ const adminModule = new Elysia({ prefix: "/admin", tags: ["Admin"] })
             const row = await AdminService.updateClarification(params.id, category, rest, isActive);
             if (!row) {
                 set.status = 404;
-                return { message: "Not found" };
+                return NOT_FOUND;
             }
             return row;
         },
-        { adminOnly: true, params: t.Object({ id: t.String() }), body: ClarificationBody },
+        { adminOnly: true, params: AdminModel.idParams, body: AdminModel.clarificationBody },
     )
     .patch(
         "/knowledge/clarifications/:id/active",
@@ -197,11 +159,11 @@ const adminModule = new Elysia({ prefix: "/admin", tags: ["Admin"] })
             const row = await AdminService.setClarificationActive(params.id, body.isActive);
             if (!row) {
                 set.status = 404;
-                return { message: "Not found" };
+                return NOT_FOUND;
             }
             return row;
         },
-        { adminOnly: true, params: t.Object({ id: t.String() }), body: t.Object({ isActive: t.Boolean() }) },
+        { adminOnly: true, params: AdminModel.idParams, body: AdminModel.activeBody },
     )
     .delete(
         "/knowledge/clarifications/:id",
@@ -209,11 +171,11 @@ const adminModule = new Elysia({ prefix: "/admin", tags: ["Admin"] })
             const row = await AdminService.deleteClarification(params.id);
             if (!row) {
                 set.status = 404;
-                return { message: "Not found" };
+                return NOT_FOUND;
             }
             return { ok: true };
         },
-        { adminOnly: true, params: t.Object({ id: t.String() }) },
+        { adminOnly: true, params: AdminModel.idParams },
     );
 
 export default adminModule;

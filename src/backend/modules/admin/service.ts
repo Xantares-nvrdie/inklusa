@@ -1,5 +1,6 @@
-import { and, count, desc, eq, ne, sql } from "drizzle-orm";
+import { and, count, desc, eq, inArray, isNotNull, ne, sql } from "drizzle-orm";
 import { auth } from "@/auth";
+import { countWhere } from "@/backend/utils/query";
 import { db } from "@/db";
 import {
     actionPlans,
@@ -11,132 +12,136 @@ import {
     user,
 } from "@/db/schema";
 import type { BarrierCategory, ClarificationData, InterventionData } from "@/lib/knowledge";
+import { ACTIVE_STATUSES } from "../action-plans/model";
+import { type CreateTeacherInput, RESULT_SCORE } from "./model";
 
 const TEACHER = eq(user.role, "TEACHER");
+const NOT_ADMIN = ne(user.role, "ADMIN");
+const COMPLETED = eq(actionPlans.status, "COMPLETED");
+const isResult = (r: keyof typeof RESULT_SCORE) => and(COMPLETED, eq(actionPlans.reflectionResult, r));
 
 export const AdminService = {
     // ── Insights ─────────────────────────────────────────────────────────────
+    /**
+     * Global insights. Previously 12 sequential queries + a full scan of completed plans in JS;
+     * now 5 aggregate queries executed concurrently, with all counting done in Postgres.
+     */
     async stats() {
-        const [teachers] = await db.select({ n: count() }).from(user).where(TEACHER);
-        const [bannedTeachers] = await db
-            .select({ n: count() })
-            .from(user)
-            .where(and(TEACHER, eq(user.banned, true)));
-        const [plans] = await db.select({ n: count() }).from(actionPlans);
-        const [completed] = await db
-            .select({ n: count() })
-            .from(actionPlans)
-            .where(eq(actionPlans.status, "COMPLETED"));
-        const [ivs] = await db.select({ n: count() }).from(knowledgeInterventions);
-        const [cls] = await db.select({ n: count() }).from(knowledgeClarifications);
+        const [[counts], byCategoryRows, topBarriers, perStrategy, reasonRows] = await Promise.all([
+            // Teacher + knowledge-base counters in one round trip (uncorrelated scalar subqueries).
+            db
+                .select({
+                    totalTeachers: countWhere(TEACHER),
+                    bannedTeachers: countWhere(and(TEACHER, eq(user.banned, true))),
+                    kbInterventions: sql<number>`(select count(*) from ${knowledgeInterventions})`.mapWith(Number),
+                    kbClarifications: sql<number>`(select count(*) from ${knowledgeClarifications})`.mapWith(Number),
+                })
+                .from(user),
 
-        const byCategory = await db
-            .select({ key: actionPlans.barrierCategory, n: count() })
-            .from(actionPlans)
-            .groupBy(actionPlans.barrierCategory);
-        const topBarriers = await db
-            .select({ key: actionPlans.barrierTitle, n: count() })
-            .from(actionPlans)
-            .groupBy(actionPlans.barrierTitle)
-            .orderBy(desc(count()))
-            .limit(5);
-        const topStrategies = await db
-            .select({ key: actionPlans.interventionSlug, n: count() })
-            .from(actionPlans)
-            .groupBy(actionPlans.interventionSlug)
-            .orderBy(desc(count()))
-            .limit(5);
-        const results = await db
-            .select({ key: actionPlans.reflectionResult, n: count() })
-            .from(actionPlans)
-            .where(eq(actionPlans.status, "COMPLETED"))
-            .groupBy(actionPlans.reflectionResult);
+            // Per-category totals; summing them also yields total/completed plan counts.
+            db
+                .select({ key: actionPlans.barrierCategory, n: count(), completed: countWhere(COMPLETED) })
+                .from(actionPlans)
+                .groupBy(actionPlans.barrierCategory),
 
-        const reflectedPlans = await db
-            .select({
-                slug: actionPlans.interventionSlug,
-                result: actionPlans.reflectionResult,
-                reason: actionPlans.reflectionReason,
-            })
-            .from(actionPlans)
-            .where(eq(actionPlans.status, "COMPLETED"));
+            db
+                .select({ key: actionPlans.barrierTitle, n: count() })
+                .from(actionPlans)
+                .groupBy(actionPlans.barrierTitle)
+                .orderBy(desc(count()))
+                .limit(5),
 
-        const strategyMap: Record<
-            string,
-            {
-                slug: string;
-                total: number;
-                veryHelpful: number;
-                helpful: number;
-                someChange: number;
-                notHelpful: number;
-                reasons: Record<string, number>;
-            }
-        > = {};
+            // One row per strategy: usage count + reflection outcome breakdown (feeds topStrategies,
+            // results and strategyEffectiveness).
+            db
+                .select({
+                    slug: actionPlans.interventionSlug,
+                    n: count(),
+                    veryHelpful: countWhere(isResult("VERY_HELPFUL")),
+                    helpful: countWhere(isResult("HELPFUL")),
+                    someChange: countWhere(isResult("SOME_CHANGE")),
+                    notHelpful: countWhere(isResult("NOT_HELPFUL")),
+                })
+                .from(actionPlans)
+                .groupBy(actionPlans.interventionSlug),
 
-        for (const row of reflectedPlans) {
-            if (!row.slug || !row.result) continue;
-            if (!strategyMap[row.slug]) {
-                strategyMap[row.slug] = {
-                    slug: row.slug,
-                    total: 0,
-                    veryHelpful: 0,
-                    helpful: 0,
-                    someChange: 0,
-                    notHelpful: 0,
-                    reasons: {},
-                };
-            }
-            const item = strategyMap[row.slug];
-            item.total++;
-            if (row.result === "VERY_HELPFUL") item.veryHelpful++;
-            else if (row.result === "HELPFUL") item.helpful++;
-            else if (row.result === "SOME_CHANGE") item.someChange++;
-            else if (row.result === "NOT_HELPFUL") item.notHelpful++;
+            db
+                .select({ slug: actionPlans.interventionSlug, reason: actionPlans.reflectionReason, n: count() })
+                .from(actionPlans)
+                .where(and(COMPLETED, isNotNull(actionPlans.reflectionResult), isNotNull(actionPlans.reflectionReason)))
+                .groupBy(actionPlans.interventionSlug, actionPlans.reflectionReason)
+                .orderBy(desc(count())),
+        ]);
 
-            if (row.reason) {
-                item.reasons[row.reason] = (item.reasons[row.reason] || 0) + 1;
-            }
+        const totalPlans = byCategoryRows.reduce((a, r) => a + r.n, 0);
+        const completedPlans = byCategoryRows.reduce((a, r) => a + r.completed, 0);
+
+        const topStrategies = [...perStrategy]
+            .sort((a, b) => b.n - a.n)
+            .slice(0, 5)
+            .map((r) => ({ key: r.slug, n: r.n }));
+
+        // Completed plans grouped by reflection result (null = completed without a result).
+        const sum = (k: "veryHelpful" | "helpful" | "someChange" | "notHelpful") =>
+            perStrategy.reduce((a, r) => a + r[k], 0);
+        const resultCounts = {
+            VERY_HELPFUL: sum("veryHelpful"),
+            HELPFUL: sum("helpful"),
+            SOME_CHANGE: sum("someChange"),
+            NOT_HELPFUL: sum("notHelpful"),
+        };
+        const reflected = Object.values(resultCounts).reduce((a, n) => a + n, 0);
+        const results = [
+            ...Object.entries(resultCounts).map(([key, n]) => ({ key: key as string | null, n })),
+            { key: null, n: completedPlans - reflected },
+        ].filter((r) => r.n > 0);
+
+        const reasonsBySlug = new Map<string, { reason: string; count: number }[]>();
+        for (const r of reasonRows) {
+            if (!r.reason) continue;
+            const list = reasonsBySlug.get(r.slug) ?? [];
+            list.push({ reason: r.reason, count: r.n });
+            reasonsBySlug.set(r.slug, list);
         }
 
-        const strategyEffectiveness = Object.values(strategyMap).map((item) => {
-            const successCount = item.veryHelpful + item.helpful;
-            const struggleCount = item.someChange + item.notHelpful;
-            const avgScore = Number(
-                (
-                    (item.veryHelpful * 4 + item.helpful * 3 + item.someChange * 2 + item.notHelpful * 1) /
-                    item.total
-                ).toFixed(1),
-            );
-            const effectivenessRate = Math.round((avgScore / 4) * 100);
-            const topReasons = Object.entries(item.reasons)
-                .map(([reason, count]) => ({ reason, count }))
-                .sort((a, b) => b.count - a.count);
-
-            return {
-                slug: item.slug,
-                total: item.total,
-                successCount,
-                struggleCount,
-                avgScore,
-                effectivenessRate,
-                successRate: effectivenessRate,
-                veryHelpful: item.veryHelpful,
-                helpful: item.helpful,
-                someChange: item.someChange,
-                notHelpful: item.notHelpful,
-                topReasons,
-            };
-        });
+        const strategyEffectiveness = perStrategy
+            .map((r) => ({ ...r, total: r.veryHelpful + r.helpful + r.someChange + r.notHelpful }))
+            .filter((r) => r.total > 0)
+            .map((r) => {
+                const avgScore = Number(
+                    (
+                        (r.veryHelpful * RESULT_SCORE.VERY_HELPFUL +
+                            r.helpful * RESULT_SCORE.HELPFUL +
+                            r.someChange * RESULT_SCORE.SOME_CHANGE +
+                            r.notHelpful * RESULT_SCORE.NOT_HELPFUL) /
+                        r.total
+                    ).toFixed(1),
+                );
+                const effectivenessRate = Math.round((avgScore / 4) * 100);
+                return {
+                    slug: r.slug,
+                    total: r.total,
+                    successCount: r.veryHelpful + r.helpful,
+                    struggleCount: r.someChange + r.notHelpful,
+                    avgScore,
+                    effectivenessRate,
+                    successRate: effectivenessRate,
+                    veryHelpful: r.veryHelpful,
+                    helpful: r.helpful,
+                    someChange: r.someChange,
+                    notHelpful: r.notHelpful,
+                    topReasons: reasonsBySlug.get(r.slug) ?? [],
+                };
+            });
 
         return {
-            totalTeachers: teachers.n,
-            bannedTeachers: bannedTeachers.n,
-            totalPlans: plans.n,
-            completedPlans: completed.n,
-            kbInterventions: ivs.n,
-            kbClarifications: cls.n,
-            byCategory,
+            totalTeachers: counts.totalTeachers,
+            bannedTeachers: counts.bannedTeachers,
+            totalPlans,
+            completedPlans,
+            kbInterventions: counts.kbInterventions,
+            kbClarifications: counts.kbClarifications,
+            byCategory: byCategoryRows.map(({ key, n }) => ({ key, n })),
             topBarriers,
             topStrategies,
             results,
@@ -145,111 +150,114 @@ export const AdminService = {
     },
 
     // ── Teachers ─────────────────────────────────────────────────────────────
+    /** Teachers with plan/student counters in one query (pre-aggregated subquery + LEFT JOIN). */
     async listTeachers() {
-        const users = await db.select().from(user).where(TEACHER).orderBy(desc(user.createdAt));
-        const plans = await db
-            .select({ teacherId: actionPlans.teacherId, status: actionPlans.status, n: count() })
+        const planStats = db
+            .select({
+                teacherId: actionPlans.teacherId,
+                plans: count().as("plans"),
+                activePlans: countWhere(inArray(actionPlans.status, [...ACTIVE_STATUSES])).as("active_plans"),
+                students: sql<number>`count(distinct ${actionPlans.studentId})`.as("students"),
+            })
             .from(actionPlans)
-            .groupBy(actionPlans.teacherId, actionPlans.status);
-        const studs = await db
-            .select({ teacherId: actionPlans.teacherId, n: sql<number>`count(distinct ${actionPlans.studentId})` })
-            .from(actionPlans)
-            .groupBy(actionPlans.teacherId);
+            .groupBy(actionPlans.teacherId)
+            .as("plan_stats");
 
-        return users.map((u) => {
-            const mine = plans.filter((p) => p.teacherId === u.id);
-            return {
-                id: u.id,
-                name: u.name,
-                email: u.email,
-                banned: !!u.banned,
-                banReason: u.banReason,
-                createdAt: u.createdAt,
-                students: studs.find((s) => s.teacherId === u.id)?.n ?? 0,
-                plans: mine.reduce((a, p) => a + p.n, 0),
-                activePlans: mine
-                    .filter((p) => p.status !== "COMPLETED" && p.status !== "CANCELLED")
-                    .reduce((a, p) => a + p.n, 0),
-            };
-        });
+        const rows = await db
+            .select({
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                banned: user.banned,
+                banReason: user.banReason,
+                createdAt: user.createdAt,
+                students: sql<number>`coalesce(${planStats.students}, 0)`.mapWith(Number),
+                plans: sql<number>`coalesce(${planStats.plans}, 0)`.mapWith(Number),
+                activePlans: sql<number>`coalesce(${planStats.activePlans}, 0)`.mapWith(Number),
+            })
+            .from(user)
+            .leftJoin(planStats, eq(planStats.teacherId, user.id))
+            .where(TEACHER)
+            .orderBy(desc(user.createdAt));
+
+        return rows.map((r) => ({ ...r, banned: !!r.banned }));
     },
 
-    async createTeacher(input: { name: string; email: string; password: string }) {
+    async createTeacher(input: CreateTeacherInput) {
         const normalizedEmail = input.email.trim().toLowerCase();
 
-        // Check if user already exists
-        const [existing] = await db.select({ id: user.id }).from(user).where(eq(user.email, normalizedEmail));
-        if (existing) {
-            throw new Error("User with this email already exists");
-        }
+        const [existing] = await db.select({ id: user.id }).from(user).where(eq(user.email, normalizedEmail)).limit(1);
+        if (existing) throw new Error("User with this email already exists");
 
-        let createdUserId: string | null = null;
+        let createdUserId: string;
         let createdUserName = input.name.trim();
 
         try {
             const res = await auth.api.signUpEmail({
-                body: {
-                    name: createdUserName,
-                    email: normalizedEmail,
-                    password: input.password,
-                },
+                body: { name: createdUserName, email: normalizedEmail, password: input.password },
             });
             createdUserId = res.user.id;
             createdUserName = res.user.name;
-        } catch (err: any) {
-            // If better-auth throws BANNED_USER (due to databaseHooks setting banned: true),
-            // check if the user row was created in the database.
+        } catch (err) {
+            // better-auth may throw BANNED_USER (databaseHooks sets banned: true) even though
+            // the user row was created — recover it if so.
             const [found] = await db
                 .select({ id: user.id, name: user.name })
                 .from(user)
-                .where(eq(user.email, normalizedEmail));
-            if (found) {
-                createdUserId = found.id;
-                createdUserName = found.name;
-            } else {
-                throw err;
-            }
+                .where(eq(user.email, normalizedEmail))
+                .limit(1);
+            if (!found) throw err;
+            createdUserId = found.id;
+            createdUserName = found.name;
         }
 
-        if (createdUserId) {
-            // Activate teacher account immediately because it was created directly by Admin
-            await db
+        await db.transaction(async (tx) => {
+            // Admin-created accounts are active immediately.
+            await tx
                 .update(user)
                 .set({ banned: false, banReason: null, role: "TEACHER" })
                 .where(eq(user.id, createdUserId));
+            // Drop the session signUpEmail created so the admin's own session is untouched.
+            await tx.delete(session).where(eq(session.userId, createdUserId));
+        });
 
-            // Delete any session created during signUpEmail so admin's session remains untouched
-            await db.delete(session).where(eq(session.userId, createdUserId));
-
-            return { id: createdUserId, name: createdUserName, email: normalizedEmail };
-        }
-
-        throw new Error("Failed to create teacher account");
+        return { id: createdUserId, name: createdUserName, email: normalizedEmail };
     },
 
     async setBan(id: string, banned: boolean, reason?: string) {
-        const [row] = await db
-            .update(user)
-            .set({ banned, banReason: banned ? reason?.trim() || null : null })
-            .where(and(eq(user.id, id), ne(user.role, "ADMIN")))
-            .returning({ id: user.id });
-        if (row && banned) await db.delete(session).where(eq(session.userId, id));
-        return row ?? null;
+        return db.transaction(async (tx) => {
+            const [row] = await tx
+                .update(user)
+                .set({ banned, banReason: banned ? reason?.trim() || null : null })
+                .where(and(eq(user.id, id), NOT_ADMIN))
+                .returning({ id: user.id });
+            if (row && banned) await tx.delete(session).where(eq(session.userId, id));
+            return row ?? null;
+        });
     },
 
     async deleteTeacher(id: string) {
         const [row] = await db
             .delete(user)
-            .where(and(eq(user.id, id), ne(user.role, "ADMIN")))
+            .where(and(eq(user.id, id), NOT_ADMIN))
             .returning({ id: user.id });
         return row ?? null;
     },
 
     // ── Knowledge: interventions ─────────────────────────────────────────────
     async listInterventions() {
-        const rows = await db.select().from(knowledgeInterventions).orderBy(knowledgeInterventions.createdAt);
-        return rows.map((r) => ({ slug: r.slug, category: r.category, isActive: r.isActive, ...r.data }));
+        const rows = await db
+            .select({
+                slug: knowledgeInterventions.slug,
+                category: knowledgeInterventions.category,
+                isActive: knowledgeInterventions.isActive,
+                data: knowledgeInterventions.data,
+            })
+            .from(knowledgeInterventions)
+            .orderBy(knowledgeInterventions.createdAt);
+        return rows.map(({ data, ...r }) => ({ ...r, ...data }));
     },
+
     async createIntervention(slug: string, category: BarrierCategory, data: InterventionData, isActive = true) {
         const [row] = await db
             .insert(knowledgeInterventions)
@@ -258,6 +266,7 @@ export const AdminService = {
             .returning({ slug: knowledgeInterventions.slug });
         return row ?? null;
     },
+
     async updateIntervention(slug: string, category: BarrierCategory, data: InterventionData, isActive?: boolean) {
         const [row] = await db
             .update(knowledgeInterventions)
@@ -266,6 +275,7 @@ export const AdminService = {
             .returning({ slug: knowledgeInterventions.slug });
         return row ?? null;
     },
+
     async setInterventionActive(slug: string, isActive: boolean) {
         const [row] = await db
             .update(knowledgeInterventions)
@@ -274,6 +284,7 @@ export const AdminService = {
             .returning({ slug: knowledgeInterventions.slug });
         return row ?? null;
     },
+
     async deleteIntervention(slug: string) {
         const [row] = await db
             .delete(knowledgeInterventions)
@@ -284,9 +295,18 @@ export const AdminService = {
 
     // ── Knowledge: clarifications ────────────────────────────────────────────
     async listClarifications() {
-        const rows = await db.select().from(knowledgeClarifications).orderBy(knowledgeClarifications.createdAt);
-        return rows.map((r) => ({ id: r.id, category: r.category, isActive: r.isActive, ...r.data }));
+        const rows = await db
+            .select({
+                id: knowledgeClarifications.id,
+                category: knowledgeClarifications.category,
+                isActive: knowledgeClarifications.isActive,
+                data: knowledgeClarifications.data,
+            })
+            .from(knowledgeClarifications)
+            .orderBy(knowledgeClarifications.createdAt);
+        return rows.map(({ data, ...r }) => ({ ...r, ...data }));
     },
+
     async createClarification(id: string, category: BarrierCategory, data: ClarificationData, isActive = true) {
         const [row] = await db
             .insert(knowledgeClarifications)
@@ -295,6 +315,7 @@ export const AdminService = {
             .returning({ id: knowledgeClarifications.id });
         return row ?? null;
     },
+
     async updateClarification(id: string, category: BarrierCategory, data: ClarificationData, isActive?: boolean) {
         const [row] = await db
             .update(knowledgeClarifications)
@@ -303,6 +324,7 @@ export const AdminService = {
             .returning({ id: knowledgeClarifications.id });
         return row ?? null;
     },
+
     async setClarificationActive(id: string, isActive: boolean) {
         const [row] = await db
             .update(knowledgeClarifications)
@@ -311,6 +333,7 @@ export const AdminService = {
             .returning({ id: knowledgeClarifications.id });
         return row ?? null;
     },
+
     async deleteClarification(id: string) {
         const [row] = await db
             .delete(knowledgeClarifications)
@@ -319,7 +342,7 @@ export const AdminService = {
         return row ?? null;
     },
 
-    // ── Strategy Feedback History ─────────────────────────────────────────────
+    // ── Strategy feedback history ────────────────────────────────────────────
     async getStrategyFeedbackHistory(slug: string) {
         const rows = await db
             .select({
@@ -348,30 +371,10 @@ export const AdminService = {
             .where(eq(actionPlans.interventionSlug, slug))
             .orderBy(desc(actionPlans.reflectedAt), desc(actionPlans.createdAt));
 
-        return rows.map((r) => ({
-            id: r.id,
-            status: r.status,
-            barrierCategory: r.barrierCategory,
-            barrierTitle: r.barrierTitle,
-            goal: r.goal,
-            timing: r.timing,
-            reflectionResult: r.reflectionResult,
-            reflectionReason: r.reflectionReason,
-            reflectionNote: r.reflectionNote,
-            reflectedAt: r.reflectedAt,
-            createdAt: r.createdAt,
-            teacher: {
-                id: r.teacherId,
-                name: r.teacherName,
-                email: r.teacherEmail,
-            },
-            student: r.studentId
-                ? {
-                      id: r.studentId,
-                      name: r.studentName,
-                      className: r.className ?? null,
-                  }
-                : null,
+        return rows.map(({ teacherId, teacherName, teacherEmail, studentId, studentName, className, ...plan }) => ({
+            ...plan,
+            teacher: { id: teacherId, name: teacherName, email: teacherEmail },
+            student: studentId ? { id: studentId, name: studentName, className: className ?? null } : null,
         }));
     },
 };

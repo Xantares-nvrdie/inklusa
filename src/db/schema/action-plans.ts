@@ -41,5 +41,11 @@ export const actionPlans = pgTable(
     (t) => ({
         teacherIdx: index("action_plans_teacher_idx").on(t.teacherId),
         statusIdx: index("action_plans_status_idx").on(t.status),
+        // Student filter, search-by-student, and ON DELETE SET NULL when a student/class is removed.
+        studentIdx: index("action_plans_student_idx").on(t.studentId),
+        // Admin strategy feedback history + per-strategy aggregates.
+        interventionIdx: index("action_plans_intervention_idx").on(t.interventionSlug),
+        // Browse: ORDER BY created_at DESC + date-range filters.
+        createdAtIdx: index("action_plans_created_at_idx").on(t.createdAt),
     }),
 );

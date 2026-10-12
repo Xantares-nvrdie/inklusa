@@ -1,99 +1,104 @@
-import { and, count, desc, eq, gte, ilike, inArray, isNull, lt } from "drizzle-orm";
+import { and, count, desc, eq, exists, gte, ilike, inArray, isNull, lt, type SQL, sql } from "drizzle-orm";
+import type { BarrierCategory } from "@/backend/utils/model";
+import { countWhere } from "@/backend/utils/query";
 import { db } from "@/db";
 import { actionPlans, students, user } from "@/db/schema";
+import {
+    ACTIVE_STATUSES,
+    type BrowseOptions,
+    HELPFUL_RESULTS,
+    LIMITED_RESULTS,
+    type PlanCreateInput,
+    type PlanFilter,
+    type PlanInsert,
+    type PlanStatusInput,
+    type PlanUpdateInput,
+    type ReflectionInput,
+} from "./model";
 
-type Plan = typeof actionPlans.$inferInsert;
+/** Only the teacher's display name is exposed — never the full user row (email, ban info, role). */
+const WITH_RELATIONS = { student: true, teacher: { columns: { name: true } } } as const;
 
-const ACTIVE = ["PLANNED", "IN_PROGRESS", "NEEDS_REFLECTION"] as const;
+const statusFilter = (filter?: PlanFilter): SQL | undefined => {
+    if (filter === "active") return inArray(actionPlans.status, [...ACTIVE_STATUSES]);
+    if (filter === "completed") return eq(actionPlans.status, "COMPLETED");
+    if (filter === "cancelled") return eq(actionPlans.status, "CANCELLED");
+    return undefined;
+};
 
-export type PlanFilter = "all" | "active" | "completed" | "cancelled";
+const owned = (teacherId: string, id: string) => and(eq(actionPlans.id, id), eq(actionPlans.teacherId, teacherId));
+
+/** Parses a `YYYY-MM-DD` string into a local-midnight Date, or null if invalid. */
+const parseDay = (value?: string) => {
+    if (!value) return null;
+    const d = new Date(`${value}T00:00:00`);
+    return Number.isNaN(d.getTime()) ? null : d;
+};
+
+const escapeLike = (value: string) => value.replace(/[%_\\]/g, (c) => `\\${c}`);
+
+async function updateOwned(teacherId: string, id: string, values: Partial<PlanInsert>) {
+    const [row] = await db.update(actionPlans).set(values).where(owned(teacherId, id)).returning();
+    return row ?? null;
+}
 
 export const ActionPlanService = {
     async list(teacherId: string | null, filter: PlanFilter = "all", studentId?: string) {
-        const filters = [];
-        if (teacherId) {
-            filters.push(eq(actionPlans.teacherId, teacherId));
-        }
+        const where = and(
+            teacherId ? eq(actionPlans.teacherId, teacherId) : undefined,
+            statusFilter(filter),
+            studentId ? eq(actionPlans.studentId, studentId) : undefined,
+        );
 
-        if (filter === "active") {
-            filters.push(inArray(actionPlans.status, [...ACTIVE]));
-        } else if (filter === "completed") {
-            filters.push(eq(actionPlans.status, "COMPLETED"));
-        } else if (filter === "cancelled") {
-            filters.push(eq(actionPlans.status, "CANCELLED"));
-        }
-
-        if (studentId) {
-            filters.push(eq(actionPlans.studentId, studentId));
-        }
-
-        return db.query.actionPlans
-            .findMany({
-                where: filters.length > 0 ? and(...filters) : undefined,
-                orderBy: desc(actionPlans.updatedAt),
-                with: { student: true, teacher: true },
-            })
-            .then((plans) => plans.map((p) => ({ ...p, teacherName: p.teacher?.name ?? "Unknown" })));
+        const plans = await db.query.actionPlans.findMany({
+            where,
+            orderBy: desc(actionPlans.updatedAt),
+            with: WITH_RELATIONS,
+        });
+        return plans.map(({ teacher, ...p }) => ({ ...p, teacherName: teacher?.name ?? "Unknown" }));
     },
 
-    async browse(
-        viewerId: string,
-        opts: {
-            filter?: PlanFilter;
-            page?: number;
-            pageSize?: number;
-            from?: string;
-            to?: string;
-            teacher?: string;
-            q?: string;
-        },
-    ) {
-        const pageSize = Math.min(Math.max(opts.pageSize ?? 10, 1), 50);
-        const page = Math.max(opts.page ?? 1, 1);
-        const filters = [];
+    async browse(viewerId: string, opts: BrowseOptions) {
+        const pageSize = Math.min(Math.max(opts.pageSize || 10, 1), 50);
+        const page = Math.max(opts.page || 1, 1);
 
-        if (opts.filter === "active") filters.push(inArray(actionPlans.status, [...ACTIVE]));
-        else if (opts.filter === "completed") filters.push(eq(actionPlans.status, "COMPLETED"));
-        else if (opts.filter === "cancelled") filters.push(eq(actionPlans.status, "CANCELLED"));
+        const from = parseDay(opts.from);
+        const to = parseDay(opts.to);
+        to?.setDate(to.getDate() + 1); // inclusive end date
 
-        if (opts.teacher) filters.push(eq(actionPlans.teacherId, opts.teacher));
+        const q = opts.q?.trim();
+        const where = and(
+            statusFilter(opts.filter),
+            opts.teacher ? eq(actionPlans.teacherId, opts.teacher) : undefined,
+            from ? gte(actionPlans.createdAt, from) : undefined,
+            to ? lt(actionPlans.createdAt, to) : undefined,
+            q
+                ? inArray(
+                      actionPlans.studentId,
+                      db
+                          .select({ id: students.id })
+                          .from(students)
+                          .where(ilike(students.name, `%${escapeLike(q)}%`)),
+                  )
+                : undefined,
+        );
 
-        const from = opts.from ? new Date(`${opts.from}T00:00:00`) : null;
-        if (from && !Number.isNaN(from.getTime())) filters.push(gte(actionPlans.createdAt, from));
-        const to = opts.to ? new Date(`${opts.to}T00:00:00`) : null;
-        if (to && !Number.isNaN(to.getTime())) {
-            to.setDate(to.getDate() + 1);
-            filters.push(lt(actionPlans.createdAt, to));
-        }
-
-        const q = opts.q?.trim().replace(/[%_\\]/g, (c) => `\\${c}`);
-        if (q) {
-            filters.push(
-                inArray(
-                    actionPlans.studentId,
-                    db
-                        .select({ id: students.id })
-                        .from(students)
-                        .where(ilike(students.name, `%${q}%`)),
-                ),
-            );
-        }
-
-        const where = filters.length > 0 ? and(...filters) : undefined;
-
-        const [{ total }] = await db.select({ total: count() }).from(actionPlans).where(where);
-        const rows = await db.query.actionPlans.findMany({
-            where,
-            orderBy: desc(actionPlans.createdAt),
-            limit: pageSize,
-            offset: (page - 1) * pageSize,
-            with: { student: true, teacher: true },
-        });
-
-        const teacherRows = await db
-            .selectDistinct({ id: user.id, name: user.name })
-            .from(actionPlans)
-            .innerJoin(user, eq(user.id, actionPlans.teacherId));
+        // Independent queries → run concurrently instead of one after another.
+        const [[{ total }], rows, teacherRows] = await Promise.all([
+            db.select({ total: count() }).from(actionPlans).where(where),
+            db.query.actionPlans.findMany({
+                where,
+                orderBy: desc(actionPlans.createdAt),
+                limit: pageSize,
+                offset: (page - 1) * pageSize,
+                with: WITH_RELATIONS,
+            }),
+            // Teachers that own at least one plan (EXISTS uses the teacher_id index, no DISTINCT over all plans).
+            db
+                .select({ id: user.id, name: user.name })
+                .from(user)
+                .where(exists(db.select({ one: sql`1` }).from(actionPlans).where(eq(actionPlans.teacherId, user.id)))),
+        ]);
 
         return {
             items: rows.map(({ teacher, ...p }) => {
@@ -112,67 +117,64 @@ export const ActionPlanService = {
         };
     },
 
+    /** Dashboard counters, aggregated in a single query instead of loading every plan. */
     async summary(teacherId: string) {
-        const rows = await db
-            .select({ status: actionPlans.status })
+        const [row] = await db
+            .select({
+                active: countWhere(inArray(actionPlans.status, [...ACTIVE_STATUSES])),
+                needsReflection: countWhere(eq(actionPlans.status, "NEEDS_REFLECTION")),
+                completed: countWhere(eq(actionPlans.status, "COMPLETED")),
+                cancelled: countWhere(eq(actionPlans.status, "CANCELLED")),
+            })
             .from(actionPlans)
             .where(eq(actionPlans.teacherId, teacherId));
-        return {
-            active: rows.filter((r) => ACTIVE.includes(r.status as any)).length,
-            needsReflection: rows.filter((r) => r.status === "NEEDS_REFLECTION").length,
-            completed: rows.filter((r) => r.status === "COMPLETED").length,
-            cancelled: rows.filter((r) => r.status === "CANCELLED").length,
-        };
+        return row;
     },
 
     getById(teacherId: string, id: string) {
         return db.query.actionPlans.findFirst({
-            where: and(eq(actionPlans.id, id), eq(actionPlans.teacherId, teacherId)),
+            where: owned(teacherId, id),
             with: { student: true },
         });
     },
 
+    /** Per-strategy reflection outcomes for a barrier, aggregated in SQL. */
     async history(
         teacherId: string,
-        barrierCategory: "INSTRUCTION" | "READING" | "FOCUS" | "EXPRESSION" | "PARTICIPATION",
+        barrierCategory: BarrierCategory,
         clarificationId: string,
         studentId?: string | null,
     ) {
-        const filters = [
-            eq(actionPlans.teacherId, teacherId),
-            eq(actionPlans.barrierCategory, barrierCategory),
-            eq(actionPlans.clarificationId, clarificationId),
-            eq(actionPlans.status, "COMPLETED"),
-        ];
-        if (studentId && studentId !== "general") {
-            filters.push(eq(actionPlans.studentId, studentId));
-        } else if (studentId === "general") {
-            // In DB, general classroom is saved as null
-            filters.push(isNull(actionPlans.studentId));
-        }
-
-        // We can do it by querying all and reducing, since it's limited per teacher per barrier
         const rows = await db
             .select({
                 slug: actionPlans.interventionSlug,
-                result: actionPlans.reflectionResult,
+                helpful: countWhere(inArray(actionPlans.reflectionResult, [...HELPFUL_RESULTS])),
+                limited: countWhere(inArray(actionPlans.reflectionResult, [...LIMITED_RESULTS])),
             })
             .from(actionPlans)
-            .where(and(...filters));
+            .where(
+                and(
+                    eq(actionPlans.teacherId, teacherId),
+                    eq(actionPlans.barrierCategory, barrierCategory),
+                    eq(actionPlans.clarificationId, clarificationId),
+                    eq(actionPlans.status, "COMPLETED"),
+                    // "general" = classroom-level plans, stored with a null student
+                    studentId === "general"
+                        ? isNull(actionPlans.studentId)
+                        : studentId
+                          ? eq(actionPlans.studentId, studentId)
+                          : undefined,
+                ),
+            )
+            .groupBy(actionPlans.interventionSlug);
 
-        const stats: Record<string, { helpful: number; limited: number }> = {};
-        for (const r of rows) {
-            if (!stats[r.slug]) stats[r.slug] = { helpful: 0, limited: 0 };
-            if (r.result === "VERY_HELPFUL" || r.result === "HELPFUL") {
-                stats[r.slug].helpful++;
-            } else if (r.result) {
-                stats[r.slug].limited++;
-            }
-        }
-        return stats;
+        return Object.fromEntries(rows.map((r) => [r.slug, { helpful: r.helpful, limited: r.limited }])) as Record<
+            string,
+            { helpful: number; limited: number }
+        >;
     },
 
-    async create(teacherId: string, input: Omit<Plan, "id" | "teacherId" | "status">) {
+    async create(teacherId: string, input: PlanCreateInput) {
         const [row] = await db
             .insert(actionPlans)
             .values({ ...input, teacherId, status: "PLANNED" })
@@ -180,63 +182,33 @@ export const ActionPlanService = {
         return row;
     },
 
-    async setStatus(teacherId: string, id: string, status: "PLANNED" | "IN_PROGRESS" | "NEEDS_REFLECTION") {
-        const [row] = await db
-            .update(actionPlans)
-            .set({ status })
-            .where(and(eq(actionPlans.id, id), eq(actionPlans.teacherId, teacherId)))
-            .returning();
-        return row ?? null;
+    setStatus(teacherId: string, id: string, status: PlanStatusInput) {
+        return updateOwned(teacherId, id, { status });
     },
 
-    async reflect(
-        teacherId: string,
-        id: string,
-        input: { result: "VERY_HELPFUL" | "HELPFUL" | "SOME_CHANGE" | "NOT_HELPFUL"; reason?: string; note?: string },
-    ) {
-        const [row] = await db
-            .update(actionPlans)
-            .set({
-                reflectionResult: input.result,
-                reflectionReason: input.reason || null,
-                reflectionNote: input.note?.trim() || null,
-                reflectedAt: new Date(),
-                status: "COMPLETED",
-            })
-            .where(and(eq(actionPlans.id, id), eq(actionPlans.teacherId, teacherId)))
-            .returning();
-        return row ?? null;
+    reflect(teacherId: string, id: string, input: ReflectionInput) {
+        return updateOwned(teacherId, id, {
+            reflectionResult: input.result,
+            reflectionReason: input.reason || null,
+            reflectionNote: input.note?.trim() || null,
+            reflectedAt: new Date(),
+            status: "COMPLETED",
+        });
     },
 
-    async update(teacherId: string, id: string, input: { goal?: string; timing?: string; studentId?: string | null }) {
-        const updateData: Partial<Plan> = {};
-        if (input.goal !== undefined) updateData.goal = input.goal.trim();
-        if (input.timing !== undefined) updateData.timing = input.timing.trim();
-        if (input.studentId !== undefined) updateData.studentId = input.studentId;
-
-        const [row] = await db
-            .update(actionPlans)
-            .set(updateData)
-            .where(and(eq(actionPlans.id, id), eq(actionPlans.teacherId, teacherId)))
-            .returning();
-        return row ?? null;
+    update(teacherId: string, id: string, input: PlanUpdateInput) {
+        const values: Partial<PlanInsert> = {};
+        if (input.goal !== undefined) values.goal = input.goal.trim();
+        if (input.timing !== undefined) values.timing = input.timing.trim();
+        if (input.studentId !== undefined) values.studentId = input.studentId;
+        return updateOwned(teacherId, id, values);
     },
 
-    async cancel(teacherId: string, id: string) {
-        const [row] = await db
-            .update(actionPlans)
-            .set({ status: "CANCELLED" })
-            .where(and(eq(actionPlans.id, id), eq(actionPlans.teacherId, teacherId)))
-            .returning();
-        return row ?? null;
+    cancel(teacherId: string, id: string) {
+        return updateOwned(teacherId, id, { status: "CANCELLED" });
     },
 
-    async restore(teacherId: string, id: string) {
-        const [row] = await db
-            .update(actionPlans)
-            .set({ status: "PLANNED" })
-            .where(and(eq(actionPlans.id, id), eq(actionPlans.teacherId, teacherId)))
-            .returning();
-        return row ?? null;
+    restore(teacherId: string, id: string) {
+        return updateOwned(teacherId, id, { status: "PLANNED" });
     },
 };
