@@ -440,6 +440,20 @@ export function PlanDetail({ id }: { id: string }) {
                                         {locale === "id"
                                             ? "Hasil evaluasi strategi intervensi di kelas"
                                             : "Intervention strategy outcome record"}
+                                        <span aria-hidden="true"> · </span>
+                                        <time dateTime={plan.reflectedAt ?? plan.createdAt}>
+                                            {plan.reflectedAt
+                                                ? locale === "id"
+                                                    ? "Direfleksikan"
+                                                    : "Reflected"
+                                                : locale === "id"
+                                                  ? "Dibuat"
+                                                  : "Created"}{" "}
+                                            {new Date(plan.reflectedAt ?? plan.createdAt).toLocaleDateString(
+                                                locale === "id" ? "id-ID" : "en-US",
+                                                { day: "numeric", month: "long", year: "numeric" },
+                                            )}
+                                        </time>
                                     </p>
                                 </div>
                             </div>
