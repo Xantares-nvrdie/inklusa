@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -36,8 +36,12 @@ function GoogleIcon({ className }: { className?: string }) {
 
 export function AuthForm({ mode }: { mode: "login" | "register" }) {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { t } = useLanguage();
-    const [error, setError] = useState<string | null>(null);
+    const errorParam = searchParams.get("error");
+    const [error, setError] = useState<string | null>(
+        errorParam === "PENDING_APPROVAL" || errorParam === "BANNED_USER" ? t.auth.pendingApproval : null,
+    );
     const [loading, setLoading] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
     const isLogin = mode === "login";
@@ -49,9 +53,14 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
             const res = await signIn.social({
                 provider: "google",
                 callbackURL: "/dashboard",
+                errorCallbackURL: "/login?error=PENDING_APPROVAL",
             });
             if (res?.error) {
-                setError(res.error.message ?? "Failed to sign in with Google");
+                if ((res.error as { code?: string }).code === "BANNED_USER" || res.error.status === 403) {
+                    setError(t.auth.pendingApproval);
+                } else {
+                    setError(res.error.message ?? "Failed to sign in with Google");
+                }
                 setGoogleLoading(false);
             }
         } catch (err: unknown) {
@@ -72,7 +81,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
             : await signUp.email({ email, password, name: String(f.get("name")) });
         setLoading(false);
         if (res.error) {
-            if ((res.error as any).code === "BANNED_USER" || res.error.status === 403) {
+            if ((res.error as { code?: string }).code === "BANNED_USER" || res.error.status === 403) {
                 setError(t.auth.pendingApproval);
             } else {
                 setError(res.error.message ?? "Something went wrong. Please try again.");
