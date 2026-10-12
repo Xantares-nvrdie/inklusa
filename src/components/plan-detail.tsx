@@ -190,8 +190,7 @@ export function PlanDetail({ id }: { id: string }) {
         }
     }
 
-    const currentStepLabel = completed ? t.planDetail.reflectionSaved : (track[idx]?.label ?? track[0].label);
-    const helpfulOutcome = plan.reflectionResult === "VERY_HELPFUL" || plan.reflectionResult === "HELPFUL";
+    const currentStepLabel = completed ? t.planDetail.progress.reflection : (track[idx]?.label ?? track[0].label);
 
     return (
         <div className="mx-auto max-w-3xl space-y-6 sm:space-y-8">
@@ -427,38 +426,67 @@ export function PlanDetail({ id }: { id: string }) {
 
             {completed && (
                 <div className="space-y-4">
-                    <Card className="space-y-4 border-l-4 border-white/60 border-l-primary bg-primary-soft/30 p-5 shadow-none glass sm:p-6">
-                        <div className="flex items-center gap-3">
-                            <CheckCircle2 className="shrink-0 text-primary" aria-hidden="true" />
-                            <h2 className="text-xl font-bold sm:text-2xl">{t.planDetail.reflectionSaved}</h2>
+                    <Card className="space-y-5 border-white/60 p-5 shadow-sm glass sm:p-6">
+                        <div className="flex items-center justify-between gap-3 border-b border-line/60 pb-4">
+                            <div className="flex items-center gap-3 min-w-0">
+                                <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/15 text-primary">
+                                    <CheckCircle2 size={20} aria-hidden="true" />
+                                </div>
+                                <div className="min-w-0">
+                                    <h2 className="text-lg font-bold sm:text-xl text-foreground">
+                                        {t.planDetail.reflectionSaved}
+                                    </h2>
+                                    <p className="text-xs text-muted">
+                                        {locale === "id"
+                                            ? "Hasil evaluasi strategi intervensi di kelas"
+                                            : "Intervention strategy outcome record"}
+                                    </p>
+                                </div>
+                            </div>
+                            <StatusBadge status="COMPLETED" />
                         </div>
-                        <div className="space-y-1">
-                            <p className="text-base sm:text-lg">
-                                <strong>
+
+                        <div className="grid gap-3.5 sm:grid-cols-2">
+                            <div className="rounded-xl border border-line/70 bg-surface/80 p-3.5 space-y-1">
+                                <p className="text-xs font-semibold text-muted uppercase tracking-wider">
+                                    {locale === "id" ? "Efektivitas Strategi" : "Effectiveness"}
+                                </p>
+                                <p className="text-base font-bold text-foreground">
                                     {plan.reflectionResult &&
                                         (resultLabels[plan.reflectionResult] ?? plan.reflectionResult)}
-                                </strong>
-                            </p>
-                            {plan.reflectionReason && (
-                                <p className="text-sm text-muted sm:text-base">
-                                    {reasonLabels[plan.reflectionReason] ?? plan.reflectionReason}
                                 </p>
+                            </div>
+
+                            {plan.reflectionReason && (
+                                <div className="rounded-xl border border-line/70 bg-surface/80 p-3.5 space-y-1">
+                                    <p className="text-xs font-semibold text-muted uppercase tracking-wider">
+                                        {locale === "id" ? "Faktor Pengaruh" : "Contributing Factor"}
+                                    </p>
+                                    <p className="text-sm font-semibold text-foreground">
+                                        {reasonLabels[plan.reflectionReason] ?? plan.reflectionReason}
+                                    </p>
+                                </div>
                             )}
                         </div>
-                        {plan.reflectionNote && (
-                            <p className="text-base text-muted sm:text-lg">&ldquo;{plan.reflectionNote}&rdquo;</p>
-                        )}
 
-                        <div className="mt-4 rounded-xl bg-white p-4 text-sm font-medium text-muted shadow-sm">
-                            {helpfulOutcome ? t.planDetail.insightHelpful : t.planDetail.insightNotHelpful}
-                        </div>
+                        {plan.reflectionNote && (
+                            <div className="rounded-xl border border-line/70 bg-surface/80 p-4 space-y-1.5">
+                                <p className="text-xs font-semibold text-muted uppercase tracking-wider">
+                                    {locale === "id" ? "Catatan Pengamatan Guru" : "Teacher's Observation"}
+                                </p>
+                                <p className="text-sm sm:text-base text-foreground leading-relaxed italic">
+                                    &ldquo;{plan.reflectionNote}&rdquo;
+                                </p>
+                            </div>
+                        )}
                     </Card>
-                    <div className="flex sm:justify-end">
-                        <ButtonLink
-                            href={helpfulOutcome ? "/action-plans" : "/quick-check"}
-                            className="w-full justify-center sm:w-auto"
-                        >
-                            {helpfulOutcome ? t.planDetail.continueStrategy : t.planDetail.tryAnotherStrategy}
+
+                    <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-3 pt-1">
+                        <ButtonLink href="/action-plans" variant="outline" className="w-full justify-center sm:w-auto">
+                            {locale === "id" ? "← Kembali ke Daftar Intervensi" : "← Back to Interventions"}
+                        </ButtonLink>
+                        <ButtonLink href="/quick-check" className="w-full justify-center sm:w-auto">
+                            {locale === "id" ? "Mulai Quick Check Baru" : "Start New Quick Check"}
                         </ButtonLink>
                     </div>
                 </div>

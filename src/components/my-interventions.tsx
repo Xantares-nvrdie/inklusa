@@ -119,7 +119,7 @@ export function MyInterventions() {
     };
 
     return (
-        <div className="space-y-5 sm:space-y-8">
+        <div className="w-full max-w-full min-w-0 space-y-5 sm:space-y-8 overflow-hidden">
             <div className="flex flex-wrap items-end justify-between gap-3 sm:gap-4">
                 <h1 className="text-2xl sm:text-4xl font-bold">{t.myInterventions.title}</h1>
                 <div className="flex w-full items-center gap-2.5 sm:w-auto sm:gap-3">
@@ -134,24 +134,29 @@ export function MyInterventions() {
                     </button>
                     <ButtonLink id="btn-new-quick-check" href="/quick-check" className="flex-1 sm:flex-none">
                         <Plus size={16} aria-hidden="true" />
-                        {t.myInterventions.btnNew}
+                        <span>{t.myInterventions.btnNew.replace(/^\+\s*/, "")}</span>
                     </ButtonLink>
                 </div>
             </div>
-            {/* Status chips scroll edge-to-edge on phones. */}
-            <div className="-mx-4 flex flex-nowrap gap-2 overflow-x-auto px-4 pb-1 no-scrollbar sm:mx-0 sm:flex-wrap sm:px-0">
-                {filters.map((f) => (
-                    <button
-                        key={f.id}
-                        id={`filter-${f.id}`}
-                        type="button"
-                        onClick={() => setFilter(f.id)}
-                        aria-pressed={filter === f.id}
-                        className={`h-9 shrink-0 cursor-pointer whitespace-nowrap rounded-full border px-4 text-sm font-semibold transition-colors sm:h-10 sm:px-5 ${filter === f.id ? "border-primary bg-primary text-white" : "border-line bg-surface hover:border-primary"}`}
-                    >
-                        {f.label}
-                    </button>
-                ))}
+            {/* Status chips scroll smoothly on phones without breaking page layout. */}
+            <div
+                className="w-full overflow-x-auto no-scrollbar pb-1 touch-pan-x"
+                style={{ WebkitOverflowScrolling: "touch" }}
+            >
+                <div className="flex w-max min-w-full flex-nowrap sm:flex-wrap gap-2">
+                    {filters.map((f) => (
+                        <button
+                            key={f.id}
+                            id={`filter-${f.id}`}
+                            type="button"
+                            onClick={() => setFilter(f.id)}
+                            aria-pressed={filter === f.id}
+                            className={`h-9 shrink-0 cursor-pointer whitespace-nowrap rounded-full border px-4 text-xs sm:text-sm font-semibold transition-colors sm:h-10 sm:px-5 ${filter === f.id ? "border-primary bg-primary text-white" : "border-line bg-surface hover:border-primary"}`}
+                        >
+                            {f.label}
+                        </button>
+                    ))}
+                </div>
             </div>
             {/* Mobile Filter Trigger Bar */}
             <div className="flex sm:hidden items-center gap-2">
@@ -403,7 +408,7 @@ export function MyInterventions() {
                 </p>
             )}
             {plans === null && !error && (
-                <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
+                <div className="grid w-full max-w-full min-w-0 grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2">
                     {[0, 1, 2, 3].map((n) => (
                         <div
                             key={n}
@@ -415,7 +420,7 @@ export function MyInterventions() {
             {plans?.length === 0 && (
                 <Card className="p-8 text-center text-muted glass border-white/60">{t.myInterventions.empty}</Card>
             )}
-            <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
+            <div className="grid w-full max-w-full min-w-0 grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2">
                 {plans?.map((p) => (
                     <PlanCard key={p.id} plan={p} />
                 ))}

@@ -99,7 +99,7 @@ export function Library() {
                 </p>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+            <div className="grid w-full max-w-full min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
                 {list.map((i) => {
                     const c = categories.find((x) => x.id === i.category);
                     return (

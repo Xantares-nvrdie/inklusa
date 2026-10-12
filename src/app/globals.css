@@ -88,6 +88,8 @@
         text-size-adjust: 100%;
         /* Keep anchored sections clear of the sticky 4rem header. */
         scroll-padding-top: 5rem;
+        max-width: 100%;
+        overflow-x: clip;
     }
     body {
         background: var(--background);
@@ -99,6 +101,8 @@
         /* Respect notches / rounded corners in landscape (viewport-fit=cover). */
         padding-left: env(safe-area-inset-left);
         padding-right: env(safe-area-inset-right);
+        max-width: 100%;
+        overflow-x: clip;
     }
     button,
     a,

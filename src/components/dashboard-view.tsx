@@ -155,7 +155,7 @@ export function DashboardView() {
                             {t.dashboard.viewAll}
                         </Link>
                     </div>
-                    <div className="grid gap-4 md:grid-cols-2">
+                    <div className="grid w-full max-w-full min-w-0 grid-cols-1 gap-4 md:grid-cols-2">
                         {needsReflection.slice(0, 2).map((p) => (
                             <PlanCard key={p.id} plan={p} />
                         ))}
@@ -191,7 +191,7 @@ export function DashboardView() {
                     </Link>
                 </div>
                 {plans === null && !error && (
-                    <div className="grid gap-4 md:grid-cols-2">
+                    <div className="grid w-full max-w-full min-w-0 grid-cols-1 gap-4 md:grid-cols-2">
                         <div className="h-36 animate-pulse rounded-card bg-surface-2" />
                         <div className="hidden h-36 animate-pulse rounded-card bg-surface-2 md:block" />
                     </div>
@@ -205,7 +205,7 @@ export function DashboardView() {
                         </div>
                     </Card>
                 )}
-                <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
+                <div className="grid w-full max-w-full min-w-0 grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2">
                     {plans?.slice(0, 4).map((p) => (
                         <PlanCard key={p.id} plan={p} />
                     ))}

@@ -16,22 +16,29 @@ export function PlanCard({ plan }: { plan: PlanRow }) {
     const locked = plan.isOwner === false;
 
     const body = (
-        <Card interactive={!locked} className="flex h-full flex-col gap-2.5 border-white/60 p-5 glass sm:gap-3 sm:p-6">
-            <div className="flex items-start justify-between gap-3">
-                <p className="min-w-0 text-sm font-semibold text-primary">
-                    <span className="block truncate">
+        <Card
+            interactive={!locked}
+            className="flex h-full w-full min-w-0 flex-col gap-2.5 border-white/60 p-4 sm:p-6 glass sm:gap-3 overflow-hidden"
+        >
+            <div className="flex w-full items-start justify-between gap-2 min-w-0">
+                <div className="min-w-0 flex-1 overflow-hidden">
+                    <p className="truncate text-xs sm:text-sm font-semibold text-primary">
                         {plan.student?.name ?? t.dashboard.generalClassroom}
-                        {plan.teacherName && <span className="ml-2 font-normal text-muted">• {plan.teacherName}</span>}
-                    </span>
-                </p>
-                <span className="shrink-0">
+                        {plan.teacherName && (
+                            <span className="ml-1.5 font-normal text-muted">• {plan.teacherName}</span>
+                        )}
+                    </p>
+                </div>
+                <div className="shrink-0 pl-1">
                     <StatusBadge status={plan.status} />
-                </span>
+                </div>
             </div>
-            <h3 className="text-lg font-bold leading-snug sm:text-xl">{plan.barrierTitle}</h3>
-            <p className="line-clamp-2 text-sm text-muted sm:text-base">{iv?.title ?? plan.interventionSlug}</p>
+            <h3 className="text-base sm:text-xl font-bold leading-snug break-words">{plan.barrierTitle}</h3>
+            <p className="line-clamp-2 text-xs sm:text-base text-muted break-words">
+                {iv?.title ?? plan.interventionSlug}
+            </p>
             {!locked && (
-                <p className="mt-auto inline-flex items-center gap-1.5 pt-1 text-sm font-semibold text-primary">
+                <p className="mt-auto inline-flex items-center gap-1.5 pt-1 text-xs sm:text-sm font-semibold text-primary">
                     {done
                         ? t.myInterventions.viewReflection
                         : plan.status === "NEEDS_REFLECTION"
@@ -48,11 +55,15 @@ export function PlanCard({ plan }: { plan: PlanRow }) {
     );
 
     return locked ? (
-        <div className="block" id={`plan-${plan.id}`}>
+        <div className="block w-full min-w-0" id={`plan-${plan.id}`}>
             {body}
         </div>
     ) : (
-        <Link href={`/action-plans/${plan.id}`} className="block rounded-[var(--radius-card)]" id={`plan-${plan.id}`}>
+        <Link
+            href={`/action-plans/${plan.id}`}
+            className="block w-full min-w-0 rounded-[var(--radius-card)]"
+            id={`plan-${plan.id}`}
+        >
             {body}
         </Link>
     );

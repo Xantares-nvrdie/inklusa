@@ -96,7 +96,7 @@ export function StudentList() {
                                 </ButtonLink>
                                 <ButtonLink href="/quick-check" className="min-w-0 px-4">
                                     <Plus size={16} aria-hidden="true" className="shrink-0" />
-                                    <span className="truncate">{t.myInterventions.btnNew}</span>
+                                    <span className="truncate">{t.myInterventions.btnNew.replace(/^\+\s*/, "")}</span>
                                 </ButtonLink>
                             </div>
                         </div>
@@ -142,7 +142,7 @@ export function StudentList() {
 
                         {/* Class Grid */}
                         {!filteredClasses ? (
-                            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            <div className="grid w-full max-w-full min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                                 {[1, 2, 3, 4, 5, 6].map((idx) => (
                                     <div key={idx} className="h-40 animate-pulse rounded-2xl bg-surface-2" />
                                 ))}
@@ -155,7 +155,7 @@ export function StudentList() {
                                 </p>
                             </Card>
                         ) : (
-                            <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+                            <div className="grid w-full max-w-full min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
                                 {filteredClasses.map((c) => (
                                     <button
                                         key={c.id}
@@ -290,7 +290,7 @@ export function StudentList() {
                                 </ButtonLink>
                                 <ButtonLink href="/quick-check" size="sm" className="h-11 min-w-0 px-3 sm:h-9 sm:px-4">
                                     <Plus size={15} aria-hidden="true" className="shrink-0" />
-                                    <span className="truncate">{t.myInterventions.btnNew}</span>
+                                    <span className="truncate">{t.myInterventions.btnNew.replace(/^\+\s*/, "")}</span>
                                 </ButtonLink>
                             </div>
                         </Card>
@@ -339,7 +339,7 @@ export function StudentList() {
                                 )}
                             </Card>
                         ) : (
-                            <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+                            <div className="grid w-full max-w-full min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
                                 {filteredStudents.map((s) => (
                                     <Link
                                         key={s.id}

@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, Sparkles, UserRound, Users } from "lucide-react";
+import { AlertTriangle, Plus, Sparkles, UserRound, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PlanCard } from "@/components/plan-card";
 import { BackLink } from "@/components/ui/back-link";
@@ -65,12 +65,12 @@ export function StudentDetail({ id }: { id: string }) {
     }
 
     return (
-        <div className="mx-auto max-w-4xl space-y-6 sm:space-y-8">
+        <div className="mx-auto w-full max-w-4xl min-w-0 space-y-6 sm:space-y-8 overflow-hidden">
             <div className="space-y-4 sm:space-y-6">
                 <BackLink href="/students" label={t.students.allStudents} />
 
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-5">
-                    <div className="flex items-center gap-3.5 sm:gap-4">
+                <div className="flex w-full min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-5">
+                    <div className="flex min-w-0 items-center gap-3.5 sm:gap-4">
                         <span
                             className={`grid h-12 w-12 sm:h-16 sm:w-16 shrink-0 place-items-center rounded-2xl ${isGeneral ? "bg-accent-soft text-[#9a5612]" : "bg-surface-2 text-primary-strong"}`}
                         >
@@ -85,9 +85,9 @@ export function StudentDetail({ id }: { id: string }) {
                                 <UserRound size={32} className="hidden sm:block" />
                             )}
                         </span>
-                        <div className="min-w-0">
-                            <h1 className="text-2xl font-bold leading-tight sm:text-4xl">{studentName}</h1>
-                            <p className="text-xs sm:text-sm text-muted">
+                        <div className="min-w-0 flex-1">
+                            <h1 className="text-2xl font-bold leading-tight sm:text-4xl truncate">{studentName}</h1>
+                            <p className="text-xs sm:text-sm text-muted truncate">
                                 {isGeneral
                                     ? t.quickCheck.generalClassroomDesc
                                     : className
@@ -98,18 +98,19 @@ export function StudentDetail({ id }: { id: string }) {
                     </div>
                     <ButtonLink
                         href={`/quick-check${!isGeneral ? `?student=${id}` : ""}`}
-                        className="w-full sm:w-auto text-center justify-center"
+                        className="w-full sm:w-auto text-center justify-center gap-2 shrink-0"
                     >
-                        {t.students.newQuickCheck}
+                        <Plus size={16} aria-hidden="true" />
+                        <span>{t.students.newQuickCheck}</span>
                     </ButtonLink>
                 </div>
             </div>
 
             {plans && plans.length > 0 ? (
-                <div className="grid gap-6 md:grid-cols-[1fr_300px]">
-                    <div className="space-y-4 sm:space-y-6">
+                <div className="grid w-full max-w-full min-w-0 grid-cols-1 gap-6 md:grid-cols-[1fr_300px]">
+                    <div className="w-full min-w-0 space-y-4 sm:space-y-6">
                         <h2 className="text-xl font-bold sm:text-2xl">{t.dashboard.recentTitle}</h2>
-                        <div className="grid gap-3 sm:gap-4">
+                        <div className="grid w-full max-w-full min-w-0 grid-cols-1 gap-3 sm:gap-4">
                             {plans.map((p) => (
                                 <PlanCard key={p.id} plan={p} />
                             ))}
@@ -117,15 +118,20 @@ export function StudentDetail({ id }: { id: string }) {
                     </div>
 
                     {/* Insights come first on phones so the summary isn't buried under a long list. */}
-                    <div className="order-first grid gap-3 sm:grid-cols-2 sm:gap-4 md:order-none md:flex md:flex-col md:gap-6">
-                        <Card className="space-y-3 border-white/60 p-5 glass sm:space-y-4 sm:p-6">
+                    <div className="order-first grid w-full max-w-full min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:order-none md:flex md:flex-col md:gap-6">
+                        <Card className="space-y-3 border-white/60 p-5 glass sm:space-y-4 sm:p-6 w-full min-w-0">
                             <h3 className="text-lg font-bold">{t.students.barrierPatterns}</h3>
                             {topBarriers.length > 0 ? (
                                 <ul className="space-y-3">
                                     {topBarriers.map(([title, count]) => (
-                                        <li key={title} className="flex items-center justify-between gap-3 text-sm">
-                                            <span className="font-medium text-muted">{title}</span>
-                                            <span className="grid h-6 min-w-6 place-items-center rounded-full bg-surface-2 px-2 font-bold text-primary-strong">
+                                        <li
+                                            key={title}
+                                            className="flex items-center justify-between gap-3 text-sm min-w-0"
+                                        >
+                                            <span className="font-medium text-muted truncate flex-1 min-w-0">
+                                                {title}
+                                            </span>
+                                            <span className="grid h-6 min-w-6 shrink-0 place-items-center rounded-full bg-surface-2 px-2 font-bold text-primary-strong">
                                                 {count}
                                             </span>
                                         </li>
@@ -137,7 +143,7 @@ export function StudentDetail({ id }: { id: string }) {
                         </Card>
 
                         {(helpful > 0 || notHelpful > 0) && (
-                            <Card className="space-y-3 border-white/60 p-5 glass sm:space-y-4 sm:p-6">
+                            <Card className="space-y-3 border-white/60 p-5 glass sm:space-y-4 sm:p-6 w-full min-w-0">
                                 <h3 className="text-lg font-bold">{t.students.successRate}</h3>
                                 <div className="space-y-3">
                                     <div className="flex items-center justify-between text-sm">
