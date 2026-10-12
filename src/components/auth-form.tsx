@@ -1,5 +1,6 @@
 "use client";
 
+import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -44,6 +45,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
     );
     const [loading, setLoading] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const isLogin = mode === "login";
 
     async function handleGoogleSignIn() {
@@ -153,16 +155,26 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
                     <label htmlFor="password" className="text-sm font-medium">
                         {t.auth.password}
                     </label>
-                    <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        required
-                        minLength={8}
-                        autoComplete={isLogin ? "current-password" : "new-password"}
-                        className={inputCls}
-                        placeholder={t.auth.passwordHint}
-                    />
+                    <div className="relative">
+                        <input
+                            id="password"
+                            name="password"
+                            type={showPassword ? "text" : "password"}
+                            required
+                            minLength={8}
+                            autoComplete={isLogin ? "current-password" : "new-password"}
+                            className={`${inputCls} pr-12`}
+                            placeholder={t.auth.passwordHint}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-muted hover:text-foreground transition rounded-xl focus:outline-none"
+                            aria-label={showPassword ? "Sembunyikan kata sandi" : "Lihat kata sandi"}
+                        >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                    </div>
                 </div>
                 {error && (
                     <p role="alert" className="rounded-xl bg-[#fbe9e7] px-4 py-3 text-sm text-danger">
