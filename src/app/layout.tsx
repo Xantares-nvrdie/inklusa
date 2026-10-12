@@ -21,6 +21,11 @@ export const metadata: Metadata = {
     title: "INKLUSA | Classroom Intervention Assistant",
     description:
         "See the barrier. Support the learner. INKLUSA helps teachers in inclusive classrooms turn observed learning barriers into structured, trackable interventions.",
+    icons: {
+        icon: [{ url: "/icon.png", sizes: "512x512", type: "image/png" }, { url: "/favicon.ico" }],
+        apple: [{ url: "/apple-icon.png", sizes: "512x512", type: "image/png" }],
+        shortcut: ["/favicon.ico"],
+    },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
