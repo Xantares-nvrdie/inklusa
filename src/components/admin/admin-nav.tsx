@@ -43,14 +43,14 @@ export function AdminNav({ name }: { name: string }) {
                                 id={`admin-nav-${href.split("/").pop() || "overview"}`}
                                 aria-current={active ? "page" : undefined}
                                 className={cn(
-                                    "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors",
+                                    "inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-medium transition-colors whitespace-nowrap shrink-0",
                                     active
                                         ? "bg-primary-soft text-primary-strong"
                                         : "text-muted hover:bg-surface-2 hover:text-foreground",
                                 )}
                             >
                                 <Icon size={16} aria-hidden="true" />
-                                <span className="hidden sm:inline">{label}</span>
+                                <span className="hidden sm:inline whitespace-nowrap">{label}</span>
                             </Link>
                         );
                     })}
@@ -92,7 +92,7 @@ export function AdminNav({ name }: { name: string }) {
                             )}
                         >
                             <Icon size={18} aria-hidden="true" />
-                            <span className="max-w-full truncate">{label}</span>
+                            <span className="max-w-full truncate whitespace-nowrap">{label}</span>
                         </Link>
                     );
                 })}

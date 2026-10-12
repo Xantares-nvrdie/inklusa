@@ -6,7 +6,7 @@ const en = {
         teachers: "Teachers",
         classes: "Classes",
         evaluations: "Evaluations",
-        knowledge: "Knowledge Base",
+        knowledge: "Knowledge",
         badge: "Admin",
     },
     overview: {
@@ -85,6 +85,10 @@ const en = {
         del: "Delete",
         confirmDeleteClass: "Are you sure you want to delete this class and all its students? This cannot be undone.",
         confirmDeleteStudent: "Are you sure you want to delete this student and their action plans?",
+        backToClasses: "Back to classes list",
+        manageStudents: "Manage Students",
+        noStudentsInClass: "No students in this class yet.",
+        searchStudents: "Search students in this class...",
     },
     kb: {
         title: "Knowledge Base",
@@ -194,7 +198,7 @@ const id: typeof en = {
         teachers: "Guru",
         classes: "Kelas",
         evaluations: "Evaluasi",
-        knowledge: "Basis Pengetahuan",
+        knowledge: "Pengetahuan",
         badge: "Admin",
     },
     overview: {
@@ -273,6 +277,10 @@ const id: typeof en = {
         del: "Hapus",
         confirmDeleteClass: "Hapus kelas ini beserta SEMUA siswanya? Tindakan ini tidak dapat dibatalkan.",
         confirmDeleteStudent: "Hapus siswa ini beserta riwayat intervensinya?",
+        backToClasses: "Kembali ke daftar kelas",
+        manageStudents: "Kelola Siswa",
+        noStudentsInClass: "Belum ada siswa di kelas ini.",
+        searchStudents: "Cari nama siswa di kelas ini...",
     },
     kb: {
         title: "Basis Pengetahuan",
