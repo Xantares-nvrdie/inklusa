@@ -53,8 +53,7 @@ export function Library() {
             </div>
 
             <div>
-                <div
-                    role="region"
+                <section
                     aria-label={t.library.filterLabel}
                     className="w-full overflow-x-auto no-scrollbar pb-2 pt-1 touch-pan-x"
                     style={{ WebkitOverflowScrolling: "touch" }}
@@ -91,7 +90,7 @@ export function Library() {
                             </button>
                         )}
                     </div>
-                </div>
+                </section>
 
                 <p className="text-sm font-medium text-muted mt-6 mb-2 ml-1" aria-live="polite">
                     {t.library.resultCount(list.length)}

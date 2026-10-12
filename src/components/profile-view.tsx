@@ -397,9 +397,9 @@ export function ProfileView({ isAdmin = false }: { isAdmin?: boolean }) {
                         <form onSubmit={handleSaveProfile} className="space-y-6">
                             {/* Profile Picture Actions */}
                             <div className="space-y-3">
-                                <label className="block text-xs font-bold uppercase tracking-wider text-muted">
+                                <span className="block text-xs font-bold uppercase tracking-wider text-muted">
                                     {locale === "id" ? "Pilihan Foto Profil" : "Profile Picture Options"}
-                                </label>
+                                </span>
                                 <div className="flex flex-wrap items-center gap-3">
                                     <Button
                                         type="button"
