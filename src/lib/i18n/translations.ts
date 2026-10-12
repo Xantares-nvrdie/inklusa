@@ -14,6 +14,9 @@ export interface TranslationDict {
         library: string;
         students: string;
         signOut: string;
+        menu: string;
+        closeMenu: string;
+        explore: string;
     };
     students: {
         title: string;
@@ -97,6 +100,8 @@ export interface TranslationDict {
         eyebrowSupports: string;
         eyebrowPrinciples: string;
         dragHint: string;
+        swipeHint: string;
+        loopSwipeHint: string;
         strategyCount: (count: number) => string;
         strategyTried: string;
         helped: string;
@@ -308,6 +313,9 @@ export const translations: Record<Locale, TranslationDict> = {
             library: "Library",
             students: "Students",
             signOut: "Sign out",
+            menu: "Menu",
+            closeMenu: "Close menu",
+            explore: "Explore",
         },
         students: {
             title: "Students / Classes",
@@ -400,6 +408,8 @@ export const translations: Record<Locale, TranslationDict> = {
             eyebrowSupports: "Support library",
             eyebrowPrinciples: "Our principles",
             dragHint: "Keep scrolling — the cards will follow",
+            swipeHint: "Swipe to see every category",
+            loopSwipeHint: "Swipe to follow each step",
             strategyCount: (count) => `${count} ${count === 1 ? "strategy" : "strategies"}`,
             strategyTried: "Strategy tried",
             helped: "Helped",
@@ -610,6 +620,9 @@ export const translations: Record<Locale, TranslationDict> = {
             library: "Pustaka",
             students: "Siswa",
             signOut: "Keluar",
+            menu: "Menu",
+            closeMenu: "Tutup menu",
+            explore: "Jelajahi",
         },
         students: {
             title: "Siswa / Kelas",
@@ -702,6 +715,8 @@ export const translations: Record<Locale, TranslationDict> = {
             eyebrowSupports: "Pustaka dukungan",
             eyebrowPrinciples: "Prinsip kami",
             dragHint: "Terus gulir — kartu akan bergerak",
+            swipeHint: "Geser untuk melihat semua kategori",
+            loopSwipeHint: "Geser untuk mengikuti tiap langkah",
             strategyCount: (count) => `${count} strategi`,
             strategyTried: "Strategi dicoba",
             helped: "Membantu",

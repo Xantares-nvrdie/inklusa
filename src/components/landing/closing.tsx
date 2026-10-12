@@ -38,27 +38,32 @@ export function LandingPrinciples() {
                 aria-hidden="true"
             />
             <div className="relative mx-auto max-w-6xl px-4 sm:px-5">
-                <motion.div style={{ y: yTitle }} className="mx-auto max-w-2xl text-center">
+                <motion.div style={{ y: yTitle }} className="mx-auto max-w-2xl sm:text-center">
                     <Eyebrow>{t.landing.eyebrowPrinciples}</Eyebrow>
-                    <h2 className="mt-4 sm:mt-5 text-2xl xs:text-3xl sm:text-5xl font-bold">
+                    <h2 className="mt-4 text-[1.75rem] font-bold leading-tight xs:text-3xl sm:mt-5 sm:text-5xl">
                         {t.landing.promisesTitle}
                     </h2>
                 </motion.div>
-                <div className="mt-10 sm:mt-16 grid gap-5 sm:gap-6 md:grid-cols-3">
+                <div className="mt-8 grid gap-3 sm:mt-16 sm:gap-6 md:grid-cols-3">
                     {items.map(({ title, desc, Icon }, i) => (
                         <motion.article
                             key={title}
                             style={{ y: ys[i] }}
-                            className="group relative overflow-hidden rounded-[2rem] border border-line bg-surface p-5 xs:p-6 sm:p-8 shadow-soft transition-shadow duration-300 hover:shadow-lift"
+                            className="group relative overflow-hidden rounded-[1.5rem] border border-line bg-surface p-5 shadow-soft transition-shadow duration-300 hover:shadow-lift sm:rounded-[2rem] sm:p-8"
                         >
-                            <span className="pointer-events-none absolute -bottom-8 -right-2 font-display text-[9rem] font-bold leading-none text-surface-2 transition-colors duration-500 group-hover:text-primary-soft">
+                            <span className="pointer-events-none absolute -bottom-6 -right-1 font-display text-[6.5rem] font-bold leading-none text-surface-2 transition-colors duration-500 group-hover:text-primary-soft sm:-bottom-8 sm:-right-2 sm:text-[9rem]">
                                 {i + 1}
                             </span>
-                            <span className="relative grid h-12 w-12 sm:h-14 sm:w-14 place-items-center rounded-2xl bg-primary-soft text-primary-strong transition-all duration-300 group-hover:rotate-[-6deg] group-hover:bg-primary group-hover:text-white">
-                                <Icon size={24} aria-hidden="true" />
-                            </span>
-                            <h3 className="relative mt-6 sm:mt-8 text-xl sm:text-2xl font-bold">{title}</h3>
-                            <p className="relative mt-2.5 sm:mt-3 text-sm sm:text-base text-muted">{desc}</p>
+                            {/* Icon sits beside the title on phones to keep cards short. */}
+                            <div className="relative flex items-center gap-3.5 sm:block">
+                                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-primary-soft text-primary-strong transition-all duration-300 group-hover:rotate-[-6deg] group-hover:bg-primary group-hover:text-white sm:h-14 sm:w-14">
+                                    <Icon size={22} aria-hidden="true" />
+                                </span>
+                                <h3 className="text-lg font-bold leading-snug sm:mt-8 sm:text-2xl">{title}</h3>
+                            </div>
+                            <p className="relative mt-2.5 pr-10 text-sm text-muted sm:mt-3 sm:pr-0 sm:text-base">
+                                {desc}
+                            </p>
                         </motion.article>
                     ))}
                 </div>
@@ -76,13 +81,15 @@ export function LandingCta() {
     const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end end"] });
     const p = useSpring(scrollYProgress, PARALLAX_SPRING);
     const scale = useTransform(p, [0, 1], [1 - 0.1 * k, 1]);
-    const radius = useTransform(p, [0, 1], [64, 32]);
+    // A 64px radius turns a phone-width panel into a pill; scale it to the viewport.
+    const wide = useMediaQuery("(min-width: 640px)");
+    const radius = useTransform(p, [0, 1], wide ? [64, 32] : [36, 28]);
     const yGlowA = useTransform(p, [0, 1], [-120 * k, 60 * k]);
     const yGlowB = useTransform(p, [0, 1], [140 * k, -40 * k]);
     const yText = useTransform(p, [0, 1], [80 * k, 0]);
 
     return (
-        <section ref={ref} className="mx-auto max-w-6xl px-4 sm:px-5 py-16 sm:py-28">
+        <section id="cta" ref={ref} className="mx-auto max-w-6xl px-4 py-12 sm:px-5 sm:py-28">
             <motion.div
                 style={{ scale, borderRadius: radius }}
                 className="bg-ink relative overflow-hidden px-5 sm:px-8 py-14 sm:py-24 text-center text-white shadow-lift"

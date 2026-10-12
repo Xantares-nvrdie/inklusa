@@ -1,11 +1,12 @@
 "use client";
 
 import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
-import { ArrowRight, Check, Sparkles, UserRoundCheck } from "lucide-react";
+import { ArrowDown, ArrowRight, Check, Sparkles, UserRoundCheck } from "lucide-react";
 import Image from "next/image";
 import { useRef } from "react";
 import { ButtonLink } from "@/components/ui/button";
 import { useLanguage } from "@/lib/i18n/context";
+import { useMediaQuery } from "@/lib/use-media-query";
 import { PARALLAX_SPRING } from "./shared";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -16,10 +17,13 @@ const EASE = [0.22, 1, 0.36, 1] as const;
  * subtle pointer-driven tilt on the illustration.
  */
 export function LandingHero() {
-    const { t, locale } = useLanguage();
+    const { t } = useLanguage();
     const ref = useRef<HTMLElement>(null);
     const reduce = useReducedMotion();
-    const k = reduce ? 0 : 1;
+    // Phones stack copy above the art, so layered parallax (and touch-driven tilt)
+    // only pushes chips over the header. Keep the depth effect for desktop.
+    const isDesktop = useMediaQuery("(min-width: 1024px)");
+    const k = reduce || !isDesktop ? 0 : 1;
 
     const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
     const p = useSpring(scrollYProgress, PARALLAX_SPRING);
@@ -27,7 +31,7 @@ export function LandingHero() {
     const yBlobs = useTransform(p, [0, 1], [0, 260 * k]);
     const yGrid = useTransform(p, [0, 1], [0, 120 * k]);
     const yText = useTransform(p, [0, 1], [0, 200 * k]);
-    const textOpacity = useTransform(p, [0, 0.65], [1, 0]);
+    const textOpacity = useTransform(p, [0, 0.65], [1, k ? 0 : 1]);
     const yArt = useTransform(p, [0, 1], [0, -120 * k]);
     const artScale = useTransform(p, [0, 1], [1, 1 + 0.15 * k]);
     const yChipA = useTransform(p, [0, 1], [0, -340 * k]);
@@ -46,6 +50,7 @@ export function LandingHero() {
     const chipY = useTransform(sy, (v) => v * -24 * k);
 
     function onPointerMove(e: React.PointerEvent<HTMLElement>) {
+        if (e.pointerType !== "mouse") return;
         const r = e.currentTarget.getBoundingClientRect();
         mx.set((e.clientX - r.left) / r.width - 0.5);
         my.set((e.clientY - r.top) / r.height - 0.5);
@@ -73,9 +78,9 @@ export function LandingHero() {
                 aria-hidden="true"
             />
 
-            <div className="mx-auto grid min-h-[calc(100svh-4rem)] max-w-6xl items-center gap-10 px-4 sm:px-5 pb-20 sm:pb-28 pt-10 sm:pt-14 lg:grid-cols-[1.05fr_0.95fr]">
+            <div className="mx-auto grid max-w-6xl items-center gap-8 px-4 pb-14 pt-7 sm:gap-10 sm:px-5 sm:pb-28 sm:pt-14 lg:min-h-[calc(100svh-4rem)] lg:grid-cols-[1.05fr_0.95fr]">
                 {/* Layer 2 — copy */}
-                <motion.div style={{ y: yText, opacity: textOpacity }} className="relative z-10 space-y-6 sm:space-y-8">
+                <motion.div style={{ y: yText, opacity: textOpacity }} className="relative z-10 space-y-5 sm:space-y-8">
                     <motion.span
                         initial={{ opacity: 0, y: 12 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -91,7 +96,7 @@ export function LandingHero() {
 
                     <h1
                         id="hero-title"
-                        className="text-3xl min-[420px]:text-4xl font-bold leading-[1.08] sm:leading-[1.02] tracking-[-0.035em] sm:text-7xl lg:text-[5.4rem]"
+                        className="text-[2.1rem] font-bold leading-[1.05] tracking-[-0.035em] min-[420px]:text-[2.5rem] sm:text-7xl sm:leading-[1.02] lg:text-[5.4rem]"
                     >
                         {titleLines.map((line, i) => (
                             <span key={line} className="block overflow-hidden pb-1 sm:pb-2">
@@ -111,22 +116,23 @@ export function LandingHero() {
                         initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.7, delay: 0.35, ease: EASE }}
-                        className="max-w-xl text-base sm:text-lg leading-relaxed text-muted"
+                        className="max-w-xl text-[0.95rem] leading-relaxed text-muted sm:text-lg"
                     >
                         {t.landing.heroDescription}
                     </motion.p>
 
                     <motion.div
+                        id="hero-cta"
                         initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.7, delay: 0.45, ease: EASE }}
-                        className="flex flex-col min-[420px]:flex-row flex-wrap items-stretch min-[420px]:items-center gap-3"
+                        className="flex flex-col items-stretch gap-1.5 pt-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3 sm:pt-0"
                     >
                         <ButtonLink
                             id="cta-hero-start"
                             href="/register"
                             size="lg"
-                            className="group w-full min-[420px]:w-auto justify-center"
+                            className="group w-full justify-center sm:w-auto"
                         >
                             {t.landing.ctaQuickCheck}
                             <ArrowRight
@@ -135,14 +141,20 @@ export function LandingHero() {
                                 className="transition-transform group-hover:translate-x-1"
                             />
                         </ButtonLink>
+                        {/* Secondary action reads as a quiet link on phones so the primary CTA leads. */}
                         <ButtonLink
                             id="cta-hero-how"
                             href="#how"
                             variant="outline"
                             size="lg"
-                            className="w-full min-[420px]:w-auto justify-center"
+                            className="group w-full justify-center max-sm:h-12 max-sm:border-transparent max-sm:bg-transparent max-sm:text-[0.95rem] max-sm:text-primary-strong max-sm:shadow-none sm:w-auto"
                         >
                             {t.landing.ctaHow}
+                            <ArrowDown
+                                size={16}
+                                aria-hidden="true"
+                                className="transition-transform group-hover:translate-y-0.5 sm:hidden"
+                            />
                         </ButtonLink>
                     </motion.div>
 
@@ -150,7 +162,7 @@ export function LandingHero() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.8, delay: 0.6 }}
-                        className="flex items-center gap-2 text-xs sm:text-sm text-muted"
+                        className="flex items-center justify-center gap-2 text-xs text-muted sm:justify-start sm:text-sm"
                     >
                         <Sparkles size={14} className="text-accent shrink-0" aria-hidden="true" />
                         {t.landing.quote}
@@ -158,7 +170,7 @@ export function LandingHero() {
                 </motion.div>
 
                 {/* Layer 3 — illustration + floating UI */}
-                <div className="relative mx-auto aspect-square w-full max-w-[540px]">
+                <div className="relative mx-auto aspect-square w-full max-w-[22rem] sm:max-w-[540px]">
                     <motion.div style={{ y: yArt, scale: artScale }} className="absolute inset-0">
                         <motion.div
                             style={{ x: artX, y: artY }}
@@ -187,13 +199,13 @@ export function LandingHero() {
                     </motion.div>
 
                     {/* Chip A — observed barrier */}
-                    <motion.div style={{ y: yChipA }} className="absolute -left-2 top-[6%] z-20 sm:-left-10">
+                    <motion.div style={{ y: yChipA }} className="absolute left-0 top-[3%] z-20 sm:-left-10 sm:top-[6%]">
                         <motion.div
                             style={{ x: chipX, y: chipY }}
                             initial={{ opacity: 0, scale: 0.85 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 0.8, delay: 0.7, ease: EASE }}
-                            className="glass w-48 sm:w-56 rounded-2xl border border-white/70 p-3.5 sm:p-4 shadow-lift"
+                            className="glass w-44 sm:w-56 rounded-2xl border border-white/70 p-3.5 sm:p-4 shadow-lift"
                         >
                             <p className="text-[0.65rem] font-semibold uppercase tracking-widest text-muted">
                                 {t.landing.observedBarrier}
@@ -213,7 +225,10 @@ export function LandingHero() {
                     </motion.div>
 
                     {/* Chip B — teacher decides */}
-                    <motion.div style={{ y: yChipB }} className="absolute -bottom-2 left-[4%] z-20">
+                    <motion.div
+                        style={{ y: yChipB }}
+                        className="absolute bottom-0 left-[2%] z-20 sm:-bottom-2 sm:left-[4%]"
+                    >
                         <motion.div
                             style={{ x: chipX, y: chipY }}
                             initial={{ opacity: 0, scale: 0.85 }}
@@ -229,7 +244,10 @@ export function LandingHero() {
                     </motion.div>
 
                     {/* Chip C — strategy outcome */}
-                    <motion.div style={{ y: yChipC }} className="absolute -right-2 bottom-[22%] z-20 sm:-right-8">
+                    <motion.div
+                        style={{ y: yChipC }}
+                        className="absolute bottom-[20%] right-0 z-20 sm:-right-8 sm:bottom-[22%]"
+                    >
                         <motion.div
                             style={{ x: chipX, y: chipY }}
                             initial={{ opacity: 0, scale: 0.85 }}

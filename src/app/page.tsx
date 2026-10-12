@@ -5,7 +5,7 @@ import { LandingHero } from "@/components/landing/hero";
 import { LandingLoop } from "@/components/landing/loop";
 import { LandingManifesto } from "@/components/landing/manifesto";
 import { LandingProblem } from "@/components/landing/problem";
-import { ScrollProgress } from "@/components/landing/shared";
+import { LandingStickyCta, ScrollProgress } from "@/components/landing/shared";
 import { LandingSupports } from "@/components/landing/supports";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
@@ -31,6 +31,7 @@ export default function LandingPage() {
                 <LandingCta />
             </main>
             <SiteFooter />
+            <LandingStickyCta />
         </>
     );
 }

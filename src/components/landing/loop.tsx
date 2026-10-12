@@ -6,7 +6,8 @@ import { useRef, useState } from "react";
 import { CategoryIcon } from "@/components/category-icon";
 import { useLanguage } from "@/lib/i18n/context";
 import { useKnowledge } from "@/lib/knowledge-context";
-import { Eyebrow } from "./shared";
+import { cn } from "@/lib/utils";
+import { CarouselDots, CarouselEndSpacer, carouselTrackCls, Eyebrow, useSnapCarousel } from "./shared";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -21,17 +22,22 @@ function useSteps() {
 }
 
 /** Mock product screens rendered for each loop step. */
-function StepVisual({ index }: { index: number }) {
+function StepVisual({ index, compact = false }: { index: number; compact?: boolean }) {
     const { t, locale } = useLanguage();
     const { categories, getIntervention } = useKnowledge();
     const cat = categories[1] ?? categories[0];
     const clar = cat?.clarifications.slice(0, 3) ?? [];
     const sample = getIntervention("graphic-organizer");
+    const titleCls = cn("font-display font-semibold leading-snug", compact ? "text-lg" : "text-2xl");
 
     const header = (label: string) => (
-        <div className="mb-5 flex items-center justify-between">
-            <p className="text-xs font-semibold uppercase tracking-widest text-white/50">{label}</p>
-            <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">{t.landing.loopMock.class}</span>
+        <div className={cn("flex items-center justify-between gap-2", compact ? "mb-3" : "mb-5")}>
+            <p className="truncate text-[11px] font-semibold uppercase tracking-widest text-white/50 sm:text-xs">
+                {label}
+            </p>
+            <span className="shrink-0 rounded-full bg-white/10 px-2.5 py-1 text-[11px] text-white/70 sm:px-3 sm:text-xs">
+                {t.landing.loopMock.class}
+            </span>
         </div>
     );
 
@@ -39,15 +45,15 @@ function StepVisual({ index }: { index: number }) {
         return (
             <div>
                 {header(t.landing.loopMock.step1)}
-                <p className="font-display text-2xl font-semibold">{t.landing.loopMock.step1Title}</p>
-                <div className="mt-6 grid gap-2.5">
+                <p className={titleCls}>{t.landing.loopMock.step1Title}</p>
+                <div className={cn("grid", compact ? "mt-4 gap-2" : "mt-6 gap-2.5")}>
                     {categories.map((c, i) => (
                         <motion.div
                             key={c.id}
                             initial={{ opacity: 0, x: 16 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: i * 0.06, duration: 0.5, ease: EASE }}
-                            className={`flex items-center gap-3 rounded-2xl border px-4 py-3 ${
+                            className={`flex items-center gap-3 rounded-2xl border px-4 ${compact ? "py-2.5" : "py-3"} ${
                                 i === 1 ? "border-[#7fd1c4] bg-[#7fd1c4]/15" : "border-white/10 bg-white/5"
                             }`}
                         >
@@ -64,8 +70,8 @@ function StepVisual({ index }: { index: number }) {
         return (
             <div>
                 {header(t.landing.loopMock.step2)}
-                <p className="font-display text-2xl font-semibold">{t.landing.loopMock.step2Title}</p>
-                <div className="mt-6 space-y-2.5">
+                <p className={titleCls}>{t.landing.loopMock.step2Title}</p>
+                <div className={cn(compact ? "mt-4 space-y-2" : "mt-6 space-y-2.5")}>
                     {clar.map((c, i) => (
                         <motion.div
                             key={c.id}
@@ -104,9 +110,9 @@ function StepVisual({ index }: { index: number }) {
                 <p className="text-xs font-semibold uppercase tracking-widest text-[#7fd1c4]">
                     {t.landing.loopMock.suggestedStrategy}
                 </p>
-                <p className="mt-2 font-display text-2xl font-semibold">{sample?.title}</p>
+                <p className={cn("mt-2", titleCls)}>{sample?.title}</p>
                 <p className="mt-3 line-clamp-2 text-sm text-white/65">{sample?.why}</p>
-                <ol className="mt-6 space-y-3">
+                <ol className={cn(compact ? "mt-4 space-y-2.5" : "mt-6 space-y-3")}>
                     {sample?.steps.slice(0, 4).map((s, i) => (
                         <motion.li
                             key={s}
@@ -129,7 +135,7 @@ function StepVisual({ index }: { index: number }) {
     return (
         <div>
             {header(t.landing.loopMock.step4)}
-            <p className="font-display text-2xl font-semibold">{t.landing.loopMock.step4Title}</p>
+            <p className={titleCls}>{t.landing.loopMock.step4Title}</p>
             <div className="mt-5 sm:mt-6 grid grid-cols-3 gap-1.5 sm:gap-2.5">
                 {options.map((o, i) => (
                     <motion.div
@@ -160,7 +166,7 @@ function StepVisual({ index }: { index: number }) {
                     <motion.span
                         key={h}
                         initial={{ height: 0 }}
-                        animate={{ height: h }}
+                        animate={{ height: compact ? Math.round(h * 0.72) : h }}
                         transition={{ delay: 0.35 + i * 0.06, duration: 0.6, ease: EASE }}
                         className="w-full rounded-t-lg bg-gradient-to-t from-[#d5a6e6]/30 to-[#d5a6e6]"
                     />
@@ -286,38 +292,115 @@ export function LandingLoop() {
                 </div>
             </div>
 
-            {/* Mobile / tablet — stacked */}
-            <div className="relative mx-auto max-w-2xl px-4 sm:px-5 py-16 sm:py-24 lg:hidden">
-                <Eyebrow dark>{t.landing.eyebrowLoop}</Eyebrow>
-                <h2 className="mt-4 sm:mt-5 text-2xl xs:text-3xl sm:text-4xl font-bold">{t.landing.loopTitle}</h2>
-                <p className="mt-3 sm:mt-4 text-base sm:text-lg text-white/65">{t.landing.loopSub}</p>
-                <div className="mt-8 sm:mt-10 space-y-5 sm:space-y-6">
-                    {steps.map((s, i) => (
-                        <motion.div
-                            key={s.key}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: "-60px" }}
-                            transition={{ duration: 0.6, ease: EASE }}
-                            className="rounded-[1.75rem] border border-white/10 bg-white/[0.06] p-4 sm:p-6"
-                        >
-                            <div className="mb-5 flex items-center gap-3">
-                                <span
-                                    className="grid h-10 w-10 place-items-center rounded-xl text-[#0c2421]"
-                                    style={{ background: s.accent }}
-                                >
-                                    <s.Icon size={18} aria-hidden="true" />
-                                </span>
-                                <div>
-                                    <p className="font-display text-xl font-semibold">{s.title}</p>
-                                    <p className="text-sm text-white/65">{s.desc}</p>
-                                </div>
-                            </div>
-                            <StepVisual index={i} />
-                        </motion.div>
-                    ))}
-                </div>
-            </div>
+            {/* Mobile / tablet — swipeable steps */}
+            <LoopCarousel steps={steps} />
         </section>
+    );
+}
+
+/**
+ * Phones get the same story as a native swipe carousel: a 4-segment step
+ * control on top, one framed "app screen" per step, no scroll hijacking.
+ */
+function LoopCarousel({ steps }: { steps: ReturnType<typeof useSteps> }) {
+    const { t } = useLanguage();
+    const { ref, active, scrollTo } = useSnapCarousel();
+    const shortTitle = (title: string) => title.split(" (")[0];
+
+    return (
+        <div className="relative py-16 sm:py-24 lg:hidden">
+            <div className="mx-auto max-w-2xl px-4 sm:px-5">
+                <Eyebrow dark>{t.landing.eyebrowLoop}</Eyebrow>
+                <h2 className="mt-4 text-[1.75rem] font-bold leading-tight xs:text-3xl sm:mt-5 sm:text-4xl">
+                    {t.landing.loopTitle}
+                </h2>
+                <p className="mt-3 text-[0.95rem] text-white/65 sm:mt-4 sm:text-lg">{t.landing.loopSub}</p>
+
+                {/* Step control — mirrors and drives the carousel */}
+                <ol className="mt-7 grid grid-cols-4 gap-2">
+                    {steps.map((s, i) => (
+                        <li key={s.key}>
+                            <button
+                                type="button"
+                                onClick={() => scrollTo(i)}
+                                aria-label={`${i + 1}. ${s.title}`}
+                                aria-current={i === active ? "step" : undefined}
+                                className="block w-full cursor-pointer py-1 text-left"
+                            >
+                                <span className="block h-1 overflow-hidden rounded-full bg-white/10">
+                                    <span
+                                        className="block h-full rounded-full transition-[width] duration-500"
+                                        style={{ width: i <= active ? "100%" : "0%", background: s.accent }}
+                                    />
+                                </span>
+                                <span
+                                    className={cn(
+                                        "mt-2 flex items-baseline gap-1 text-[11px] font-semibold transition-colors xs:text-xs",
+                                        i === active ? "text-white" : "text-white/45",
+                                    )}
+                                >
+                                    <span className="font-display">0{i + 1}</span>
+                                    <span className="truncate">{shortTitle(s.title)}</span>
+                                </span>
+                            </button>
+                        </li>
+                    ))}
+                </ol>
+            </div>
+
+            <section
+                ref={ref}
+                aria-roledescription="carousel"
+                aria-label={t.landing.loopTitle}
+                className={cn(carouselTrackCls, "mt-4 items-stretch")}
+            >
+                {steps.map((s, i) => (
+                    <article
+                        key={s.key}
+                        data-slide
+                        aria-roledescription="slide"
+                        aria-label={`${i + 1} / ${steps.length}`}
+                        className={cn(
+                            "flex w-[86%] max-w-[26rem] shrink-0 snap-start flex-col rounded-[1.75rem] border bg-white/[0.06] p-4 transition-colors duration-300 sm:p-5",
+                            i === active ? "border-white/20" : "border-white/10",
+                        )}
+                    >
+                        <div className="flex items-start gap-3">
+                            <span
+                                className="grid h-10 w-10 shrink-0 place-items-center rounded-xl text-[#0c2421]"
+                                style={{ background: s.accent }}
+                            >
+                                <s.Icon size={18} aria-hidden="true" />
+                            </span>
+                            <div className="min-w-0">
+                                <p className="font-display text-lg font-semibold leading-snug">{s.title}</p>
+                                <p className="text-sm leading-snug text-white/65">{s.desc}</p>
+                            </div>
+                        </div>
+                        {/* Framed app screen */}
+                        <div className="mt-4 flex-1 rounded-[1.25rem] border border-white/10 bg-[#0c2421]/70 p-4 shadow-inner">
+                            <div className="mb-3 flex gap-1.5" aria-hidden="true">
+                                <span className="h-2 w-2 rounded-full bg-white/15" />
+                                <span className="h-2 w-2 rounded-full bg-white/15" />
+                                <span className="h-2 w-2 rounded-full bg-white/15" />
+                            </div>
+                            <StepVisual index={i} compact />
+                        </div>
+                    </article>
+                ))}
+                <CarouselEndSpacer />
+            </section>
+
+            <div className="mx-auto mt-3 flex max-w-2xl items-center justify-between gap-3 px-4 sm:px-5">
+                <p className="text-xs text-white/45">{t.landing.loopSwipeHint}</p>
+                <CarouselDots
+                    dark
+                    count={steps.length}
+                    active={active}
+                    onSelect={scrollTo}
+                    label={(i) => `${i + 1}. ${steps[i].title}`}
+                />
+            </div>
+        </div>
     );
 }
