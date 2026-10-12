@@ -436,7 +436,11 @@ export function ProfileView({ isAdmin = false }: { isAdmin?: boolean }) {
                                 <div className="space-y-2 pt-2">
                                     <p className="text-xs text-muted flex items-center gap-1.5">
                                         <Sparkles size={14} className="text-accent" />
-                                        <span>{locale === "id" ? "Atau pilih avatar siap pakai:" : "Or pick a preset avatar:"}</span>
+                                        <span>
+                                            {locale === "id"
+                                                ? "Atau pilih avatar siap pakai:"
+                                                : "Or pick a preset avatar:"}
+                                        </span>
                                     </p>
                                     <div className="flex flex-wrap gap-2.5">
                                         {PRESET_AVATARS.map((preset) => {

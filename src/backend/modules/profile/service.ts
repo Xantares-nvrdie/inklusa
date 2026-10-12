@@ -27,18 +27,14 @@ export const ProfileService = {
             updateData.image = data.image;
         }
 
-        const [updated] = await db
-            .update(user)
-            .set(updateData)
-            .where(eq(user.id, userId))
-            .returning({
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                image: user.image,
-                role: user.role,
-                createdAt: user.createdAt,
-            });
+        const [updated] = await db.update(user).set(updateData).where(eq(user.id, userId)).returning({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.image,
+            role: user.role,
+            createdAt: user.createdAt,
+        });
 
         return updated;
     },
