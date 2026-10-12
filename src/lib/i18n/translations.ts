@@ -114,6 +114,8 @@ export interface TranslationDict {
         passwordHint: string;
         btnSignIn: string;
         btnRegister: string;
+        btnGoogle: string;
+        orDivider: string;
         pleaseWait: string;
         dontHaveAccount: string;
         alreadyHaveAccount: string;
@@ -396,6 +398,8 @@ export const translations: Record<Locale, TranslationDict> = {
             passwordHint: "At least 8 characters",
             btnSignIn: "Sign in",
             btnRegister: "Create account",
+            btnGoogle: "Continue with Google",
+            orDivider: "or continue with email",
             pleaseWait: "Please wait…",
             dontHaveAccount: "Don't have an account? ",
             alreadyHaveAccount: "Already have an account? ",
@@ -677,6 +681,8 @@ export const translations: Record<Locale, TranslationDict> = {
             passwordHint: "Minimal 8 karakter",
             btnSignIn: "Masuk",
             btnRegister: "Buat Akun",
+            btnGoogle: "Lanjutkan dengan Google",
+            orDivider: "atau lanjutkan dengan email",
             pleaseWait: "Mohon tunggu…",
             dontHaveAccount: "Belum punya akun? ",
             alreadyHaveAccount: "Sudah punya akun? ",
