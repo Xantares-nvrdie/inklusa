@@ -113,7 +113,7 @@ function StepVisual({ index, compact = false }: { index: number; compact?: boole
                 <p className={cn("mt-2", titleCls)}>{sample?.title}</p>
                 <p className="mt-3 line-clamp-2 text-sm text-white/65">{sample?.why}</p>
                 <ol className={cn(compact ? "mt-4 space-y-2.5" : "mt-6 space-y-3")}>
-                    {sample?.steps.slice(0, 4).map((s, i) => (
+                    {sample?.steps.slice(0, compact ? 3 : 4).map((s, i) => (
                         <motion.li
                             key={s}
                             initial={{ opacity: 0, x: -12 }}
