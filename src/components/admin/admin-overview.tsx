@@ -140,17 +140,33 @@ export function AdminOverview() {
                 </p>
             )}
 
-            <section className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+            <section className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
                 {cards.map(({ label, value, sub, Icon, tone }) => (
-                    <Card key={label} className="space-y-3 glass border-white/60 p-4 sm:p-6">
-                        <span className={`grid h-10 w-10 sm:h-11 sm:w-11 place-items-center rounded-2xl ${tone}`}>
-                            <Icon size={18} className="sm:hidden" aria-hidden="true" />
+                    <Card
+                        key={label}
+                        className="flex flex-col justify-between glass border-white/60 p-3.5 sm:p-5 lg:p-6 rounded-2xl sm:rounded-card shadow-soft space-y-3"
+                    >
+                        <span
+                            className={`grid h-9 w-9 sm:h-11 sm:w-11 place-items-center rounded-xl sm:rounded-2xl ${tone}`}
+                        >
+                            <Icon size={17} className="sm:hidden" aria-hidden="true" />
                             <Icon size={20} className="hidden sm:block" aria-hidden="true" />
                         </span>
                         <div>
-                            <p className="font-display text-2xl sm:text-4xl font-bold leading-none">{value ?? "–"}</p>
-                            <p className="mt-1 text-xs sm:text-sm text-muted">{label}</p>
-                            {sub && <p className="text-[11px] sm:text-xs text-muted">{sub}</p>}
+                            <p className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold leading-none">
+                                {value ?? "–"}
+                            </p>
+                            <p className="mt-1 text-xs sm:text-sm font-medium text-muted leading-tight">{label}</p>
+                            {sub ? (
+                                <p className="mt-0.5 text-[11px] sm:text-xs text-muted leading-tight">{sub}</p>
+                            ) : (
+                                <p
+                                    className="mt-0.5 text-[11px] sm:text-xs text-transparent select-none leading-tight"
+                                    aria-hidden="true"
+                                >
+                                    &nbsp;
+                                </p>
+                            )}
                         </div>
                     </Card>
                 ))}
