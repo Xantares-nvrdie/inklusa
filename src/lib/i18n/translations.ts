@@ -285,7 +285,7 @@ export const translations: Record<Locale, TranslationDict> = {
             signIn: "Sign in",
             getStarted: "Get started",
             dashboard: "Dashboard",
-            myInterventions: "My Interventions",
+            myInterventions: "Intervention Plans",
             library: "Library",
             students: "Students",
             signOut: "Sign out",
@@ -500,7 +500,7 @@ export const translations: Record<Locale, TranslationDict> = {
             startingIntervention: "Starting…",
         },
         planDetail: {
-            back: "← My Interventions",
+            back: "← Intervention Plans",
             goal: "Goal",
             when: "When",
             progress: {
@@ -527,7 +527,7 @@ export const translations: Record<Locale, TranslationDict> = {
             tryAnotherStrategy: "Try Another Strategy",
         },
         myInterventions: {
-            title: "My Interventions",
+            title: "Intervention Plans",
             btnNew: "+ Quick Check",
             filters: { all: "All", active: "Active", completed: "Completed" },
             empty: "Nothing here yet.",
@@ -568,7 +568,7 @@ export const translations: Record<Locale, TranslationDict> = {
             signIn: "Masuk",
             getStarted: "Daftar",
             dashboard: "Dashboard",
-            myInterventions: "Intervensi Saya",
+            myInterventions: "Rencana Intervensi",
             library: "Pustaka Strategi",
             students: "Siswa",
             signOut: "Keluar",
@@ -784,7 +784,7 @@ export const translations: Record<Locale, TranslationDict> = {
             startingIntervention: "Memulai…",
         },
         planDetail: {
-            back: "← Intervensi Saya",
+            back: "← Rencana Intervensi",
             goal: "Tujuan",
             when: "Waktu Penerapan",
             progress: {
@@ -811,7 +811,7 @@ export const translations: Record<Locale, TranslationDict> = {
             tryAnotherStrategy: "Coba Strategi Lain",
         },
         myInterventions: {
-            title: "Intervensi Saya",
+            title: "Rencana Intervensi",
             btnNew: "+ Quick Check",
             filters: { all: "Semua", active: "Aktif", completed: "Selesai" },
             empty: "Belum ada data intervensi di sini.",
