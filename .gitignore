@@ -66,8 +66,5 @@ Thumbs.db
 
 # Temporary files
 *.tmp
-src/db/seed.ts
-
-
 
 *.MD

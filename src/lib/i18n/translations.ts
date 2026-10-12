@@ -240,11 +240,24 @@ export interface TranslationDict {
         insightNotHelpful: string;
         continueStrategy: string;
         tryAnotherStrategy: string;
+        btnEdit: string;
+        btnCancelPlan: string;
+        btnRestorePlan: string;
+        cancelledNotice: string;
+        editModalTitle: string;
+        editGoal: string;
+        editTiming: string;
+        editStudent: string;
+        saveChanges: string;
+        cancelEdit: string;
+        confirmCancelTitle: string;
+        confirmCancelDesc: string;
+        confirmCancelBtn: string;
     };
     myInterventions: {
         title: string;
         btnNew: string;
-        filters: { all: string; active: string; completed: string };
+        filters: { all: string; active: string; completed: string; cancelled: string };
         empty: string;
         viewReflection: string;
         reflect: string;
@@ -525,11 +538,24 @@ export const translations: Record<Locale, TranslationDict> = {
                 "Teacher insight: This strategy showed limited improvement. A different approach might be needed.",
             continueStrategy: "Continue Strategy",
             tryAnotherStrategy: "Try Another Strategy",
+            btnEdit: "Edit Plan",
+            btnCancelPlan: "Cancel Plan",
+            btnRestorePlan: "Reactivate Plan",
+            cancelledNotice: "This intervention plan has been cancelled.",
+            editModalTitle: "Edit Intervention Plan",
+            editGoal: "Target / Goal",
+            editTiming: "Implementation Timing",
+            editStudent: "Target Student",
+            saveChanges: "Save Changes",
+            cancelEdit: "Cancel",
+            confirmCancelTitle: "Cancel Intervention Plan?",
+            confirmCancelDesc: "This plan will be marked as cancelled and removed from active interventions.",
+            confirmCancelBtn: "Yes, Cancel Plan",
         },
         myInterventions: {
             title: "Intervention Plans",
             btnNew: "+ Quick Check",
-            filters: { all: "All", active: "Active", completed: "Completed" },
+            filters: { all: "All", active: "Active", completed: "Completed", cancelled: "Cancelled" },
             empty: "Nothing here yet.",
             viewReflection: "View reflection",
             reflect: "Reflect",
@@ -809,11 +835,24 @@ export const translations: Record<Locale, TranslationDict> = {
                 "Insight Guru: Strategi ini menunjukkan sedikit perbaikan. Pendekatan lain mungkin diperlukan.",
             continueStrategy: "Lanjutkan Strategi",
             tryAnotherStrategy: "Coba Strategi Lain",
+            btnEdit: "Edit Rencana",
+            btnCancelPlan: "Batalkan Rencana",
+            btnRestorePlan: "Aktifkan Kembali",
+            cancelledNotice: "Rencana intervensi ini telah dibatalkan.",
+            editModalTitle: "Edit Rencana Intervensi",
+            editGoal: "Target / Tujuan",
+            editTiming: "Waktu Pelaksanaan",
+            editStudent: "Target Siswa",
+            saveChanges: "Simpan Perubahan",
+            cancelEdit: "Batal",
+            confirmCancelTitle: "Batalkan Rencana Intervensi?",
+            confirmCancelDesc: "Rencana ini akan ditandai sebagai dibatalkan dan tidak lagi masuk dalam daftar aktif.",
+            confirmCancelBtn: "Ya, Batalkan Rencana",
         },
         myInterventions: {
             title: "Rencana Intervensi",
             btnNew: "+ Quick Check",
-            filters: { all: "Semua", active: "Aktif", completed: "Selesai" },
+            filters: { all: "Semua", active: "Aktif", completed: "Selesai", cancelled: "Dibatalkan" },
             empty: "Belum ada data intervensi di sini.",
             viewReflection: "Lihat refleksi",
             reflect: "Isi Refleksi",

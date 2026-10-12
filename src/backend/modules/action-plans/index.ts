@@ -15,7 +15,12 @@ const actionPlansModule = new Elysia({ prefix: "/action-plans", tags: ["Action P
 
     .get(
         "/",
-        ({ user, query }) => ActionPlanService.list(query.global === "true" ? null : user.id, (query.filter ?? "all") as PlanFilter, query.student),
+        ({ user, query }) =>
+            ActionPlanService.list(
+                query.global === "true" ? null : user.id,
+                (query.filter ?? "all") as PlanFilter,
+                query.student,
+            ),
         {
             auth: true,
             query: t.Object({
@@ -156,6 +161,61 @@ const actionPlansModule = new Elysia({ prefix: "/action-plans", tags: ["Action P
                 note: t.Optional(t.String({ maxLength: 1000 })),
             }),
             detail: { summary: "Save reflection and complete the intervention" },
+        },
+    )
+    .patch(
+        "/:id",
+        async ({ user, params, body, set }) => {
+            const row = await ActionPlanService.update(user.id, params.id, body);
+            if (!row) {
+                set.status = 404;
+                return { message: "Action plan not found or not owned by you" };
+            }
+            return row;
+        },
+        {
+            auth: true,
+            params: t.Object({ id: t.String() }),
+            body: t.Object({
+                goal: t.Optional(t.String({ minLength: 1, maxLength: 300 })),
+                timing: t.Optional(t.String({ maxLength: 120 })),
+                studentId: t.Optional(t.Nullable(t.String())),
+            }),
+            detail: { summary: "Update an action plan (goal, timing, student)" },
+        },
+    )
+
+    .delete(
+        "/:id",
+        async ({ user, params, set }) => {
+            const row = await ActionPlanService.cancel(user.id, params.id);
+            if (!row) {
+                set.status = 404;
+                return { message: "Action plan not found or not owned by you" };
+            }
+            return { success: true, message: "Action plan cancelled", plan: row };
+        },
+        {
+            auth: true,
+            params: t.Object({ id: t.String() }),
+            detail: { summary: "Soft delete (cancel) an action plan" },
+        },
+    )
+
+    .post(
+        "/:id/restore",
+        async ({ user, params, set }) => {
+            const row = await ActionPlanService.restore(user.id, params.id);
+            if (!row) {
+                set.status = 404;
+                return { message: "Action plan not found or not owned by you" };
+            }
+            return { success: true, message: "Action plan restored", plan: row };
+        },
+        {
+            auth: true,
+            params: t.Object({ id: t.String() }),
+            detail: { summary: "Restore a cancelled action plan" },
         },
     );
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, CircleDashed, Clock3, MessageSquareText } from "lucide-react";
+import { CheckCircle2, CircleDashed, Clock3, MessageSquareText, XCircle } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/context";
 import { type PlanStatus, STATUS_LABELS_DATA } from "@/lib/knowledge";
 
@@ -9,6 +9,7 @@ const STYLE: Record<PlanStatus, { cls: string; Icon: typeof Clock3 }> = {
     IN_PROGRESS: { cls: "bg-accent-soft text-[#9a5612]", Icon: Clock3 },
     NEEDS_REFLECTION: { cls: "bg-[#f3e6f7] text-[#7a3f8f]", Icon: MessageSquareText },
     COMPLETED: { cls: "bg-primary-soft text-primary-strong", Icon: CheckCircle2 },
+    CANCELLED: { cls: "bg-danger/10 text-danger", Icon: XCircle },
 };
 
 /** Status is always conveyed by icon + label, never colour alone. */

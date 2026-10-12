@@ -20,7 +20,7 @@ interface BrowseResult {
 
 export function MyInterventions() {
     const { t } = useLanguage();
-    const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
+    const [filter, setFilter] = useState<"all" | "active" | "completed" | "cancelled">("all");
     const [data, setData] = useState<BrowseResult | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [page, setPage] = useState(1);
@@ -38,6 +38,7 @@ export function MyInterventions() {
         { id: "all" as const, label: t.myInterventions.filters.all },
         { id: "active" as const, label: t.myInterventions.filters.active },
         { id: "completed" as const, label: t.myInterventions.filters.completed },
+        { id: "cancelled" as const, label: t.myInterventions.filters.cancelled },
     ];
 
     useEffect(() => {
@@ -78,8 +79,7 @@ export function MyInterventions() {
         setTeacher("");
     };
 
-    const inputCls =
-        "rounded-xl border border-line bg-surface px-3 py-2 text-sm outline-none focus:border-primary";
+    const inputCls = "rounded-xl border border-line bg-surface px-3 py-2 text-sm outline-none focus:border-primary";
 
     const exportCSV = () => {
         if (!plans) return;
@@ -219,7 +219,11 @@ export function MyInterventions() {
             {data && data.total > 0 && (
                 <nav className="flex flex-wrap items-center justify-between gap-3" aria-label="Pagination">
                     <p className="text-sm text-muted">
-                        {t.myInterventions.showingTotal((page - 1) * data.pageSize + 1, page * data.pageSize, data.total)}
+                        {t.myInterventions.showingTotal(
+                            (page - 1) * data.pageSize + 1,
+                            page * data.pageSize,
+                            data.total,
+                        )}
                     </p>
                     <div className="flex items-center gap-2">
                         <button

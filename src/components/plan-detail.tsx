@@ -1,8 +1,9 @@
 "use client";
 
-import { Check, CheckCircle2 } from "lucide-react";
+import { AlertTriangle, Check, CheckCircle2, Pencil, RotateCcw, Trash2, X } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { StatusBadge } from "@/components/status-badge";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -28,6 +29,17 @@ export function PlanDetail({ id }: { id: string }) {
     const [note, setNote] = useState("");
     const [busy, setBusy] = useState(false);
 
+    // Edit modal states
+    const [isEditing, setIsEditing] = useState(false);
+    const [editGoal, setEditGoal] = useState("");
+    const [editTiming, setEditTiming] = useState("");
+    const [editStudentId, setEditStudentId] = useState<string>("");
+    const [students, setStudents] = useState<{ id: string; name: string }[]>([]);
+
+    // Cancel modal state
+    const [showCancelModal, setShowCancelModal] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
+
     const load = useCallback(
         () =>
             api<PlanRow>(`/action-plans/${id}`)
@@ -35,9 +47,16 @@ export function PlanDetail({ id }: { id: string }) {
                 .catch((e) => setError(e.message)),
         [id],
     );
+
     useEffect(() => {
         load();
     }, [load]);
+
+    useEffect(() => {
+        api<{ id: string; name: string }[]>("/students")
+            .then(setStudents)
+            .catch(() => {});
+    }, []);
 
     if (error)
         return (
@@ -49,6 +68,7 @@ export function PlanDetail({ id }: { id: string }) {
 
     const iv = getIntervention(plan.interventionSlug);
     const completed = plan.status === "COMPLETED";
+    const cancelled = plan.status === "CANCELLED";
 
     const track: { id: PlanStatus; label: string }[] = [
         { id: "PLANNED", label: t.planDetail.progress.planned },
@@ -97,11 +117,131 @@ export function PlanDetail({ id }: { id: string }) {
         }
     }
 
+    function openEditModal() {
+        if (!plan) return;
+        setEditGoal(plan.goal);
+        setEditTiming(plan.timing);
+        setEditStudentId(plan.studentId ?? "");
+        setIsEditing(true);
+    }
+
+    async function handleUpdatePlan(e: React.FormEvent) {
+        e.preventDefault();
+        if (!editGoal.trim()) return;
+        setIsUpdating(true);
+        try {
+            await api(`/action-plans/${id}`, {
+                method: "PATCH",
+                body: JSON.stringify({
+                    goal: editGoal.trim(),
+                    timing: editTiming.trim(),
+                    studentId: editStudentId || null,
+                }),
+            });
+            toast.success(
+                locale === "id" ? "Rencana intervensi berhasil diperbarui" : "Intervention plan updated successfully",
+            );
+            setIsEditing(false);
+            await load();
+        } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : "Failed to update plan";
+            toast.error(msg);
+        } finally {
+            setIsUpdating(false);
+        }
+    }
+
+    async function handleCancelPlan() {
+        setIsUpdating(true);
+        try {
+            await api(`/action-plans/${id}`, {
+                method: "DELETE",
+            });
+            toast.success(locale === "id" ? "Rencana intervensi dibatalkan" : "Intervention plan cancelled");
+            setShowCancelModal(false);
+            await load();
+        } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : "Failed to cancel plan";
+            toast.error(msg);
+        } finally {
+            setIsUpdating(false);
+        }
+    }
+
+    async function handleRestorePlan() {
+        setIsUpdating(true);
+        try {
+            await api(`/action-plans/${id}/restore`, {
+                method: "POST",
+            });
+            toast.success(
+                locale === "id"
+                    ? "Rencana intervensi berhasil diaktifkan kembali"
+                    : "Intervention plan reactivated successfully",
+            );
+            await load();
+        } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : "Failed to restore plan";
+            toast.error(msg);
+        } finally {
+            setIsUpdating(false);
+        }
+    }
+
     return (
         <div className="mx-auto max-w-3xl space-y-8">
-            <Link href="/action-plans" className="text-sm font-medium text-muted hover:text-foreground">
-                {t.planDetail.back}
-            </Link>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+                <Link
+                    href="/action-plans"
+                    className="text-sm font-medium text-muted hover:text-foreground transition-colors"
+                >
+                    {t.planDetail.back}
+                </Link>
+                {!cancelled && (
+                    <div className="flex items-center gap-2">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={openEditModal}
+                            className="rounded-xl border-line px-3 py-1.5 text-xs font-semibold"
+                        >
+                            <Pencil size={13} className="mr-1.5" />
+                            {t.planDetail.btnEdit}
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setShowCancelModal(true)}
+                            className="rounded-xl px-3 py-1.5 text-xs font-semibold text-danger hover:bg-danger/10 hover:text-danger"
+                        >
+                            <Trash2 size={13} className="mr-1.5" />
+                            {t.planDetail.btnCancelPlan}
+                        </Button>
+                    </div>
+                )}
+            </div>
+
+            {cancelled && (
+                <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-danger/30 bg-danger/10 px-5 py-4 text-danger animate-in fade-in">
+                    <div className="flex items-center gap-3">
+                        <AlertTriangle size={20} className="shrink-0" />
+                        <p className="text-sm font-semibold">{t.planDetail.cancelledNotice}</p>
+                    </div>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleRestorePlan}
+                        disabled={isUpdating}
+                        className="rounded-xl border-danger/40 bg-surface text-danger hover:bg-danger/10 text-xs font-semibold"
+                    >
+                        <RotateCcw size={13} className="mr-1.5" />
+                        {t.planDetail.btnRestorePlan}
+                    </Button>
+                </div>
+            )}
 
             <div className="space-y-3">
                 <div className="flex flex-wrap items-center gap-3">
@@ -123,46 +263,48 @@ export function PlanDetail({ id }: { id: string }) {
                 </div>
             </Card>
 
-            {/* Tracker */}
-            <Card className="space-y-6 glass border-white/60">
-                <ol className="flex items-center" aria-label="Progress">
-                    {track.map((tr, i) => {
-                        const reached = completed || i <= idx;
-                        return (
-                            <li key={tr.id} className="flex flex-1 items-center last:flex-none">
-                                <div className="flex items-center gap-2">
-                                    <span
-                                        className={`grid h-9 w-9 place-items-center rounded-full text-sm font-bold ${reached ? "bg-primary text-white" : "bg-surface-2 text-muted"}`}
-                                    >
-                                        {reached && (completed || i < idx) ? (
-                                            <Check size={16} aria-hidden="true" />
-                                        ) : (
-                                            i + 1
-                                        )}
-                                    </span>
-                                    <span
-                                        className={`text-sm font-semibold ${reached ? "text-foreground" : "text-muted"}`}
-                                    >
-                                        {tr.label}
-                                    </span>
-                                </div>
-                                {i < track.length - 1 && (
-                                    <span
-                                        className={`mx-3 h-0.5 flex-1 rounded ${completed || i < idx ? "bg-primary" : "bg-line"}`}
-                                    />
-                                )}
-                            </li>
-                        );
-                    })}
-                </ol>
-                {nextAction && (
-                    <Button id="btn-advance" onClick={advance} disabled={busy}>
-                        {nextAction.label}
-                    </Button>
-                )}
-            </Card>
+            {/* Tracker - only show when not cancelled */}
+            {!cancelled && (
+                <Card className="space-y-6 glass border-white/60">
+                    <ol className="flex items-center" aria-label="Progress">
+                        {track.map((tr, i) => {
+                            const reached = completed || i <= idx;
+                            return (
+                                <li key={tr.id} className="flex flex-1 items-center last:flex-none">
+                                    <div className="flex items-center gap-2">
+                                        <span
+                                            className={`grid h-9 w-9 place-items-center rounded-full text-sm font-bold ${reached ? "bg-primary text-white" : "bg-surface-2 text-muted"}`}
+                                        >
+                                            {reached && (completed || i < idx) ? (
+                                                <Check size={16} aria-hidden="true" />
+                                            ) : (
+                                                i + 1
+                                            )}
+                                        </span>
+                                        <span
+                                            className={`text-sm font-semibold ${reached ? "text-foreground" : "text-muted"}`}
+                                        >
+                                            {tr.label}
+                                        </span>
+                                    </div>
+                                    {i < track.length - 1 && (
+                                        <span
+                                            className={`mx-3 h-0.5 flex-1 rounded ${completed || i < idx ? "bg-primary" : "bg-line"}`}
+                                        />
+                                    )}
+                                </li>
+                            );
+                        })}
+                    </ol>
+                    {nextAction && (
+                        <Button id="btn-advance" onClick={advance} disabled={busy}>
+                            {nextAction.label}
+                        </Button>
+                    )}
+                </Card>
+            )}
 
-            {iv && !completed && (
+            {iv && !completed && !cancelled && (
                 <Card className="space-y-4 glass border-white/60">
                     <h2 className="text-xl font-bold">{t.planDetail.howToApply}</h2>
                     <ol className="space-y-2">
@@ -180,7 +322,7 @@ export function PlanDetail({ id }: { id: string }) {
             )}
 
             {/* Reflection */}
-            {plan.status === "NEEDS_REFLECTION" && (
+            {!cancelled && plan.status === "NEEDS_REFLECTION" && (
                 <Card className="space-y-6 p-8 shadow-lift glass border-white/60">
                     <h2 className="text-3xl font-bold">{t.planDetail.reflectTitle}</h2>
                     <fieldset className="space-y-3">
@@ -291,6 +433,107 @@ export function PlanDetail({ id }: { id: string }) {
                             <ButtonLink href="/quick-check">{t.planDetail.tryAnotherStrategy}</ButtonLink>
                         )}
                     </div>
+                </div>
+            )}
+
+            {/* Edit Modal */}
+            {isEditing && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm animate-in fade-in">
+                    <Card className="w-full max-w-lg space-y-5 border-white/80 p-6 shadow-2xl glass">
+                        <div className="flex items-center justify-between">
+                            <h2 className="text-xl font-bold">{t.planDetail.editModalTitle}</h2>
+                            <button
+                                type="button"
+                                onClick={() => setIsEditing(false)}
+                                className="rounded-lg p-1.5 text-muted hover:bg-surface-2 hover:text-foreground"
+                            >
+                                <X size={18} />
+                            </button>
+                        </div>
+                        <form onSubmit={handleUpdatePlan} className="space-y-4">
+                            <div className="space-y-1.5">
+                                <label htmlFor="edit-student" className="text-xs font-semibold text-muted">
+                                    {t.planDetail.editStudent}
+                                </label>
+                                <select
+                                    id="edit-student"
+                                    value={editStudentId}
+                                    onChange={(e) => setEditStudentId(e.target.value)}
+                                    className="w-full rounded-xl border border-line bg-surface px-3 py-2 text-sm outline-none focus:border-primary"
+                                >
+                                    <option value="">{t.dashboard.generalClassroom}</option>
+                                    {students.map((st) => (
+                                        <option key={st.id} value={st.id}>
+                                            {st.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="space-y-1.5">
+                                <label htmlFor="edit-goal" className="text-xs font-semibold text-muted">
+                                    {t.planDetail.editGoal}
+                                </label>
+                                <textarea
+                                    id="edit-goal"
+                                    required
+                                    maxLength={300}
+                                    rows={3}
+                                    value={editGoal}
+                                    onChange={(e) => setEditGoal(e.target.value)}
+                                    className="w-full rounded-xl border border-line bg-surface p-3 text-sm outline-none focus:border-primary"
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label htmlFor="edit-timing" className="text-xs font-semibold text-muted">
+                                    {t.planDetail.editTiming}
+                                </label>
+                                <input
+                                    id="edit-timing"
+                                    required
+                                    maxLength={120}
+                                    value={editTiming}
+                                    onChange={(e) => setEditTiming(e.target.value)}
+                                    className="w-full rounded-xl border border-line bg-surface px-3 py-2 text-sm outline-none focus:border-primary"
+                                />
+                            </div>
+                            <div className="flex justify-end gap-2 pt-2">
+                                <Button type="button" variant="ghost" onClick={() => setIsEditing(false)}>
+                                    {t.planDetail.cancelEdit}
+                                </Button>
+                                <Button type="submit" disabled={isUpdating}>
+                                    {t.planDetail.saveChanges}
+                                </Button>
+                            </div>
+                        </form>
+                    </Card>
+                </div>
+            )}
+
+            {/* Cancel (Soft Delete) Confirmation Modal */}
+            {showCancelModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm animate-in fade-in">
+                    <Card className="w-full max-w-md space-y-4 border-white/80 p-6 shadow-2xl glass">
+                        <div className="flex items-center gap-3 text-danger">
+                            <span className="grid h-10 w-10 place-items-center rounded-full bg-danger/10 shrink-0">
+                                <AlertTriangle size={20} />
+                            </span>
+                            <h3 className="text-lg font-bold">{t.planDetail.confirmCancelTitle}</h3>
+                        </div>
+                        <p className="text-sm text-muted">{t.planDetail.confirmCancelDesc}</p>
+                        <div className="flex justify-end gap-2 pt-2">
+                            <Button type="button" variant="ghost" onClick={() => setShowCancelModal(false)}>
+                                {t.planDetail.cancelEdit}
+                            </Button>
+                            <Button
+                                type="button"
+                                onClick={handleCancelPlan}
+                                disabled={isUpdating}
+                                className="bg-danger text-white hover:bg-danger/90"
+                            >
+                                {t.planDetail.confirmCancelBtn}
+                            </Button>
+                        </div>
+                    </Card>
                 </div>
             )}
         </div>

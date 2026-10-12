@@ -13,6 +13,7 @@ export const actionPlanStatusEnum = pgEnum("action_plan_status", [
     "IN_PROGRESS",
     "NEEDS_REFLECTION",
     "COMPLETED",
+    "CANCELLED",
 ]);
 
 export const reflectionResultEnum = pgEnum("reflection_result", [

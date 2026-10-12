@@ -9,7 +9,7 @@ import type { PlanRow } from "@/lib/knowledge";
 import { useKnowledge } from "@/lib/knowledge-context";
 
 export function PlanCard({ plan }: { plan: PlanRow }) {
-    const { t } = useLanguage();
+    const { t, locale } = useLanguage();
     const { getIntervention } = useKnowledge();
     const iv = getIntervention(plan.interventionSlug);
     const done = plan.status === "COMPLETED";
@@ -33,7 +33,9 @@ export function PlanCard({ plan }: { plan: PlanRow }) {
                     <div>
                         <p className="text-sm font-semibold text-primary">
                             {plan.student?.name ?? t.dashboard.generalClassroom}
-                            {plan.teacherName && <span className="text-muted ml-2 font-normal">• {plan.teacherName}</span>}
+                            {plan.teacherName && (
+                                <span className="text-muted ml-2 font-normal">• {plan.teacherName}</span>
+                            )}
                         </p>
                         <h3 className="text-xl font-bold">{plan.barrierTitle}</h3>
                     </div>
@@ -46,7 +48,11 @@ export function PlanCard({ plan }: { plan: PlanRow }) {
                             ? t.myInterventions.viewReflection
                             : plan.status === "NEEDS_REFLECTION"
                               ? t.myInterventions.reflect
-                              : t.myInterventions.continueBtn}
+                              : plan.status === "CANCELLED"
+                                ? locale === "id"
+                                    ? "Lihat detail"
+                                    : "View details"
+                                : t.myInterventions.continueBtn}
                         <ArrowRight size={14} aria-hidden="true" />
                     </p>
                 )}

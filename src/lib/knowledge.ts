@@ -1521,12 +1521,14 @@ export const STATUS_LABELS_DATA: Record<Locale, Record<string, string>> = {
         IN_PROGRESS: "In progress",
         NEEDS_REFLECTION: "Needs reflection",
         COMPLETED: "Completed",
+        CANCELLED: "Cancelled",
     },
     id: {
         PLANNED: "Direncanakan",
         IN_PROGRESS: "Sedang berjalan",
         NEEDS_REFLECTION: "Perlu refleksi",
         COMPLETED: "Selesai",
+        CANCELLED: "Dibatalkan",
     },
 };
 
@@ -1534,7 +1536,7 @@ export const RESULT_LABELS = RESULT_LABELS_DATA.en;
 export const REASON_LABELS = REASON_LABELS_DATA.en;
 export const STATUS_LABELS = STATUS_LABELS_DATA.en;
 
-export type PlanStatus = "PLANNED" | "IN_PROGRESS" | "NEEDS_REFLECTION" | "COMPLETED";
+export type PlanStatus = "PLANNED" | "IN_PROGRESS" | "NEEDS_REFLECTION" | "COMPLETED" | "CANCELLED";
 export type ReflectionResult = "VERY_HELPFUL" | "HELPFUL" | "SOME_CHANGE" | "NOT_HELPFUL";
 export type ReflectionReason = "STILL_NEEDED_ASSISTANCE" | "DIFFICULT_TO_APPLY" | "BARRIER_CHANGED" | "OTHER";
 

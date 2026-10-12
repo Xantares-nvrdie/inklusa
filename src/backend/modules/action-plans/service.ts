@@ -6,7 +6,7 @@ type Plan = typeof actionPlans.$inferInsert;
 
 const ACTIVE = ["PLANNED", "IN_PROGRESS", "NEEDS_REFLECTION"] as const;
 
-export type PlanFilter = "all" | "active" | "completed";
+export type PlanFilter = "all" | "active" | "completed" | "cancelled";
 
 export const ActionPlanService = {
     async list(teacherId: string | null, filter: PlanFilter = "all", studentId?: string) {
@@ -19,17 +19,21 @@ export const ActionPlanService = {
             filters.push(inArray(actionPlans.status, [...ACTIVE]));
         } else if (filter === "completed") {
             filters.push(eq(actionPlans.status, "COMPLETED"));
+        } else if (filter === "cancelled") {
+            filters.push(eq(actionPlans.status, "CANCELLED"));
         }
 
         if (studentId) {
             filters.push(eq(actionPlans.studentId, studentId));
         }
 
-        return db.query.actionPlans.findMany({
-            where: filters.length > 0 ? and(...filters) : undefined,
-            orderBy: desc(actionPlans.updatedAt),
-            with: { student: true, teacher: true },
-        }).then(plans => plans.map(p => ({ ...p, teacherName: p.teacher?.name ?? "Unknown" })));
+        return db.query.actionPlans
+            .findMany({
+                where: filters.length > 0 ? and(...filters) : undefined,
+                orderBy: desc(actionPlans.updatedAt),
+                with: { student: true, teacher: true },
+            })
+            .then((plans) => plans.map((p) => ({ ...p, teacherName: p.teacher?.name ?? "Unknown" })));
     },
 
     async browse(
@@ -50,6 +54,7 @@ export const ActionPlanService = {
 
         if (opts.filter === "active") filters.push(inArray(actionPlans.status, [...ACTIVE]));
         else if (opts.filter === "completed") filters.push(eq(actionPlans.status, "COMPLETED"));
+        else if (opts.filter === "cancelled") filters.push(eq(actionPlans.status, "CANCELLED"));
 
         if (opts.teacher) filters.push(eq(actionPlans.teacherId, opts.teacher));
 
@@ -64,7 +69,13 @@ export const ActionPlanService = {
         const q = opts.q?.trim().replace(/[%_\\]/g, (c) => `\\${c}`);
         if (q) {
             filters.push(
-                inArray(actionPlans.studentId, db.select({ id: students.id }).from(students).where(ilike(students.name, `%${q}%`))),
+                inArray(
+                    actionPlans.studentId,
+                    db
+                        .select({ id: students.id })
+                        .from(students)
+                        .where(ilike(students.name, `%${q}%`)),
+                ),
             );
         }
 
@@ -107,9 +118,10 @@ export const ActionPlanService = {
             .from(actionPlans)
             .where(eq(actionPlans.teacherId, teacherId));
         return {
-            active: rows.filter((r) => r.status !== "COMPLETED").length,
+            active: rows.filter((r) => ACTIVE.includes(r.status as any)).length,
             needsReflection: rows.filter((r) => r.status === "NEEDS_REFLECTION").length,
             completed: rows.filter((r) => r.status === "COMPLETED").length,
+            cancelled: rows.filter((r) => r.status === "CANCELLED").length,
         };
     },
 
@@ -191,6 +203,38 @@ export const ActionPlanService = {
                 reflectedAt: new Date(),
                 status: "COMPLETED",
             })
+            .where(and(eq(actionPlans.id, id), eq(actionPlans.teacherId, teacherId)))
+            .returning();
+        return row ?? null;
+    },
+
+    async update(teacherId: string, id: string, input: { goal?: string; timing?: string; studentId?: string | null }) {
+        const updateData: Partial<Plan> = {};
+        if (input.goal !== undefined) updateData.goal = input.goal.trim();
+        if (input.timing !== undefined) updateData.timing = input.timing.trim();
+        if (input.studentId !== undefined) updateData.studentId = input.studentId;
+
+        const [row] = await db
+            .update(actionPlans)
+            .set(updateData)
+            .where(and(eq(actionPlans.id, id), eq(actionPlans.teacherId, teacherId)))
+            .returning();
+        return row ?? null;
+    },
+
+    async cancel(teacherId: string, id: string) {
+        const [row] = await db
+            .update(actionPlans)
+            .set({ status: "CANCELLED" })
+            .where(and(eq(actionPlans.id, id), eq(actionPlans.teacherId, teacherId)))
+            .returning();
+        return row ?? null;
+    },
+
+    async restore(teacherId: string, id: string) {
+        const [row] = await db
+            .update(actionPlans)
+            .set({ status: "PLANNED" })
             .where(and(eq(actionPlans.id, id), eq(actionPlans.teacherId, teacherId)))
             .returning();
         return row ?? null;

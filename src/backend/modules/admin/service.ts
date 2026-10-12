@@ -81,7 +81,7 @@ export const AdminService = {
                 createdAt: u.createdAt,
                 students: studs.find((s) => s.teacherId === u.id)?.n ?? 0,
                 plans: mine.reduce((a, p) => a + p.n, 0),
-                activePlans: mine.filter((p) => p.status !== "COMPLETED").reduce((a, p) => a + p.n, 0),
+                activePlans: mine.filter((p) => p.status !== "COMPLETED" && p.status !== "CANCELLED").reduce((a, p) => a + p.n, 0),
             };
         });
     },
