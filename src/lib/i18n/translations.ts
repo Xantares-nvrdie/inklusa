@@ -72,6 +72,8 @@ export interface TranslationDict {
         passwordHint: string;
         btnSignIn: string;
         btnRegister: string;
+        btnGoogle: string;
+        orDivider: string;
         pleaseWait: string;
         dontHaveAccount: string;
         alreadyHaveAccount: string;
@@ -271,6 +273,8 @@ export const translations: Record<Locale, TranslationDict> = {
             passwordHint: "At least 8 characters",
             btnSignIn: "Sign in",
             btnRegister: "Create account",
+            btnGoogle: "Continue with Google",
+            orDivider: "or continue with email",
             pleaseWait: "Please wait…",
             dontHaveAccount: "Don't have an account? ",
             alreadyHaveAccount: "Already have an account? ",
@@ -368,7 +372,8 @@ export const translations: Record<Locale, TranslationDict> = {
             reflectionSaved: "Reflection saved",
             savedHint: "Your observation has been added to the intervention record.",
             insightHelpful: "Teacher insight: This strategy seems appropriate for the situation.",
-            insightNotHelpful: "Teacher insight: This strategy showed limited improvement. A different approach might be needed.",
+            insightNotHelpful:
+                "Teacher insight: This strategy showed limited improvement. A different approach might be needed.",
             continueStrategy: "Continue Strategy",
             tryAnotherStrategy: "Try Another Strategy",
         },
@@ -468,6 +473,8 @@ export const translations: Record<Locale, TranslationDict> = {
             passwordHint: "Minimal 8 karakter",
             btnSignIn: "Masuk",
             btnRegister: "Buat Akun",
+            btnGoogle: "Lanjutkan dengan Google",
+            orDivider: "atau lanjutkan dengan email",
             pleaseWait: "Mohon tunggu…",
             dontHaveAccount: "Belum punya akun? ",
             alreadyHaveAccount: "Sudah punya akun? ",
@@ -484,7 +491,8 @@ export const translations: Record<Locale, TranslationDict> = {
             recentTitle: "Intervensi Terbaru",
             viewAll: "Lihat semua",
             noInterventions: "Belum ada intervensi",
-            noInterventionsDesc: "Ketika menemukan kendala di kelas, mulai Quick Check. Rencana Anda akan tampil di sini.",
+            noInterventionsDesc:
+                "Ketika menemukan kendala di kelas, mulai Quick Check. Rencana Anda akan tampil di sini.",
             btnStart: "Mulai Quick Check",
             generalClassroom: "Kelas umum",
         },
@@ -565,7 +573,8 @@ export const translations: Record<Locale, TranslationDict> = {
             reflectionSaved: "Refleksi Tersimpan",
             savedHint: "Pengamatan Anda telah dicatat ke riwayat intervensi.",
             insightHelpful: "Insight Guru: Strategi ini tampaknya sesuai untuk situasi tersebut.",
-            insightNotHelpful: "Insight Guru: Strategi ini menunjukkan sedikit perbaikan. Pendekatan lain mungkin diperlukan.",
+            insightNotHelpful:
+                "Insight Guru: Strategi ini menunjukkan sedikit perbaikan. Pendekatan lain mungkin diperlukan.",
             continueStrategy: "Lanjutkan Strategi",
             tryAnotherStrategy: "Coba Strategi Lain",
         },
