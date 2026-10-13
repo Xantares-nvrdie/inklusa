@@ -157,7 +157,8 @@ export function LandingHero() {
                                 src="/landing/hero-clay.jpg"
                                 alt={t.landing.heroImageAlt}
                                 fill
-                                priority
+                                preload
+                                fetchPriority="high"
                                 sizes="(min-width: 1024px) 540px, (min-width: 640px) 420px, 352px"
                                 className="object-contain mix-blend-multiply"
                             />
