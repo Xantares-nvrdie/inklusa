@@ -9,12 +9,10 @@ import { useLanguage } from "@/lib/i18n/context";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { PARALLAX_SPRING } from "./shared";
 
-const EASE = [0.22, 1, 0.36, 1] as const;
-
 /**
- * Multi-layer hero. Each layer travels at its own speed while scrolling
- * (background slowest, floating chips fastest) to create depth, plus a
- * subtle pointer-driven tilt on the illustration.
+ * Multi-layer hero. Primary content is immediately visible so mobile visitors
+ * can paint the LCP element without waiting for a JavaScript entrance effect.
+ * The desktop keeps its scroll and pointer parallax for depth.
  */
 export function LandingHero() {
     const { t } = useLanguage();
@@ -65,13 +63,12 @@ export function LandingHero() {
             className="relative isolate overflow-hidden"
             aria-labelledby="hero-title"
         >
-            {/* Layer 0 — colour fields */}
+            {/* Lighter mobile fields retain the colour treatment with less raster work. */}
             <motion.div style={{ y: yBlobs }} className="pointer-events-none absolute inset-0 -z-20" aria-hidden="true">
-                <div className="absolute -left-40 -top-40 h-[36rem] w-[36rem] rounded-full bg-primary/20 blur-[120px]" />
-                <div className="absolute -right-32 top-10 h-[30rem] w-[30rem] rounded-full bg-accent/25 blur-[120px]" />
-                <div className="absolute bottom-0 left-1/3 h-[24rem] w-[24rem] rounded-full bg-sky/15 blur-[120px]" />
+                <div className="absolute -left-24 -top-24 h-[24rem] w-[24rem] rounded-full bg-primary/20 blur-[72px] sm:-left-32 sm:-top-32 sm:h-[30rem] sm:w-[30rem] sm:blur-[96px] lg:-left-40 lg:-top-40 lg:h-[36rem] lg:w-[36rem] lg:blur-[120px]" />
+                <div className="absolute -right-20 top-8 h-[22rem] w-[22rem] rounded-full bg-accent/25 blur-[72px] sm:-right-24 sm:h-[26rem] sm:w-[26rem] sm:blur-[96px] lg:-right-32 lg:top-10 lg:h-[30rem] lg:w-[30rem] lg:blur-[120px]" />
+                <div className="absolute bottom-0 left-1/3 h-[18rem] w-[18rem] rounded-full bg-sky/15 blur-[72px] sm:h-[21rem] sm:w-[21rem] sm:blur-[96px] lg:h-[24rem] lg:w-[24rem] lg:blur-[120px]" />
             </motion.div>
-            {/* Layer 1 — grid */}
             <motion.div
                 style={{ y: yGrid }}
                 className="bg-grid pointer-events-none absolute inset-0 -z-10"
@@ -79,20 +76,15 @@ export function LandingHero() {
             />
 
             <div className="mx-auto grid max-w-6xl items-center gap-8 px-4 pb-14 pt-7 sm:gap-10 sm:px-5 sm:pb-28 sm:pt-14 lg:min-h-[calc(100svh-4rem)] lg:grid-cols-[1.05fr_0.95fr]">
-                {/* Layer 2 — copy */}
+                {/* Copy is deliberately static on entry for a fast, stable LCP. */}
                 <motion.div style={{ y: yText, opacity: textOpacity }} className="relative z-10 space-y-5 sm:space-y-8">
-                    <motion.span
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, ease: EASE }}
-                        className="inline-flex items-center gap-2 rounded-full border border-line bg-surface/80 px-3.5 py-1 sm:px-4 sm:py-1.5 text-xs sm:text-sm font-medium text-primary-strong shadow-soft backdrop-blur"
-                    >
+                    <span className="inline-flex items-center gap-2 rounded-full border border-line bg-surface/80 px-3.5 py-1 text-xs font-medium text-primary-strong shadow-soft backdrop-blur sm:px-4 sm:py-1.5 sm:text-sm">
                         <span className="relative grid h-2 w-2 place-items-center">
                             <span className="animate-pulse-ring absolute h-2 w-2 rounded-full bg-primary" />
                             <span className="h-2 w-2 rounded-full bg-primary" />
                         </span>
                         {t.landing.taglineBadge}
-                    </motion.span>
+                    </span>
 
                     <h1
                         id="hero-title"
@@ -100,39 +92,24 @@ export function LandingHero() {
                     >
                         {titleLines.map((line, i) => (
                             <span key={line} className="block overflow-hidden pb-1 sm:pb-2">
-                                <motion.span
-                                    className={`block ${i === 1 ? "text-gradient-warm" : ""}`}
-                                    initial={{ y: "110%" }}
-                                    animate={{ y: 0 }}
-                                    transition={{ duration: 0.9, delay: 0.1 + i * 0.12, ease: EASE }}
-                                >
-                                    {line}
-                                </motion.span>
+                                <span className={`block ${i === 1 ? "text-gradient-warm" : ""}`}>{line}</span>
                             </span>
                         ))}
                     </h1>
 
-                    <motion.p
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, delay: 0.35, ease: EASE }}
-                        className="max-w-xl text-[0.95rem] leading-relaxed text-muted sm:text-lg"
-                    >
+                    <p className="max-w-xl text-[0.95rem] leading-relaxed text-muted sm:text-lg">
                         {t.landing.heroDescription}
-                    </motion.p>
+                    </p>
 
-                    <motion.div
+                    <div
                         id="hero-cta"
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7, delay: 0.45, ease: EASE }}
                         className="flex flex-col items-stretch gap-1.5 pt-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3 sm:pt-0"
                     >
                         <ButtonLink
-                            id="cta-hero-start"
                             href="/register"
                             size="lg"
                             className="group w-full justify-center sm:w-auto"
+                            id="cta-hero-start"
                         >
                             {t.landing.ctaQuickCheck}
                             <ArrowRight
@@ -143,11 +120,11 @@ export function LandingHero() {
                         </ButtonLink>
                         {/* Secondary action reads as a quiet link on phones so the primary CTA leads. */}
                         <ButtonLink
-                            id="cta-hero-how"
                             href="#how"
                             variant="outline"
                             size="lg"
                             className="group w-full justify-center max-sm:h-12 max-sm:border-transparent max-sm:bg-transparent max-sm:text-[0.95rem] max-sm:text-primary-strong max-sm:shadow-none sm:w-auto"
+                            id="cta-hero-how"
                         >
                             {t.landing.ctaHow}
                             <ArrowDown
@@ -156,35 +133,24 @@ export function LandingHero() {
                                 className="transition-transform group-hover:translate-y-0.5 sm:hidden"
                             />
                         </ButtonLink>
-                    </motion.div>
+                    </div>
 
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.8, delay: 0.6 }}
-                        className="flex items-center justify-center gap-2 text-xs text-muted sm:justify-start sm:text-sm"
-                    >
-                        <Sparkles size={14} className="text-accent shrink-0" aria-hidden="true" />
+                    <p className="flex items-center justify-center gap-2 text-xs text-muted sm:justify-start sm:text-sm">
+                        <Sparkles size={14} className="shrink-0 text-accent" aria-hidden="true" />
                         {t.landing.quote}
-                    </motion.p>
+                    </p>
                 </motion.div>
 
-                {/* Layer 3 — illustration + floating UI */}
+                {/* Illustration remains visual-rich, but no longer fades in after hydration. */}
                 <div className="relative mx-auto aspect-square w-full max-w-[22rem] sm:max-w-[540px]">
                     <motion.div style={{ y: yArt, scale: artScale }} className="absolute inset-0">
-                        <motion.div
-                            style={{ x: artX, y: artY }}
-                            initial={{ opacity: 0, scale: 0.92 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 1.1, delay: 0.2, ease: EASE }}
-                            className="relative h-full w-full"
-                        >
+                        <motion.div style={{ x: artX, y: artY }} className="relative h-full w-full">
                             <div
                                 className="absolute inset-[12%] rounded-full bg-gradient-to-br from-primary-soft via-white to-accent-soft"
                                 aria-hidden="true"
                             />
                             <div
-                                className="animate-spin-slow absolute inset-[6%] rounded-full border border-dashed border-primary/25"
+                                className="absolute inset-[6%] rounded-full border border-dashed border-primary/25 lg:animate-spin-slow"
                                 aria-hidden="true"
                             />
                             <Image
@@ -192,7 +158,7 @@ export function LandingHero() {
                                 alt={t.landing.heroImageAlt}
                                 fill
                                 priority
-                                sizes="(min-width: 1024px) 540px, 90vw"
+                                sizes="(min-width: 1024px) 540px, (min-width: 640px) 420px, 352px"
                                 className="object-contain mix-blend-multiply"
                             />
                         </motion.div>
@@ -202,24 +168,16 @@ export function LandingHero() {
                     <motion.div style={{ y: yChipA }} className="absolute left-0 top-[3%] z-20 sm:-left-10 sm:top-[6%]">
                         <motion.div
                             style={{ x: chipX, y: chipY }}
-                            initial={{ opacity: 0, scale: 0.85 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.8, delay: 0.7, ease: EASE }}
-                            className="glass w-44 sm:w-56 rounded-2xl border border-white/70 p-3.5 sm:p-4 shadow-lift"
+                            className="glass w-44 rounded-2xl border border-white/70 p-3.5 shadow-lift sm:w-56 sm:p-4"
                         >
                             <p className="text-[0.65rem] font-semibold uppercase tracking-widest text-muted">
                                 {t.landing.observedBarrier}
                             </p>
-                            <p className="mt-1 font-display text-base sm:text-lg font-bold">
+                            <p className="mt-1 font-display text-base font-bold sm:text-lg">
                                 {t.landing.sampleBarrierTitle}
                             </p>
-                            <div className="mt-2.5 sm:mt-3 h-1.5 overflow-hidden rounded-full bg-surface-2">
-                                <motion.div
-                                    className="h-full rounded-full bg-gradient-to-r from-primary to-accent"
-                                    initial={{ width: 0 }}
-                                    animate={{ width: "72%" }}
-                                    transition={{ duration: 1.4, delay: 1.1, ease: EASE }}
-                                />
+                            <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-surface-2 sm:mt-3">
+                                <div className="h-full w-[72%] rounded-full bg-gradient-to-r from-primary to-accent" />
                             </div>
                         </motion.div>
                     </motion.div>
@@ -231,15 +189,12 @@ export function LandingHero() {
                     >
                         <motion.div
                             style={{ x: chipX, y: chipY }}
-                            initial={{ opacity: 0, scale: 0.85 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.8, delay: 0.85, ease: EASE }}
-                            className="flex items-center gap-2.5 sm:gap-3 rounded-full border border-line bg-surface px-3.5 sm:px-4 py-2 sm:py-2.5 shadow-lift"
+                            className="flex items-center gap-2.5 rounded-full border border-line bg-surface px-3.5 py-2 shadow-lift sm:gap-3 sm:px-4 sm:py-2.5"
                         >
-                            <span className="grid h-7 w-7 sm:h-8 sm:w-8 place-items-center rounded-full bg-accent-soft text-[#9a5612]">
+                            <span className="grid h-7 w-7 place-items-center rounded-full bg-accent-soft text-[#9a5612] sm:h-8 sm:w-8">
                                 <UserRoundCheck size={15} aria-hidden="true" />
                             </span>
-                            <span className="text-xs sm:text-sm font-semibold">{t.landing.teacherDecides}</span>
+                            <span className="text-xs font-semibold sm:text-sm">{t.landing.teacherDecides}</span>
                         </motion.div>
                     </motion.div>
 
@@ -250,15 +205,12 @@ export function LandingHero() {
                     >
                         <motion.div
                             style={{ x: chipX, y: chipY }}
-                            initial={{ opacity: 0, scale: 0.85 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.8, delay: 1, ease: EASE }}
-                            className="rounded-2xl bg-primary-strong p-3.5 sm:p-4 text-white shadow-lift"
+                            className="rounded-2xl bg-primary-strong p-3.5 text-white shadow-lift sm:p-4"
                         >
                             <p className="text-[0.65rem] font-semibold uppercase tracking-widest text-white/60">
                                 {t.landing.strategyTried}
                             </p>
-                            <p className="mt-1 text-sm sm:text-base font-semibold">Graphic Organizer</p>
+                            <p className="mt-1 text-sm font-semibold sm:text-base">Graphic Organizer</p>
                             <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-xs font-medium">
                                 <Check size={12} aria-hidden="true" /> {t.landing.helped}
                             </p>

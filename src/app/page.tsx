@@ -1,5 +1,3 @@
-"use client";
-
 import { LandingCta, LandingPrinciples } from "@/components/landing/closing";
 import { LandingHero } from "@/components/landing/hero";
 import { LandingLoop } from "@/components/landing/loop";
