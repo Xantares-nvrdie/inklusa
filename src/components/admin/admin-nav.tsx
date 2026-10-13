@@ -35,7 +35,7 @@ export function AdminNav({ name, image }: { name: string; image?: string | null 
                 <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4 sm:h-16 sm:px-5">
                     <div className="flex min-w-0 items-center gap-2 sm:gap-3">
                         <Logo href="/admin" />
-                        <span className="hidden rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-[#9a5612] xs:inline">
+                        <span className="hidden rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-[#9a5612] xl:inline-flex">
                             {a.nav.badge}
                         </span>
                     </div>
