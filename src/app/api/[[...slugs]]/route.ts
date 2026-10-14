@@ -32,6 +32,8 @@ export const app = new Elysia({ prefix: "/api" })
 
 export type app = typeof app;
 
+export const maxDuration = 60;
+
 export const GET = app.fetch;
 export const POST = app.fetch;
 export const PUT = app.fetch;
