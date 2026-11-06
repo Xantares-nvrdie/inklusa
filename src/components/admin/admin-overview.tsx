@@ -231,10 +231,13 @@ export function AdminOverview() {
                             <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
                                 {needsReviewList.slice(0, 3).map((item) => {
                                     const rate = item.effectivenessRate ?? item.successRate ?? 0;
+                                    const isHigh = rate >= 70;
                                     const isModerate = rate >= 40 && rate < 70;
-                                    const badgeClass = isModerate
-                                        ? "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/30"
-                                        : "bg-danger/10 text-danger border-danger/30";
+                                    const badgeClass = isHigh
+                                        ? "bg-success/10 text-success border-success/30"
+                                        : isModerate
+                                          ? "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/30"
+                                          : "bg-danger/10 text-danger border-danger/30";
 
                                     const topReasonKey = item.topReasons[0]?.reason;
                                     const topReasonLabel = topReasonKey
